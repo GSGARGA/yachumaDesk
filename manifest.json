@@ -1,0 +1,25 @@
+{
+  "name": "ЯЧУМА — десктоп",
+  "short_name": "ЯЧУМА",
+  "description": "idle-кликер про чуму: зарази мир — от блохи до Космоса",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#182410",
+  "theme_color": "#0b140a",
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "icon-512.png?v=26",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png?v=26",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
