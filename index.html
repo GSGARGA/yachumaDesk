@@ -1174,7 +1174,13 @@ body.hd{
   padding:0 !important;
   background:#05100a !important;
 }
-body.hd *{font-family:inherit !important;letter-spacing:.02em !important}
+/* Шрифт подменяем через переменные игры, а не правилом `*` —
+   универсальный селектор заставляет браузер пересчитывать стили всех узлов
+   при каждом изменении классов, а игра меняет их каждый кадр. */
+body.hd{
+  --arcade:'HDUI','JetBrains Mono',ui-monospace,monospace;
+  --body:'HDUI','JetBrains Mono',ui-monospace,monospace;
+}
 
 /* фон-космос от hd.js */
 body.hd canvas.hd-space,body.hd #hdSpace{position:fixed !important;left:0;top:0;width:100vw !important;height:100vh !important;z-index:-1;pointer-events:none;display:block}
@@ -1273,19 +1279,22 @@ body.hd #fxCanvas{position:absolute !important;inset:0;width:100% !important;hei
 body.hd .event-badges{
   position:absolute !important;left:2.4vw !important;right:2.4vw !important;top:16.6vh !important;bottom:auto !important;
   width:auto !important;max-width:none !important;margin:0 !important;grid-template-columns:none !important;
-  display:flex !important;flex-wrap:nowrap;justify-content:flex-start;align-items:center;gap:.85vw !important;z-index:3;
+  display:grid !important;grid-template-columns:repeat(5,1fr) !important;
+  align-items:center;column-gap:.9vw !important;row-gap:0 !important;z-index:3;
 }
 body.hd #viralBadge,body.hd #pandemicBadge,body.hd #ratsBadge,body.hd #fleasBadge,body.hd #bdBadge{
   position:relative !important;
-  height:4vh !important;min-height:0 !important;padding:0 1.2vw !important;
+  height:4vh !important;min-height:0 !important;padding:0 .6vw !important;
+  width:auto !important;min-width:0 !important;max-width:none !important;
   display:flex !important;flex-direction:column;justify-content:center;
   border-radius:2vh !important;line-height:1 !important;overflow:hidden !important;
   background:linear-gradient(180deg,rgba(18,30,14,.72),rgba(8,16,8,.72)) !important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06) !important;
 }
 body.hd #viralBadge > div:first-child,body.hd #pandemicBadge > div:first-child,body.hd #ratsBadge > div:first-child,body.hd #fleasBadge > div:first-child,body.hd #bdBadge > div:first-child{
-  display:flex !important;align-items:center;gap:.5vw;white-space:nowrap;
-  font-size:1.6vh !important;color:#eaf5e2 !important;letter-spacing:.03em !important;
+  display:flex !important;align-items:center;justify-content:center;gap:.4vw;white-space:nowrap;
+  font-size:1.5vh !important;color:#eaf5e2 !important;letter-spacing:.02em !important;
+  overflow:hidden;text-overflow:ellipsis;
 }
 body.hd #viralBadge > div:first-child span,body.hd #pandemicBadge > div:first-child span,body.hd #ratsBadge > div:first-child span,body.hd #fleasBadge > div:first-child span,body.hd #bdBadge > div:first-child span{font-size:1.6vh !important;color:inherit !important}
 body.hd .vb-barwrap,body.hd .pb-barwrap,body.hd .rb-barwrap,body.hd .fb-barwrap,body.hd .bd-barwrap{
@@ -1322,7 +1331,7 @@ body.hd #fatality{
   font-size:1.85vh !important;color:#b6cbab !important;white-space:nowrap;z-index:6 !important;
   text-shadow:0 .2vh .6vh rgba(0,0,0,.6) !important;letter-spacing:.02em !important;
 }
-body.hd #fatality .fat-num{color:#ef7a52 !important;font-size:2.2vh !important;margin-left:.5vw !important}
+body.hd #fatality .fat-num{color:#ef7a52 !important;font-size:2.2vh !important;margin-left:0 !important}
 body.hd #matBtn::before,body.hd #ageBtn::before{display:none !important}
 body.hd #matBtn .mlabel,body.hd #ageBtn .mlabel{font-size:1.85vh !important;color:var(--hd-muted) !important;line-height:1}
 body.hd #matBtn .mv,body.hd #ageBtn .mv{margin:0 !important;padding:0 !important}
@@ -1381,7 +1390,15 @@ body.hd .bc-cta{
   position:absolute !important;left:4%;right:4%;bottom:10% !important;top:auto !important;
   display:flex !important;flex-direction:column;align-items:center;gap:.7vh;text-align:center;
 }
-body.hd .bc-label{font-size:2.8vh !important;color:#fff !important;letter-spacing:.05em !important;text-shadow:0 .2vh .8vh rgba(0,0,0,.65)}
+body.hd .bc-label{font-size:2.8vh !important;letter-spacing:.05em !important}
+/* зелёная только «РАСПРОСТРАНЯТЬ» — это состояние очага (.viral у круга) */
+body.hd #battleCircle:not(.viral):not(.infinity) .bc-label{
+  color:#fff !important;text-shadow:0 .2vh .8vh rgba(0,0,0,.65) !important;
+}
+body.hd #battleCircle.viral:not(.infinity) .bc-label{
+  color:#a6ef7a !important;
+  text-shadow:0 .2vh .8vh rgba(0,0,0,.85),0 0 1.8vh rgba(120,230,90,.45) !important;
+}
 body.hd .bc-info{display:flex !important;flex-direction:column;gap:.3vh;align-items:center}
 body.hd .bc-info > div{font-size:1.6vh !important;color:#e6f2dd !important;opacity:.92;white-space:nowrap}
 body.hd .bc-info b{color:#fff !important}
@@ -1398,7 +1415,8 @@ body.hd #arenaShop > .buy{
   position:fixed !important;top:33.4vh !important;
   width:min(20.1vw,322px) !important;height:19.6vh !important;min-height:0 !important;flex:none !important;
   margin:0 !important;padding:1.6vh 1.2vw !important;
-  display:grid !important;grid-template-rows:auto auto auto 1fr;align-content:start;gap:1.1vh 0;
+  display:grid !important;grid-template-rows:auto auto auto 1fr;grid-template-columns:minmax(0,1fr) !important;
+  align-content:start;gap:1.1vh 0;overflow:hidden !important;
   border:1px solid rgba(130,205,95,.34) !important;border-radius:1.6vh !important;
   background:linear-gradient(180deg,rgba(28,54,22,.55),rgba(10,22,10,.44)) !important;
   box-shadow:inset 0 1px 0 rgba(190,255,150,.09),0 .8vh 2.4vh rgba(0,0,0,.4) !important;
@@ -1611,6 +1629,131 @@ body.hd #arenaShop > .buy:not([disabled]){
 body.hd #arenaShop > .buy:not([disabled]) .top,
 body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
 
+/* ===== вылетающие органы и урон: от середины круга, органы влево, урон вправо ===== */
+@keyframes hdFloatL{
+  0%{opacity:0;transform:translate(0,0) scale(.7)}
+  18%{opacity:1;transform:translate(-1vh,-1.2vh) scale(1.06)}
+  100%{opacity:0;transform:translate(-5vh,-8.5vh) scale(1)}
+}
+@keyframes hdFloatR{
+  0%{opacity:0;transform:translate(0,0) scale(.7)}
+  18%{opacity:1;transform:translate(1vh,-1.2vh) scale(1.06)}
+  100%{opacity:0;transform:translate(5vh,-8.5vh) scale(1)}
+}
+body.hd #battleCircle > .float{
+  position:absolute !important;top:50% !important;bottom:auto !important;
+  filter:none !important;max-width:34% !important;
+  font-size:2.4vh !important;line-height:1.2 !important;
+  animation-duration:.85s !important;animation-timing-function:ease-out !important;
+  text-shadow:0 .2vh .5vh rgba(0,0,0,.75),1px 1px 0 #000 !important;
+  z-index:12 !important;
+}
+/* урон — правая половина */
+body.hd #battleCircle > .float:not(.organ){
+  left:66% !important;right:auto !important;
+  text-align:left !important;
+  animation-name:hdFloatR !important;
+}
+/* органы — левая половина */
+body.hd #battleCircle > .float.organ{
+  left:auto !important;right:66% !important;
+  text-align:right !important;
+  animation-name:hdFloatL !important;
+  font-size:2.2vh !important;
+}
+body.hd #battleCircle > .float.organ .oi{font-size:4vh !important;vertical-align:-.9vh !important;line-height:1 !important}
+body.hd #battleCircle > .float.organ svg{width:4vh !important;height:3.6vh !important;vertical-align:-.9vh !important}
+/* длинные подписи (смертность, пандемия, чёрная смерть) чуть ближе к центру, чтобы не уезжать за край */
+body.hd #battleCircle > .float.super,
+body.hd #battleCircle > .float.pandemic,
+body.hd #battleCircle > .float.bdhit{left:58% !important;max-width:36% !important;text-align:left !important}
+body.hd #battleCircle > .float .lbl{font-size:1.7vh !important}
+
+/* ===== цифры не должны прыгать: у каждой своя фиксированная колонка ===== */
+/* панели ЗАРАЖЕНИЕ / КОЛОНИЯ */
+body.hd #arenaShop > .buy .now{
+  display:grid !important;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) !important;
+  align-items:baseline !important;column-gap:.4vw !important;
+}
+body.hd #arenaShop > .buy .now > *:first-child{justify-self:start !important;text-align:left !important}
+body.hd #arenaShop > .buy .now > *:last-child{justify-self:end !important;text-align:right !important}
+body.hd #arenaShop > .buy .price{
+  display:grid !important;grid-template-columns:auto 1fr !important;
+  align-items:baseline !important;column-gap:.8vw !important;
+}
+body.hd #arenaShop > .buy .price > *{justify-self:start !important;text-align:left !important}
+
+/* Фатальность / Возраст чумы / Матёрость — общая ось по центру */
+body.hd #fatality,body.hd #matBtn,body.hd #ageBtn{
+  display:grid !important;grid-template-columns:1fr 1fr !important;
+  width:42vh !important;column-gap:.7vw !important;align-items:baseline !important;
+}
+body.hd #matBtn .mlabel,body.hd #ageBtn .mlabel{justify-self:end !important;text-align:right !important}
+body.hd #matBtn .mv,body.hd #ageBtn .mv{justify-self:start !important;text-align:left !important}
+body.hd #fatality{white-space:nowrap !important;justify-items:end !important;text-align:right !important}
+body.hd #fatality > *{justify-self:start !important;text-align:left !important}
+
+/* шапка справа: ширины цифр зарезервированы (шрифт моноширинный, ch = ровно символ) */
+body.hd #app > header .dropinfo > div:not(.infected) b#dropBonus{
+  display:inline-block !important;min-width:8ch !important;text-align:right !important;
+}
+body.hd #app > header .dropinfo > div:not(.infected) b#dropNext{
+  display:inline-block !important;min-width:8ch !important;text-align:right !important;
+}
+body.hd #app > header .dropinfo > .infected > b#totalInfected{
+  min-width:9ch !important;text-align:right !important;
+}
+/* шапка справа: две колонки по содержимому; ширина стабильна за счёт резерва под цифры */
+body.hd #app > header .dropinfo{
+  display:grid !important;grid-template-columns:auto auto !important;
+  column-gap:1.6vw !important;align-items:center !important;justify-items:end !important;
+}
+body.hd #app > header .dropinfo > div:not(.infected){text-align:right !important;white-space:nowrap !important}
+body.hd #app > header .dropinfo > .infected{white-space:nowrap !important}
+
+/* ===== иконка-эмодзи (крыса) — как остальные иконки и по центру ===== */
+body.hd #bcIcon .introface{
+  width:100% !important;height:100% !important;margin:0 !important;padding:0 !important;
+  display:flex !important;align-items:center !important;justify-content:center !important;
+  font-size:9.5vh !important;line-height:1 !important;text-align:center !important;
+}
+
+/* ===== матёрость >= 200M: зелёная строка лечения на круге не нужна ===== */
+body.hd.hd-mat200 .bc-heal{display:none !important}
+
+/* ===== шапка: блок дропа ближе к «заражено», цифры вплотную к двоеточию ===== */
+body.hd #app > header .dropinfo{column-gap:.7vw !important}
+body.hd #app > header .dropinfo > div:not(.infected) b#dropNext{
+  text-align:left !important;min-width:7ch !important;
+}
+body.hd #app > header .dropinfo > div:not(.infected) b#dropBonus{
+  text-align:right !important;min-width:7ch !important;
+}
+
+/* ===== больше воздуха между Фатальностью, Возрастом и Матёростью ===== */
+body.hd #fingersPill{top:calc(100% + 1.4vh) !important}
+body.hd .event-badges{top:16.0vh !important}
+body.hd #fatality{top:21.2vh !important}
+body.hd #ageBtn{top:calc(100% + 5.8vh) !important}
+body.hd #matBtn{top:30.4vh !important}
+body.hd #battleCircle{top:33.4vh !important;width:42vh !important;height:42vh !important}
+body.hd #arenaShop > .buy{top:36.0vh !important}
+body.hd #playerCard{top:77.8vh !important}
+
+/* ===== ЗАРАЖЕНИЕ и ЧЁРНАЯ КОЛОНИЯ после 340 уровня — чёрный текст (класс .bcol от игры) ===== */
+body.hd #arenaShop > .buy.bcol .top .t,
+body.hd #arenaShop > .buy.bcol:not([disabled]) .top .t,
+body.hd #arenaShop > .buy.bcol .top,
+body.hd #arenaShop > .buy.bcol:not([disabled]) .top{
+  color:#0b0f0b !important;
+  text-shadow:0 0 .9vh rgba(150,230,130,.55),0 1px 0 rgba(255,255,255,.16) !important;
+}
+
+/* холсты — отдельные слои компоновщика, чтобы их обновление не перерисовывало страницу */
+body.hd canvas.hd-space,body.hd #hdSpace,body.hd canvas.hd-planet{
+  will-change:transform;transform:translateZ(0);backface-visibility:hidden;
+}
+
 </style>
 <script id="hdLayer">
 /* ЯЧУМА — HD-слой для браузера и десктопа.
@@ -1621,7 +1764,7 @@ body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
   if (window.__hdInit) return;
   window.__hdInit = true;   // десктоп-сборка: слой включён всегда
 
-  var DPR = Math.min(window.devicePixelRatio || 1, 1.75);
+  var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
   var TW = 512, TH = 256;
 
   function hexToRgb(s) {
@@ -1687,6 +1830,7 @@ body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
     this.cloud = makeNoise(90210, 4, 8);
     this.sea = quantile(this.surf, 0.56);      // ~44% суши
     this.cq = quantile(this.cloud, 0.62);
+    this.pal = null;
     this.tint = [58, 122, 114];
     this.lost = 0;
     this.applyTint();
@@ -1694,6 +1838,31 @@ body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
 
   // Уровни 0..7 и «земные» — синий океан + зелёная суша (как в макете).
   // Планеты 8..15 приходят со своим цветом — тогда палитра строится от него.
+  Planet.prototype.buildPalette = function () {
+    var P = this.pal, SEA = this.sea, N = 256;
+    var r = new Float32Array(N), g = new Float32Array(N), b = new Float32Array(N);
+    for (var i = 0; i < N; i++) {
+      var h = i / (N - 1);
+      var land = clamp((h - SEA) * 16, 0, 1);
+      var hi = clamp((h - SEA - 0.07) * 9, 0, 1);
+      var deep = clamp((SEA - h) * 6, 0, 1);
+      var sr = P.sea2[0] + (P.sea[0] - P.sea2[0]) * deep;
+      var sg = P.sea2[1] + (P.sea[1] - P.sea2[1]) * deep;
+      var sb = P.sea2[2] + (P.sea[2] - P.sea2[2]) * deep;
+      var lr = P.lnd[0] + (P.lnd2[0] - P.lnd[0]) * hi;
+      var lg = P.lnd[1] + (P.lnd2[1] - P.lnd[1]) * hi;
+      var lb = P.lnd[2] + (P.lnd2[2] - P.lnd[2]) * hi;
+      r[i] = sr + (lr - sr) * land;
+      g[i] = sg + (lg - sg) * land;
+      b[i] = sb + (lb - sb) * land;
+    }
+    this.lutR = r; this.lutG = g; this.lutB = b;
+    // доля суши тоже в таблицу — нужна для полярных шапок и блика
+    var L = new Float32Array(N);
+    for (i = 0; i < N; i++) L[i] = clamp((i / (N - 1) - SEA) * 16, 0, 1);
+    this.lutL = L;
+  };
+
   Planet.prototype.applyTint = function () {
     var t = this.tint, r = t[0], g = t[1], b = t[2];
     var earth = Math.abs(r - 58) < 12 && Math.abs(g - 122) < 12 && Math.abs(b - 114) < 12;
@@ -1714,6 +1883,7 @@ body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
         pole: [Math.min(255, r * 0.55 + 130), Math.min(255, g * 0.55 + 130), Math.min(255, b * 0.55 + 135)]
       };
     }
+    if (this.sea != null) this.buildPalette();
   };
 
   Planet.prototype.resize = function () {
@@ -1721,7 +1891,7 @@ body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
     var side = Math.min(r.width, r.height);
     if (side < 8) return;
     // потолок буфера: рисуем не крупнее 520 px, дальше растягиваем — экономит CPU
-    var s = Math.round(Math.min(side * DPR, 460));
+    var s = Math.round(Math.min(side * DPR, 360));
     if (s === this.size) return;
     this.size = s; this.cv.width = s; this.cv.height = s;
     this.buildLUT(); this.img = this.ctx.createImageData(s, s);
@@ -1762,12 +1932,9 @@ body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
     if (!this.lut || !this.img) return;
     var s = this.size, L = this.lut, d = this.img.data;
     var surf = this.surf, cloud = this.cloud;
-    var P = this.pal;
-    var seaR = P.sea[0], seaG = P.sea[1], seaB = P.sea[2];
-    var sea2R = P.sea2[0], sea2G = P.sea2[1], sea2B = P.sea2[2];
-    var lndR = P.lnd[0], lndG = P.lnd[1], lndB = P.lnd[2];
-    var lnd2R = P.lnd2[0], lnd2G = P.lnd2[1], lnd2B = P.lnd2[2];
-    var polR = P.pole[0], polG = P.pole[1], polB = P.pole[2];
+    if (!this.lutR) this.buildPalette();
+    var LR = this.lutR, LG = this.lutG, LB = this.lutB, LL = this.lutL;
+    var polR = this.pal.pole[0], polG = this.pal.pole[1], polB = this.pal.pole[2];
     var SEA = this.sea, CQ = this.cq;
     // дробное смещение — иначе поверхность прыгает целыми пикселями текстуры
     var offF = t * 6, coffF = t * 10.5;
@@ -1780,17 +1947,8 @@ body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
       var u = L.U[i], v = L.V[i];
       var row = v * TW, u0 = (u + offI) % TW, u1 = u0 + 1 === TW ? 0 : u0 + 1;
       var h0 = surf[row + u0], hgt = h0 + (surf[row + u1] - h0) * offR;
-      var land = clamp((hgt - SEA) * 16, 0, 1);
-      var hi = clamp((hgt - SEA - 0.07) * 9, 0, 1);          // возвышенности
-      var deep = clamp((SEA - hgt) * 6, 0, 1);        // глубина океана
-      var r, g, b;
-      if (land > 0) {
-        r = lndR + (lnd2R - lndR) * hi; g = lndG + (lnd2G - lndG) * hi; b = lndB + (lnd2B - lndB) * hi;
-        var sr = sea2R + (seaR - sea2R) * deep, sg = sea2G + (seaG - sea2G) * deep, sb = sea2B + (seaB - sea2B) * deep;
-        r = sr + (r - sr) * land; g = sg + (g - sg) * land; b = sb + (b - sb) * land;
-      } else {
-        r = sea2R + (seaR - sea2R) * deep; g = sea2G + (seaG - sea2G) * deep; b = sea2B + (seaB - sea2B) * deep;
-      }
+      var hi8 = (hgt * 255) | 0; if (hi8 < 0) hi8 = 0; else if (hi8 > 255) hi8 = 255;
+      var r = LR[hi8], g = LG[hi8], b = LB[hi8], land = LL[hi8];
       // полярные шапки
       var pol = clamp((Math.abs(L.LAT[i]) - 0.88) * 9, 0, 1) * (0.35 + 0.65 * land);
       if (pol > 0) { r = r + (polR - r) * pol; g = g + (polG - g) * pol; b = b + (polB - b) * pol; }
@@ -1842,7 +2000,9 @@ body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
     this.spores = []; this.w = 0; this.h = 0; this.bg = null;
   }
   Space.prototype.resize = function () {
-    var w = Math.round(innerWidth * DPR), h = Math.round(innerHeight * DPR);
+    // фон мягкий, его буфер держим небольшим и растягиваем — экономит заливку на больших экранах
+    var k = Math.min(1, 1280 / Math.max(innerWidth, innerHeight));
+    var w = Math.round(innerWidth * k), h = Math.round(innerHeight * k);
     if (w === this.w && h === this.h) return;
     this.w = w; this.h = h; this.cv.width = w; this.cv.height = h;
     this.cv.style.width = innerWidth + 'px'; this.cv.style.height = innerHeight + 'px';
@@ -1860,7 +2020,7 @@ body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
     }
     for (var s = 0, ns = Math.round(w * h / 5600); s < ns; s++) {
       var sx = Math.random() * w, sy = Math.random() * h;
-      var rr = (Math.random() * 1.3 + .3) * DPR, al = .12 + Math.random() * .7;
+      var rr = (Math.random() * 1.3 + .3), al = .12 + Math.random() * .7;
       c.fillStyle = 'rgba(226,236,206,' + al.toFixed(2) + ')';
       c.beginPath(); c.arc(sx, sy, rr, 0, 6.283); c.fill();
     }
@@ -1900,17 +2060,25 @@ body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
     if (planet) { planet.resize(); planet.sync(); }
 
     var resizeTimer = null;
+    function relayout() {
+      space.resize();
+      if (planet) { planet.resize(); planet.dirty = true; }
+    }
     addEventListener('resize', function () {
       clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(function () {
-        space.resize(); if (planet) planet.resize();
-      }, 120);
+      resizeTimer = setTimeout(relayout, 120);
     });
+    setInterval(relayout, 1000);   // страховка на смену масштаба/зума
 
+    var needSync = true;
     if (planet && window.MutationObserver) {
-      new MutationObserver(function () { planet.sync(); })
+      // игра меняет --lost каждый кадр; читаем стиль не чаще 8 раз в секунду,
+      // иначе каждый кадр вызывает принудительный пересчёт стилей всего документа
+      new MutationObserver(function () { needSync = true; })
         .observe(bc, { attributes: true, attributeFilter: ['style', 'class'] });
     }
+
+
     // не тратим CPU, когда вкладка скрыта
     var hidden = false;
     document.addEventListener('visibilitychange', function () { hidden = document.hidden; });
@@ -1933,19 +2101,36 @@ body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
     function syncEpid() {
       document.body.classList.toggle('hd-epid', epidReady());
     }
-    syncEpid();
+
+    // матёрость >= 200M: строку лечения на круге прячем
+    var MAT_U = ['', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No', 'Dc'];
+    function matValue() {
+      var el = document.getElementById('matVal');
+      if (!el) return 0;
+      var t = el.textContent.replace(/[\s\u2009\u00a0]/g, '');
+      var m = t.match(/^([0-9.]+)([A-Za-z]*)$/);
+      if (!m) return 0;
+      var i = MAT_U.indexOf(m[2]);
+      if (i < 0) return 1e30;                       // единица крупнее списка — точно выше порога
+      return parseFloat(m[1]) * Math.pow(1000, i);
+    }
+    function syncMat() {
+      document.body.classList.toggle('hd-mat200', matValue() >= 2e8);
+    }
+    syncEpid(); syncMat();
 
     var t0 = performance.now(), lastPlanet = 0, lastSpace = 0;
     function loop(now) {
       var t = (now - t0) / 1000;
       if (!hidden) {
-        if (now - lastSpace > 48) { lastSpace = now; space.draw(t); }  // космос ~20 fps — споры дрейфуют медленно
+        if (now - lastSpace > 62) { lastSpace = now; space.draw(t); }  // космос ~16 fps, фон медленный
         if (planet && (planet.dirty || now - lastPlanet > 32)) {       // планета 30 fps — вращение плавное
           lastPlanet = now; planet.dirty = false;
-          planet.resize(); planet.sync(); planet.draw(t);
+          if (needSync) { needSync = false; planet.sync(); }
+          planet.draw(t);
         }
       }
-      if (now - epidTimer > 500) { epidTimer = now; syncEpid(); }
+      if (now - epidTimer > 500) { epidTimer = now; syncEpid(); syncMat(); }
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
