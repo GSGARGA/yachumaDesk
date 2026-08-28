@@ -1156,6 +1156,8 @@
   unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
 
 body.hd{
+  --appvw:12.8px;       /* 1% ширины макета (1280 px) */
+  --apph:7.2px;         /* 1% высоты макета (720 px) */
   --hd-gold:#e3b23a;
   --hd-green:#8fd45a;
   --hd-green2:#a6ef7a;
@@ -1186,12 +1188,19 @@ body.hd{
 body.hd canvas.hd-space,body.hd #hdSpace{position:fixed !important;left:0;top:0;width:100vw !important;height:100vh !important;z-index:-1;pointer-events:none;display:block}
 
 body.hd #app{
-  position:relative;z-index:auto;
-  width:100% !important;
-  max-width:min(100vw,160vh) !important;
-  height:100vh !important;min-height:100vh !important;
-  margin:0 auto !important;
-  padding:2.6vh 2.4vw 0 !important;
+  z-index:auto;
+  /* макет фиксированный 1024x640, по центру экрана; если окно меньше — ужимается целиком */
+  /* ни transform, ни position:fixed — оба создают свой стекинг-контекст,
+     и затемнение #mBackdrop (вне #app, z-index 205) накрыло бы окна.
+     Масштаб — через zoom, позиционирование — absolute. */
+  position:absolute !important;
+  left:calc(50% - 640px) !important;top:calc(50% - 360px) !important;
+  right:auto !important;bottom:auto !important;
+  zoom:var(--hd-k,1);
+  width:1280px !important;max-width:none !important;
+  height:720px !important;min-height:0 !important;
+  margin:0 !important;
+  padding:calc(2.6 * var(--apph)) calc(2.4 * var(--appvw)) 0 !important;
   background:none !important;border:none !important;box-shadow:none !important;
   overflow:hidden !important;
   display:block !important;
@@ -1201,38 +1210,38 @@ body.hd .vertag,body.hd #banner,body.hd .devbar,body.hd #mobileBtn{display:none 
 /* ================= ШАПКА ================= */
 body.hd #app > header{
   position:relative !important;
-  height:7.8vh !important;min-height:0 !important;margin:0 !important;
+  height:calc(7.8 * var(--apph)) !important;min-height:0 !important;margin:0 !important;
   display:block !important;
   border:1px solid var(--hd-line) !important;
-  border-radius:1.6vh !important;
+  border-radius:calc(1.6 * var(--apph)) !important;
   background:linear-gradient(180deg,rgba(22,44,18,.42),rgba(8,18,8,.34)) !important;
-  box-shadow:inset 0 1px 0 rgba(190,255,150,.07),0 .6vh 2vh rgba(0,0,0,.35) !important;
+  box-shadow:inset 0 1px 0 rgba(190,255,150,.07),0 .6vh calc(2 * var(--apph)) rgba(0,0,0,.35) !important;
   overflow:visible !important;
 }
 body.hd #app > header .titlewrap{display:contents !important}
 
 /* кнопка ЭПИДЕМИЯ */
 body.hd #epidBtn{
-  position:absolute !important;left:1.5vw;top:50%;transform:translateY(-50%);
-  width:17.4% !important;height:5.2vh !important;min-height:0 !important;
+  position:absolute !important;left:calc(1.5 * var(--appvw));top:50%;transform:translateY(-50%);
+  width:17.4% !important;height:calc(5.2 * var(--apph)) !important;min-height:0 !important;
   margin:0 !important;padding:.5vh .9vw !important;
   display:grid !important;grid-template-columns:1fr auto;grid-template-rows:auto auto;
   align-content:center;gap:.35vh 0;
-  border:1px solid var(--hd-line) !important;border-radius:1.1vh !important;
+  border:1px solid var(--hd-line) !important;border-radius:calc(1.1 * var(--apph)) !important;
   background:rgba(8,20,8,.5) !important;box-shadow:none !important;
   text-align:left !important;
 }
-body.hd #epidBtn > span[data-k]{grid-column:1;grid-row:1;font-size:1.55vh !important;color:var(--hd-ink) !important;line-height:1;white-space:nowrap}
-body.hd #epidBtn > .ec{grid-column:1/3;grid-row:2;font-size:1.5vh !important;color:var(--hd-muted) !important;line-height:1;white-space:nowrap;text-align:left}
+body.hd #epidBtn > span[data-k]{grid-column:1;grid-row:1;font-size:calc(1.55 * var(--apph)) !important;color:var(--hd-ink) !important;line-height:1;white-space:nowrap}
+body.hd #epidBtn > .ec{grid-column:1/3;grid-row:2;font-size:calc(1.5 * var(--apph)) !important;color:var(--hd-muted) !important;line-height:1;white-space:nowrap;text-align:left}
 body.hd #epidBtn > .ec b{color:var(--hd-ink) !important}
-body.hd #epidBtn > .pbadge{grid-column:2;grid-row:1;position:static !important;justify-self:end;align-self:center;width:1.5vh !important;height:1.5vh !important;background:#d63030 !important;box-shadow:0 0 1.2vh rgba(214,48,48,.7) !important}
+body.hd #epidBtn > .pbadge{grid-column:2;grid-row:1;position:static !important;justify-self:end;align-self:center;width:calc(1.5 * var(--apph)) !important;height:calc(1.5 * var(--apph)) !important;background:#d63030 !important;box-shadow:0 0 calc(1.2 * var(--apph)) rgba(214,48,48,.7) !important}
 
 /* логотип по центру */
 body.hd #app > header .logo{
   position:absolute !important;left:50%;top:50%;transform:translate(-50%,-50%);
-  margin:0 !important;font-size:3.4vh !important;line-height:1 !important;
+  margin:0 !important;font-size:calc(3.4 * var(--apph)) !important;line-height:1 !important;
   color:#eef7e6 !important;letter-spacing:.06em !important;
-  text-shadow:0 0 2.4vh rgba(140,220,90,.45),0 .3vh 0 rgba(0,0,0,.5) !important;
+  text-shadow:0 0 calc(2.4 * var(--apph)) rgba(140,220,90,.45),0 .3vh 0 rgba(0,0,0,.5) !important;
   white-space:nowrap;
 }
 body.hd #app > header .logo{color:#8fd45a !important}
@@ -1240,32 +1249,32 @@ body.hd #app > header .logo b{color:#eef7e6 !important;font-weight:inherit !impo
 
 /* правая часть шапки */
 body.hd #app > header .dropinfo{
-  position:absolute !important;right:1.5vw;top:50%;transform:translateY(-50%);
-  margin:0 !important;display:flex !important;align-items:center;gap:1.6vw;
-  text-align:right !important;font-size:1.7vh !important;color:var(--hd-muted) !important;
+  position:absolute !important;right:calc(1.5 * var(--appvw));top:50%;transform:translateY(-50%);
+  margin:0 !important;display:flex !important;align-items:center;gap:calc(1.6 * var(--appvw));
+  text-align:right !important;font-size:calc(1.7 * var(--apph)) !important;color:var(--hd-muted) !important;
 }
-body.hd #app > header .dropinfo > div:not(.infected){order:1;font-size:1.75vh !important;white-space:nowrap;line-height:1}
+body.hd #app > header .dropinfo > div:not(.infected){order:1;font-size:calc(1.75 * var(--apph)) !important;white-space:nowrap;line-height:1}
 body.hd #app > header .dropinfo > div:not(.infected) b{color:#e06a4a !important}
 body.hd #app > header .dropinfo > div:not(.infected) b#dropNext{color:var(--hd-muted) !important}
 body.hd #app > header .dropinfo > .infected{
   order:2;display:flex !important;flex-wrap:wrap;justify-content:flex-end;align-items:baseline;
-  gap:0 .4vw;line-height:1.05;font-size:1.6vh !important;
+  gap:0 .4vw;line-height:1.05;font-size:calc(1.6 * var(--apph)) !important;
 }
 body.hd #app > header .dropinfo > .infected > b{
-  flex:0 0 100%;text-align:right;font-size:3vh !important;color:var(--hd-gold) !important;line-height:1.05;
+  flex:0 0 100%;text-align:right;font-size:calc(3 * var(--apph)) !important;color:var(--hd-gold) !important;line-height:1.05;
 }
 
 /* пилюля «пальцы» — под шапкой слева */
 body.hd #fingersPill{
-  position:absolute !important;left:.2vw !important;top:calc(100% + 2.2vh) !important;right:auto !important;bottom:auto !important;width:auto !important;
+  position:absolute !important;left:.2vw !important;top:calc(100% + calc(2.2 * var(--apph))) !important;right:auto !important;bottom:auto !important;width:auto !important;
   margin:0 !important;padding:0 !important;background:none !important;border:none !important;box-shadow:none !important;
   display:flex !important;align-items:baseline;gap:.9vw;white-space:nowrap;
 }
 body.hd #fingersPill small:not(.ftick){display:none !important}
-body.hd #fingersPill .ic{display:inline-block !important;font-size:2.6vh !important;line-height:1 !important;margin:0 !important}
+body.hd #fingersPill .ic{display:inline-block !important;font-size:calc(2.6 * var(--apph)) !important;line-height:1 !important;margin:0 !important}
 body.hd #fingersPill .fmain{display:flex !important;align-items:baseline;gap:.5vw}
-body.hd #fingersPill .fmain b{font-size:3vh !important;color:var(--hd-gold) !important;line-height:1}
-body.hd #fingersPill .ftick{font-size:1.9vh !important;color:var(--hd-muted) !important;line-height:1}
+body.hd #fingersPill .fmain b{font-size:calc(3 * var(--apph)) !important;color:var(--hd-gold) !important;line-height:1}
+body.hd #fingersPill .ftick{font-size:calc(1.9 * var(--apph)) !important;color:var(--hd-muted) !important;line-height:1}
 
 /* ================= АРЕНА ================= */
 body.hd #app > main.arena{
@@ -1277,26 +1286,26 @@ body.hd #fxCanvas{position:absolute !important;inset:0;width:100% !important;hei
 
 /* плашки событий */
 body.hd .event-badges{
-  position:absolute !important;left:2.4vw !important;right:2.4vw !important;top:16.6vh !important;bottom:auto !important;
+  position:absolute !important;left:calc(2.4 * var(--appvw)) !important;right:calc(2.4 * var(--appvw)) !important;top:calc(16.6 * var(--apph)) !important;bottom:auto !important;
   width:auto !important;max-width:none !important;margin:0 !important;grid-template-columns:none !important;
   display:grid !important;grid-template-columns:repeat(5,1fr) !important;
   align-items:center;column-gap:.9vw !important;row-gap:0 !important;z-index:3;
 }
 body.hd #viralBadge,body.hd #pandemicBadge,body.hd #ratsBadge,body.hd #fleasBadge,body.hd #bdBadge{
   position:relative !important;
-  height:4vh !important;min-height:0 !important;padding:0 .6vw !important;
+  height:calc(4 * var(--apph)) !important;min-height:0 !important;padding:0 .6vw !important;
   width:auto !important;min-width:0 !important;max-width:none !important;
   display:flex !important;flex-direction:column;justify-content:center;
-  border-radius:2vh !important;line-height:1 !important;overflow:hidden !important;
+  border-radius:calc(2 * var(--apph)) !important;line-height:1 !important;overflow:hidden !important;
   background:linear-gradient(180deg,rgba(18,30,14,.72),rgba(8,16,8,.72)) !important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06) !important;
 }
 body.hd #viralBadge > div:first-child,body.hd #pandemicBadge > div:first-child,body.hd #ratsBadge > div:first-child,body.hd #fleasBadge > div:first-child,body.hd #bdBadge > div:first-child{
   display:flex !important;align-items:center;justify-content:center;gap:.4vw;white-space:nowrap;
-  font-size:1.5vh !important;color:#eaf5e2 !important;letter-spacing:.02em !important;
+  font-size:calc(1.5 * var(--apph)) !important;color:#eaf5e2 !important;letter-spacing:.02em !important;
   overflow:hidden;text-overflow:ellipsis;
 }
-body.hd #viralBadge > div:first-child span,body.hd #pandemicBadge > div:first-child span,body.hd #ratsBadge > div:first-child span,body.hd #fleasBadge > div:first-child span,body.hd #bdBadge > div:first-child span{font-size:1.6vh !important;color:inherit !important}
+body.hd #viralBadge > div:first-child span,body.hd #pandemicBadge > div:first-child span,body.hd #ratsBadge > div:first-child span,body.hd #fleasBadge > div:first-child span,body.hd #bdBadge > div:first-child span{font-size:calc(1.6 * var(--apph)) !important;color:inherit !important}
 body.hd .vb-barwrap,body.hd .pb-barwrap,body.hd .rb-barwrap,body.hd .fb-barwrap,body.hd .bd-barwrap{
   position:absolute !important;left:0;right:0;bottom:0;height:.35vh !important;
   border-radius:0 !important;margin:0 !important;background:rgba(255,255,255,.08) !important;
@@ -1322,26 +1331,26 @@ body.hd #matBtn,body.hd #ageBtn{
   align-items:baseline !important;gap:.6vw;z-index:3;
   transform:translateX(-50%) !important;
 }
-body.hd #matBtn{display:flex !important;top:27.0vh !important}
-body.hd #ageBtn{display:flex;top:calc(100% + 3.8vh) !important}
+body.hd #matBtn{display:flex !important;top:calc(27.0 * var(--apph)) !important}
+body.hd #ageBtn{display:flex;top:calc(100% + calc(3.8 * var(--apph))) !important}
 body.hd #fatality{
-  position:fixed !important;left:50% !important;top:21.8vh !important;bottom:auto !important;right:auto !important;
+  position:absolute !important;left:50% !important;top:calc(21.8 * var(--apph)) !important;bottom:auto !important;right:auto !important;
   transform:translateX(-50%) !important;
   width:auto !important;max-width:none !important;margin:0 !important;padding:0 !important;background:none !important;
-  font-size:1.85vh !important;color:#b6cbab !important;white-space:nowrap;z-index:6 !important;
+  font-size:calc(1.85 * var(--apph)) !important;color:#b6cbab !important;white-space:nowrap;z-index:6 !important;
   text-shadow:0 .2vh .6vh rgba(0,0,0,.6) !important;letter-spacing:.02em !important;
 }
-body.hd #fatality .fat-num{color:#ef7a52 !important;font-size:2.2vh !important;margin-left:0 !important}
+body.hd #fatality .fat-num{color:#ef7a52 !important;font-size:calc(2.2 * var(--apph)) !important;margin-left:0 !important}
 body.hd #matBtn::before,body.hd #ageBtn::before{display:none !important}
-body.hd #matBtn .mlabel,body.hd #ageBtn .mlabel{font-size:1.85vh !important;color:var(--hd-muted) !important;line-height:1}
+body.hd #matBtn .mlabel,body.hd #ageBtn .mlabel{font-size:calc(1.85 * var(--apph)) !important;color:var(--hd-muted) !important;line-height:1}
 body.hd #matBtn .mv,body.hd #ageBtn .mv{margin:0 !important;padding:0 !important}
-body.hd #matBtn .mv b,body.hd #ageBtn .mv b{font-size:2.4vh !important;color:var(--hd-gold) !important;line-height:1;position:static !important}
+body.hd #matBtn .mv b,body.hd #ageBtn .mv b{font-size:calc(2.4 * var(--apph)) !important;color:var(--hd-gold) !important;line-height:1;position:static !important}
 
 /* ================= ПЛАНЕТА ================= */
 body.hd #battleCircle{
-  position:absolute !important;left:50% !important;top:30.0vh !important;right:auto !important;bottom:auto !important;
+  position:absolute !important;left:50% !important;top:calc(30.0 * var(--apph)) !important;right:auto !important;bottom:auto !important;
   transform:translateX(-50%) !important;
-  width:45vh !important;height:45vh !important;max-width:none !important;min-width:0 !important;
+  width:calc(45 * var(--apph)) !important;height:calc(45 * var(--apph)) !important;max-width:none !important;min-width:0 !important;
   aspect-ratio:auto !important;margin:0 !important;
   border:none !important;box-shadow:none !important;
   border-radius:50% !important;z-index:2;overflow:visible !important;
@@ -1364,13 +1373,13 @@ body.hd .bc-top{
   position:absolute !important;left:0;right:0;top:11% !important;
   display:flex !important;flex-direction:column;align-items:center;gap:.5vh;text-align:center;
 }
-body.hd .bc-lvl{font-size:1.8vh !important;color:#dfe9d6 !important;opacity:.9}
-body.hd .bc-name{font-size:2.8vh !important;color:#fff !important;line-height:1;text-shadow:0 .2vh .6vh rgba(0,0,0,.6)}
-body.hd .bc-hp{font-size:2.5vh !important;color:#fff !important;display:flex;align-items:center;gap:.5vw}
-body.hd .bc-hp .ic{font-size:1.8vh !important}
-body.hd .bc-heal{font-size:2.1vh !important;color:#7ee07e !important;display:flex;align-items:center;gap:.4vw}
-body.hd .bc-heal svg{width:1.8vh;height:1.8vh}
-body.hd .bc-pand{font-size:1.5vh !important;color:#d7a6ff !important}
+body.hd .bc-lvl{font-size:calc(1.8 * var(--apph)) !important;color:#dfe9d6 !important;opacity:.9}
+body.hd .bc-name{font-size:calc(2.8 * var(--apph)) !important;color:#fff !important;line-height:1;text-shadow:0 .2vh .6vh rgba(0,0,0,.6)}
+body.hd .bc-hp{font-size:calc(2.5 * var(--apph)) !important;color:#fff !important;display:flex;align-items:center;gap:.5vw}
+body.hd .bc-hp .ic{font-size:calc(1.8 * var(--apph)) !important}
+body.hd .bc-heal{font-size:calc(2.1 * var(--apph)) !important;color:#7ee07e !important;display:flex;align-items:center;gap:.4vw}
+body.hd .bc-heal svg{width:calc(1.8 * var(--apph));height:calc(1.8 * var(--apph))}
+body.hd .bc-pand{font-size:calc(1.5 * var(--apph)) !important;color:#d7a6ff !important}
 
 body.hd .bc-mid{
   position:absolute !important;left:50%;top:50%;transform:translate(-50%,-50%);
@@ -1378,9 +1387,9 @@ body.hd .bc-mid{
 }
 body.hd #bcIcon{
   opacity:.96 !important;
-  width:13vh !important;height:13vh !important;
-  font-size:11vh !important;line-height:1 !important;
-  filter:drop-shadow(0 .6vh 1.4vh rgba(0,0,0,.55)) drop-shadow(0 0 2vh rgba(140,220,90,.25)) !important;
+  width:calc(13 * var(--apph)) !important;height:calc(13 * var(--apph)) !important;
+  font-size:calc(11 * var(--apph)) !important;line-height:1 !important;
+  filter:drop-shadow(0 .6vh calc(1.4 * var(--apph)) rgba(0,0,0,.55)) drop-shadow(0 0 calc(2 * var(--apph)) rgba(140,220,90,.25)) !important;
 }
 body.hd .bc-mid #bcIcon img,body.hd .bc-mid #bcIcon svg,body.hd .bc-mid #bcIcon > *{
   width:100% !important;height:100% !important;max-width:none !important;max-height:none !important;
@@ -1390,17 +1399,17 @@ body.hd .bc-cta{
   position:absolute !important;left:4%;right:4%;bottom:10% !important;top:auto !important;
   display:flex !important;flex-direction:column;align-items:center;gap:.7vh;text-align:center;
 }
-body.hd .bc-label{font-size:2.8vh !important;letter-spacing:.05em !important}
+body.hd .bc-label{font-size:calc(2.8 * var(--apph)) !important;letter-spacing:.05em !important}
 /* зелёная только «РАСПРОСТРАНЯТЬ» — это состояние очага (.viral у круга) */
 body.hd #battleCircle:not(.viral):not(.infinity) .bc-label{
   color:#fff !important;text-shadow:0 .2vh .8vh rgba(0,0,0,.65) !important;
 }
 body.hd #battleCircle.viral:not(.infinity) .bc-label{
   color:#a6ef7a !important;
-  text-shadow:0 .2vh .8vh rgba(0,0,0,.85),0 0 1.8vh rgba(120,230,90,.45) !important;
+  text-shadow:0 .2vh .8vh rgba(0,0,0,.85),0 0 calc(1.8 * var(--apph)) rgba(120,230,90,.45) !important;
 }
 body.hd .bc-info{display:flex !important;flex-direction:column;gap:.3vh;align-items:center}
-body.hd .bc-info > div{font-size:1.6vh !important;color:#e6f2dd !important;opacity:.92;white-space:nowrap}
+body.hd .bc-info > div{font-size:calc(1.6 * var(--apph)) !important;color:#e6f2dd !important;opacity:.92;white-space:nowrap}
 body.hd .bc-info b{color:#fff !important}
 
 /* ================= БОКОВЫЕ ПАНЕЛИ ================= */
@@ -1412,80 +1421,80 @@ body.hd #msRow,body.hd .bac-party{display:none !important}
 body.hd .center{position:static !important;display:block !important;width:100% !important;gap:0 !important;margin:0 !important}
 body.hd #arenaShop{display:block !important;width:auto !important;margin:0 !important;gap:0 !important;background:none !important}
 body.hd #arenaShop > .buy{
-  position:fixed !important;top:33.4vh !important;
-  width:min(20.1vw,322px) !important;height:19.6vh !important;min-height:0 !important;flex:none !important;
-  margin:0 !important;padding:1.6vh 1.2vw !important;
+  position:absolute !important;top:calc(33.4 * var(--apph)) !important;
+  width:min(calc(20.1 * var(--appvw)),322px) !important;height:calc(19.6 * var(--apph)) !important;min-height:0 !important;flex:none !important;
+  margin:0 !important;padding:calc(1.6 * var(--apph)) calc(1.2 * var(--appvw)) !important;
   display:grid !important;grid-template-rows:auto auto auto 1fr;grid-template-columns:minmax(0,1fr) !important;
-  align-content:start;gap:1.1vh 0;overflow:hidden !important;
-  border:1px solid rgba(130,205,95,.34) !important;border-radius:1.6vh !important;
+  align-content:start;gap:calc(1.1 * var(--apph)) 0;overflow:hidden !important;
+  border:1px solid rgba(130,205,95,.34) !important;border-radius:calc(1.6 * var(--apph)) !important;
   background:linear-gradient(180deg,rgba(28,54,22,.55),rgba(10,22,10,.44)) !important;
-  box-shadow:inset 0 1px 0 rgba(190,255,150,.09),0 .8vh 2.4vh rgba(0,0,0,.4) !important;
+  box-shadow:inset 0 1px 0 rgba(190,255,150,.09),0 .8vh calc(2.4 * var(--apph)) rgba(0,0,0,.4) !important;
   text-align:left !important;z-index:3;opacity:.7 !important;
 }
 body.hd #arenaShop > .buy:not([disabled]){opacity:1 !important}
-body.hd{--hd-edge:calc((100vw - min(100vw,160vh))/2 + 2.4vw)}
-body.hd #arenaShop > .buy.dmg{left:var(--hd-edge) !important;right:auto !important}
-body.hd #arenaShop > .buy.hp{right:var(--hd-edge) !important;left:auto !important}
-body.hd #arenaShop > .buy .top{width:100% !important;justify-self:stretch !important;display:flex !important;align-items:center;gap:.6vw;font-size:1.9vh !important;color:var(--hd-green2) !important}
-body.hd #arenaShop > .buy .top .ic{font-size:2vh !important}
-body.hd #arenaShop > .buy .top .t{font-size:1.9vh !important;color:var(--hd-green2) !important;letter-spacing:.04em !important;white-space:nowrap}
+body.hd{--hd-edge:calc((100vw - min(100vw,1280px))/2 + 30px)}
+body.hd #arenaShop > .buy.dmg{left:calc(2.4 * var(--appvw)) !important;right:auto !important}
+body.hd #arenaShop > .buy.hp{right:calc(2.4 * var(--appvw)) !important;left:auto !important}
+body.hd #arenaShop > .buy .top{width:100% !important;justify-self:stretch !important;display:flex !important;align-items:center;gap:.6vw;font-size:calc(1.9 * var(--apph)) !important;color:var(--hd-green2) !important}
+body.hd #arenaShop > .buy .top .ic{font-size:calc(2 * var(--apph)) !important}
+body.hd #arenaShop > .buy .top .t{font-size:calc(1.9 * var(--apph)) !important;color:var(--hd-green2) !important;letter-spacing:.04em !important;white-space:nowrap}
 body.hd #arenaShop > .buy .now b,body.hd #arenaShop > .buy .now span,
 body.hd #arenaShop > .buy .price span{font-size:inherit !important}
-body.hd #arenaShop > .buy .now{width:100% !important;justify-self:stretch !important;display:flex !important;align-items:baseline;justify-content:space-between;gap:.8vw;font-size:2.3vh !important;color:#eaf5e2 !important;white-space:nowrap}
+body.hd #arenaShop > .buy .now{width:100% !important;justify-self:stretch !important;display:flex !important;align-items:baseline;justify-content:space-between;gap:.8vw;font-size:calc(2.3 * var(--apph)) !important;color:#eaf5e2 !important;white-space:nowrap}
 body.hd #arenaShop > .buy .now b:first-child{color:var(--hd-green2) !important}
 body.hd #arenaShop > .buy .now b{font-weight:inherit !important}
-body.hd #arenaShop > .buy .price{width:100% !important;justify-self:stretch !important;display:flex !important;align-items:baseline;justify-content:space-between;gap:.8vw;font-size:2.3vh !important;color:#eef6e8 !important;white-space:nowrap}
+body.hd #arenaShop > .buy .price{width:100% !important;justify-self:stretch !important;display:flex !important;align-items:baseline;justify-content:space-between;gap:.8vw;font-size:calc(2.3 * var(--apph)) !important;color:#eef6e8 !important;white-space:nowrap}
 body.hd #arenaShop > .buy .lvltag{
   position:static !important;justify-self:end;align-self:end;
-  font-size:1.5vh !important;color:var(--hd-muted) !important;background:none !important;border:none !important;padding:0 !important;
+  font-size:calc(1.5 * var(--apph)) !important;color:var(--hd-muted) !important;background:none !important;border:none !important;padding:0 !important;
 }
 
 /* ================= НИЗ: статистика, HP, кнопки ================= */
 body.hd #playerCard{
-  position:absolute !important;left:2.4vw !important;right:2.4vw !important;top:78.4vh !important;bottom:auto !important;width:auto !important;max-width:none !important;flex:none !important;
+  position:absolute !important;left:calc(2.4 * var(--appvw)) !important;right:calc(2.4 * var(--appvw)) !important;top:calc(78.4 * var(--apph)) !important;bottom:auto !important;width:auto !important;max-width:none !important;flex:none !important;
   margin:0 !important;padding:0 !important;background:none !important;border:none !important;box-shadow:none !important;
-  display:flex !important;flex-direction:column;align-items:center;gap:1.2vh;z-index:3;
+  display:flex !important;flex-direction:column;align-items:center;gap:calc(1.2 * var(--apph));z-index:3;
 }
 body.hd #playerCard .stat{
-  order:1;margin:0 !important;font-size:1.9vh !important;color:var(--hd-muted) !important;
+  order:1;margin:0 !important;font-size:calc(1.9 * var(--apph)) !important;color:var(--hd-muted) !important;
   display:flex !important;align-items:baseline;gap:.5vw;
 }
-body.hd #playerCard .stat b{font-size:2.2vh !important;color:var(--hd-green2) !important}
+body.hd #playerCard .stat b{font-size:calc(2.2 * var(--apph)) !important;color:var(--hd-green2) !important}
 
-body.hd #playerCard .hpwrap{order:2;width:min(55vw,880px) !important;margin:0 !important;position:relative}
+body.hd #playerCard .hpwrap{order:2;width:min(calc(55 * var(--appvw)),880px) !important;margin:0 !important;position:relative}
 body.hd #playerCard #starShard,body.hd #playerCard #starShard2,
 body.hd #playerCard #greenDrop,body.hd #playerCard #labBtn{transform:scale(1.35);z-index:5}
 body.hd #playerCard .hpbar{
-  height:3.2vh !important;border-radius:999px !important;overflow:hidden !important;
+  height:calc(3.2 * var(--apph)) !important;border-radius:999px !important;overflow:hidden !important;
   background:rgb(16,25,12) !important;border:1px solid rgba(120,190,90,.22) !important;box-shadow:inset 0 2px 6px rgba(0,0,0,.5) !important;
 }
 body.hd #playerCard .hpfill{
   height:100% !important;border-radius:999px 0 0 999px !important;
   background:linear-gradient(90deg,rgb(57,139,28) 0%,rgb(146,221,81) 100%) !important;
-  box-shadow:0 0 2vh rgba(140,220,90,.35) !important;
+  box-shadow:0 0 calc(2 * var(--apph)) rgba(140,220,90,.35) !important;
 }
 body.hd #playerCard .hpfill::after{display:none !important}
 body.hd #playerCard .hpinbar{
   position:absolute !important;inset:0;display:flex !important;align-items:center;justify-content:center;gap:.5vw;
-  font-size:1.7vh !important;color:#0b1407 !important;font-weight:800 !important;
+  font-size:calc(1.7 * var(--apph)) !important;color:#0b1407 !important;font-weight:800 !important;
   text-shadow:0 0 .5vh rgba(230,255,205,.55) !important;
 }
-body.hd #playerCard .hpinbar .ic{font-size:1.7vh !important}
+body.hd #playerCard .hpinbar .ic{font-size:calc(1.7 * var(--apph)) !important}
 body.hd #playerCard .hpinbar b,body.hd #playerCard .hpinbar small{color:#0b1407 !important}
 
 body.hd #dsRow{
-  order:3;display:flex !important;justify-content:center;align-items:center;gap:1.6vw !important;
+  order:3;display:flex !important;justify-content:center;align-items:center;gap:calc(1.6 * var(--appvw)) !important;
   width:auto !important;margin:0 !important;
 }
 body.hd #dsRow > *{
-  width:min(15.3vw,244px) !important;height:5.4vh !important;min-height:0 !important;flex:none !important;
-  margin:0 !important;padding:0 !important;border-radius:1.2vh !important;
+  width:min(calc(15.3 * var(--appvw)),244px) !important;height:calc(5.4 * var(--apph)) !important;min-height:0 !important;flex:none !important;
+  margin:0 !important;padding:0 !important;border-radius:calc(1.2 * var(--apph)) !important;
   display:flex !important;align-items:center;justify-content:center;
-  font-size:2vh !important;letter-spacing:.06em !important;
-  box-shadow:0 .5vh 1.4vh rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.22) !important;
+  font-size:calc(2 * var(--apph)) !important;letter-spacing:.06em !important;
+  box-shadow:0 .5vh calc(1.4 * var(--apph)) rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.22) !important;
 }
 body.hd #dsRow #divBtn .dl,body.hd #dsRow #stopBtn{
-  font-size:2vh !important;letter-spacing:.06em !important;font-family:inherit !important;text-transform:uppercase;
+  font-size:calc(2 * var(--apph)) !important;letter-spacing:.06em !important;font-family:inherit !important;text-transform:uppercase;
 }
 body.hd #dsRow #divBtn{
   background:linear-gradient(180deg,#8fdc5c,#54a029) !important;border:1px solid #aef07d !important;color:#0d1a08 !important;
@@ -1500,20 +1509,20 @@ body.hd #dsRow #stopBtn{
 
 /* ================= НАВИГАЦИЯ ================= */
 body.hd #mPlaques{
-  position:absolute !important;left:0 !important;right:0 !important;bottom:2vh !important;top:auto !important;
-  display:flex !important;justify-content:center;align-items:center;gap:1.2vw !important;
+  position:absolute !important;left:0 !important;right:0 !important;bottom:calc(2 * var(--apph)) !important;top:auto !important;
+  display:flex !important;justify-content:center;align-items:center;gap:calc(1.2 * var(--appvw)) !important;
   width:auto !important;margin:0 !important;padding:0 !important;background:none !important;z-index:3;
 }
 body.hd #mPlaques > *{
   position:relative !important;
-  flex:none !important;height:4.8vh !important;min-height:0 !important;
-  padding:0 2vw !important;margin:0 !important;
+  flex:none !important;height:calc(4.8 * var(--apph)) !important;min-height:0 !important;
+  padding:0 calc(2 * var(--appvw)) !important;margin:0 !important;
   display:flex !important;align-items:center;justify-content:center;gap:.6vw;
-  font-size:1.7vh !important;letter-spacing:.05em !important;line-height:1 !important;
-  border:1px solid rgba(130,205,95,.38) !important;border-radius:1.4vh !important;
+  font-size:calc(1.7 * var(--apph)) !important;letter-spacing:.05em !important;line-height:1 !important;
+  border:1px solid rgba(130,205,95,.38) !important;border-radius:calc(1.4 * var(--apph)) !important;
   background:linear-gradient(180deg,rgba(26,50,20,.55),rgba(10,22,10,.45)) !important;
   color:#e2f1d6 !important;
-  box-shadow:inset 0 1px 0 rgba(190,255,150,.08),0 .4vh 1.2vh rgba(0,0,0,.35) !important;
+  box-shadow:inset 0 1px 0 rgba(190,255,150,.08),0 .4vh calc(1.2 * var(--apph)) rgba(0,0,0,.35) !important;
   overflow:visible !important;cursor:pointer;transition:background .12s,border-color .12s;
 }
 body.hd #mPlaques > *:hover{
@@ -1521,24 +1530,24 @@ body.hd #mPlaques > *:hover{
   border-color:rgba(160,230,120,.6) !important;
 }
 body.hd #mPlaques > *:active{transform:translateY(.3vh)}
-body.hd #mPlaques svg{width:2.2vh;height:2.2vh;flex:0 0 auto}
+body.hd #mPlaques svg{width:calc(2.2 * var(--apph));height:calc(2.2 * var(--apph));flex:0 0 auto}
 body.hd #mPlaques .pbadge{
   position:absolute !important;top:.5vh !important;right:.6vw !important;left:auto !important;
-  width:1vh !important;height:1vh !important;transform:none !important;
-  background:#e0402f !important;box-shadow:0 0 1vh rgba(224,64,47,.8) !important;
+  width:calc(1 * var(--apph)) !important;height:calc(1 * var(--apph)) !important;transform:none !important;
+  background:#e0402f !important;box-shadow:0 0 calc(1 * var(--apph)) rgba(224,64,47,.8) !important;
 }
 /* магазин алмазов — читаемый размер на десктопе */
 body.hd #diamondModal .modal-box,body.hd #diamondModal > div{
-  width:min(46vw,620px) !important;max-width:none !important;font-size:1.7vh !important;
+  width:min(calc(46 * var(--appvw)),620px) !important;max-width:none !important;font-size:calc(1.7 * var(--apph)) !important;
 }
-body.hd #diamondModal .modal-title,body.hd #diamondModal .modal-res{font-size:2vh !important}
+body.hd #diamondModal .modal-title,body.hd #diamondModal .modal-res{font-size:calc(2 * var(--apph)) !important}
 
 /* ===== всплывающие окна: ширина 360 px ===== */
 body.hd #hud,body.hd #shop,body.hd #helpBox{
   position:fixed !important;left:50% !important;top:50% !important;right:auto !important;bottom:auto !important;
   transform:translate(-50%,-50%) !important;margin:0 !important;
   width:360px !important;max-width:360px !important;min-width:0 !important;
-  max-height:86vh !important;height:auto !important;overflow:auto !important;z-index:300 !important;
+  max-height:600px !important;height:auto !important;overflow:auto !important;z-index:300 !important;
   padding:14px !important;border-radius:16px !important;
   border:1px solid rgba(130,205,95,.34) !important;
   background:linear-gradient(180deg,rgba(24,46,20,.97),rgba(9,20,9,.97)) !important;
@@ -1608,10 +1617,10 @@ body.hd #battleCircle.grav canvas.hd-planet,
 body.hd #battleCircle.time canvas.hd-planet{display:none !important}
 
 /* ===== подпись на HP-баре крупнее ===== */
-body.hd #playerCard .hpinbar{font-size:1.9vh !important}
-body.hd #playerCard .hpinbar b{font-size:2.1vh !important}
+body.hd #playerCard .hpinbar{font-size:calc(1.9 * var(--apph)) !important}
+body.hd #playerCard .hpinbar b{font-size:calc(2.1 * var(--apph)) !important}
 body.hd #playerCard .hpinbar small,body.hd #playerCard .hpinbar .hpunit{
-  font-size:1.6vh !important;opacity:1 !important;color:#0b1407 !important;margin-left:.4vw !important;
+  font-size:calc(1.6 * var(--apph)) !important;opacity:1 !important;color:#0b1407 !important;margin-left:.4vw !important;
 }
 
 /* ===== значок на ЭПИДЕМИИ — только когда есть что купить прямо сейчас ===== */
@@ -1622,8 +1631,8 @@ body.hd.hd-epid #epidBtn > .pbadge{display:block !important}
 body.hd #arenaShop > .buy:not([disabled]){
   border-color:rgba(165,240,115,.62) !important;
   box-shadow:inset 0 1px 0 rgba(200,255,160,.14),
-             0 0 2.6vh rgba(140,220,90,.30),
-             0 .8vh 2.4vh rgba(0,0,0,.4) !important;
+             0 0 calc(2.6 * var(--apph)) rgba(140,220,90,.30),
+             0 .8vh calc(2.4 * var(--apph)) rgba(0,0,0,.4) !important;
   background:linear-gradient(180deg,rgba(38,72,28,.6),rgba(12,26,12,.46)) !important;
 }
 body.hd #arenaShop > .buy:not([disabled]) .top,
@@ -1637,13 +1646,13 @@ body.hd #arenaShop > .buy:not([disabled]) .top .t{color:#c4f79a !important}
 }
 @keyframes hdFloatR{
   0%{opacity:0;transform:translate(0,0) scale(.7)}
-  18%{opacity:1;transform:translate(1vh,-1.2vh) scale(1.06)}
-  100%{opacity:0;transform:translate(5vh,-8.5vh) scale(1)}
+  18%{opacity:1;transform:translate(calc(1 * var(--apph)),-1.2vh) scale(1.06)}
+  100%{opacity:0;transform:translate(calc(5 * var(--apph)),-8.5vh) scale(1)}
 }
 body.hd #battleCircle > .float{
   position:absolute !important;top:50% !important;bottom:auto !important;
   filter:none !important;max-width:34% !important;
-  font-size:2.4vh !important;line-height:1.2 !important;
+  font-size:calc(2.4 * var(--apph)) !important;line-height:1.2 !important;
   animation-duration:.85s !important;animation-timing-function:ease-out !important;
   text-shadow:0 .2vh .5vh rgba(0,0,0,.75),1px 1px 0 #000 !important;
   z-index:12 !important;
@@ -1659,15 +1668,15 @@ body.hd #battleCircle > .float.organ{
   left:auto !important;right:66% !important;
   text-align:right !important;
   animation-name:hdFloatL !important;
-  font-size:2.2vh !important;
+  font-size:calc(2.2 * var(--apph)) !important;
 }
-body.hd #battleCircle > .float.organ .oi{font-size:4vh !important;vertical-align:-.9vh !important;line-height:1 !important}
-body.hd #battleCircle > .float.organ svg{width:4vh !important;height:3.6vh !important;vertical-align:-.9vh !important}
+body.hd #battleCircle > .float.organ .oi{font-size:calc(4 * var(--apph)) !important;vertical-align:-.9vh !important;line-height:1 !important}
+body.hd #battleCircle > .float.organ svg{width:calc(4 * var(--apph)) !important;height:calc(3.6 * var(--apph)) !important;vertical-align:-.9vh !important}
 /* длинные подписи (смертность, пандемия, чёрная смерть) чуть ближе к центру, чтобы не уезжать за край */
 body.hd #battleCircle > .float.super,
 body.hd #battleCircle > .float.pandemic,
 body.hd #battleCircle > .float.bdhit{left:58% !important;max-width:36% !important;text-align:left !important}
-body.hd #battleCircle > .float .lbl{font-size:1.7vh !important}
+body.hd #battleCircle > .float .lbl{font-size:calc(1.7 * var(--apph)) !important}
 
 /* ===== цифры не должны прыгать: у каждой своя фиксированная колонка ===== */
 /* панели ЗАРАЖЕНИЕ / КОЛОНИЯ */
@@ -1686,7 +1695,7 @@ body.hd #arenaShop > .buy .price > *{justify-self:start !important;text-align:le
 /* Фатальность / Возраст чумы / Матёрость — общая ось по центру */
 body.hd #fatality,body.hd #matBtn,body.hd #ageBtn{
   display:grid !important;grid-template-columns:1fr 1fr !important;
-  width:42vh !important;column-gap:.7vw !important;align-items:baseline !important;
+  width:calc(42 * var(--apph)) !important;column-gap:.7vw !important;align-items:baseline !important;
 }
 body.hd #matBtn .mlabel,body.hd #ageBtn .mlabel{justify-self:end !important;text-align:right !important}
 body.hd #matBtn .mv,body.hd #ageBtn .mv{justify-self:start !important;text-align:left !important}
@@ -1706,7 +1715,7 @@ body.hd #app > header .dropinfo > .infected > b#totalInfected{
 /* шапка справа: две колонки по содержимому; ширина стабильна за счёт резерва под цифры */
 body.hd #app > header .dropinfo{
   display:grid !important;grid-template-columns:auto auto !important;
-  column-gap:1.6vw !important;align-items:center !important;justify-items:end !important;
+  column-gap:calc(1.6 * var(--appvw)) !important;align-items:center !important;justify-items:end !important;
 }
 body.hd #app > header .dropinfo > div:not(.infected){text-align:right !important;white-space:nowrap !important}
 body.hd #app > header .dropinfo > .infected{white-space:nowrap !important}
@@ -1715,7 +1724,7 @@ body.hd #app > header .dropinfo > .infected{white-space:nowrap !important}
 body.hd #bcIcon .introface{
   width:100% !important;height:100% !important;margin:0 !important;padding:0 !important;
   display:flex !important;align-items:center !important;justify-content:center !important;
-  font-size:9.5vh !important;line-height:1 !important;text-align:center !important;
+  font-size:calc(9.5 * var(--apph)) !important;line-height:1 !important;text-align:center !important;
 }
 
 /* ===== матёрость >= 200M: зелёная строка лечения на круге не нужна ===== */
@@ -1731,14 +1740,14 @@ body.hd #app > header .dropinfo > div:not(.infected) b#dropBonus{
 }
 
 /* ===== больше воздуха между Фатальностью, Возрастом и Матёростью ===== */
-body.hd #fingersPill{top:calc(100% + 1.4vh) !important}
-body.hd .event-badges{top:16.0vh !important}
-body.hd #fatality{top:21.2vh !important}
-body.hd #ageBtn{top:calc(100% + 5.8vh) !important}
-body.hd #matBtn{top:30.4vh !important}
-body.hd #battleCircle{top:33.4vh !important;width:42vh !important;height:42vh !important}
-body.hd #arenaShop > .buy{top:36.0vh !important}
-body.hd #playerCard{top:77.8vh !important}
+body.hd #fingersPill{top:calc(100% + calc(1.4 * var(--apph))) !important}
+body.hd .event-badges{top:calc(16.0 * var(--apph)) !important}
+body.hd #fatality{top:calc(21.2 * var(--apph)) !important}
+body.hd #ageBtn{top:calc(100% + calc(5.8 * var(--apph))) !important}
+body.hd #matBtn{top:calc(30.4 * var(--apph)) !important}
+body.hd #battleCircle{top:calc(33.4 * var(--apph)) !important;width:calc(42 * var(--apph)) !important;height:calc(42 * var(--apph)) !important}
+body.hd #arenaShop > .buy{top:calc(36.0 * var(--apph)) !important}
+body.hd #playerCard{top:calc(77.8 * var(--apph)) !important}
 
 /* ===== ЗАРАЖЕНИЕ и ЧЁРНАЯ КОЛОНИЯ после 340 уровня — чёрный текст (класс .bcol от игры) ===== */
 body.hd #arenaShop > .buy.bcol .top .t,
@@ -1752,6 +1761,66 @@ body.hd #arenaShop > .buy.bcol:not([disabled]) .top{
 /* холсты — отдельные слои компоновщика, чтобы их обновление не перерисовывало страницу */
 body.hd canvas.hd-space,body.hd #hdSpace,body.hd canvas.hd-planet{
   will-change:transform;transform:translateZ(0);backface-visibility:hidden;
+}
+
+/* ===== Фатальность / Возраст чумы / Матёрость — по левому краю, в одну колонку ===== */
+body.hd #fatality,body.hd #matBtn,body.hd #ageBtn{
+  grid-template-columns:calc(16 * var(--apph)) auto !important;
+  width:auto !important;transform:none !important;column-gap:.6vw !important;
+  justify-items:start !important;text-align:left !important;
+}
+body.hd #matBtn{left:calc(2.4 * var(--appvw)) !important}
+body.hd #fatality{left:calc(2.4 * var(--appvw)) !important}
+body.hd #ageBtn{left:0 !important}
+body.hd #matBtn .mlabel,body.hd #ageBtn .mlabel{justify-self:start !important;text-align:left !important}
+body.hd #matBtn .mv,body.hd #ageBtn .mv,body.hd #fatality > *{justify-self:start !important;text-align:left !important}
+
+/* ===== Абсолют: проценты выше на 30 px ===== */
+/* игра сдвигает проценты на +40px; поднимаем на 30 -> остаётся +10 */
+body.hd #battleCircle.absolute .bc-hp{transform:translateY(10px) !important}
+
+/* ===== костёр и «пандемия лечение» — над полосой HP, вне круга (не дёргаются) ===== */
+body.hd #playerCard > #bonfire{
+  position:absolute !important;inset:auto !important;
+  left:258px !important;top:-1px !important;
+  width:auto !important;height:auto !important;
+  display:none !important;align-items:center !important;justify-content:flex-start !important;
+  font-size:26px !important;z-index:7 !important;animation:bonfirepulse .5s ease-in-out infinite;
+}
+body.hd #playerCard > #bonfire.show{display:flex !important}
+body.hd #playerCard > #bonfire span{font-size:13px !important;margin-left:3px !important}
+
+body.hd #playerCard > .bc-pand{
+  position:absolute !important;left:330px !important;top:3px !important;
+  right:auto !important;bottom:auto !important;transform:none !important;margin:0 !important;
+  width:auto !important;max-width:none !important;white-space:nowrap !important;text-align:left !important;
+  font-size:14px !important;line-height:1.2 !important;color:#c79af2 !important;
+  text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 6px rgba(160,110,240,.45) !important;
+  z-index:7 !important;
+}
+body.hd #playerCard > .bc-pand b{color:#e2c8ff !important}
+
+/* ===== белое свечение под Фатальностью не нужно ===== */
+body.hd #fatality::before,body.hd #fatality::after{display:none !important;content:none !important}
+
+/* ===== на круге не показываем смертность и очаг ===== */
+body.hd #battleCircle .bc-info{display:none !important}
+
+/* ===== ЗАРАЖАТЬ / ИДЁТ ЗАРАЖЕНИЕ / РАСПРОСТРАНЯТЬ — на 70 px ниже ===== */
+body.hd #battleCircle .bc-cta{
+  top:calc(46% + 70px) !important;bottom:auto !important;
+}
+
+/* ===== цифры Фатальности / Возраста / Матёрости начинаются строго с одной точки ===== */
+body.hd #matBtn .mv,body.hd #ageBtn .mv,body.hd #fatality .fat-num{
+  width:auto !important;min-width:0 !important;max-width:none !important;
+  margin:0 !important;padding:0 !important;text-align:left !important;
+}
+body.hd #matBtn .mv b,body.hd #ageBtn .mv b,body.hd #fatality .fat-num{
+  display:inline !important;position:static !important;
+  width:auto !important;min-width:0 !important;
+  margin:0 !important;padding:0 !important;
+  text-align:left !important;letter-spacing:.02em !important;
 }
 
 </style>
@@ -2060,7 +2129,17 @@ body.hd canvas.hd-space,body.hd #hdSpace,body.hd canvas.hd-planet{
     if (planet) { planet.resize(); planet.sync(); }
 
     var resizeTimer = null;
+    // макет фиксированный 1024x640: если окно меньше — ужимаем целиком
+    function fitApp() {
+      var app = document.getElementById('app');
+      if (!app) return;
+      var k = Math.min(1, innerWidth / 1280, innerHeight / 720);
+      document.body.style.setProperty('--hd-k', k.toFixed(4));
+    }
+    fitApp();
+
     function relayout() {
+      fitApp();
       space.resize();
       if (planet) { planet.resize(); planet.dirty = true; }
     }
@@ -2118,6 +2197,34 @@ body.hd canvas.hd-space,body.hd #hdSpace,body.hd canvas.hd-planet{
       document.body.classList.toggle('hd-mat200', matValue() >= 2e8);
     }
     syncEpid(); syncMat();
+
+    // Круг дёргается по клику — но только когда клик по нему что-то делает:
+    // ЗАРАЖАТЬ и РАСПРОСТРАНЯТЬ (очаг). В состоянии «ИДЁТ ЗАРАЖЕНИЕ» — нет.
+    if (bc && bc.animate) {
+      var tapAnim = null;
+      bc.addEventListener('pointerdown', function () {
+        var cl = bc.classList;
+        if (cl.contains('infecting') && !cl.contains('viral')) return;
+        if (tapAnim) { try { tapAnim.cancel(); } catch (e) {} }
+        tapAnim = bc.animate(
+          [{ translate: '0 0',    scale: '1' },
+           { translate: '0 2px',  scale: '0.995' },
+           { translate: '0 -1px', scale: '1.002' },
+           { translate: '0 0',    scale: '1' }],
+          { duration: 170, easing: 'ease-out' }
+        );
+      }, { passive: true });
+    }
+
+    // костёр игра кладёт в центр круга; в HD он живёт слева-снизу, поэтому
+    // переносим его прямо в круг — так им можно управлять координатами круга
+    // костёр и «пандемия лечение» живут над полосой HP, а не на круге —
+    // иначе они дёргались бы вместе с кругом при клике
+    var pcEl = document.getElementById('playerCard');
+    var bfEl = document.getElementById('bonfire');
+    if (bfEl && pcEl && bfEl.parentNode !== pcEl) pcEl.appendChild(bfEl);
+    var pandEl = document.getElementById('bcPandLine');
+    if (pandEl && pcEl && pandEl.parentNode !== pcEl) pcEl.appendChild(pandEl);
 
     var t0 = performance.now(), lastPlanet = 0, lastSpace = 0;
     function loop(now) {
@@ -2198,7 +2305,7 @@ body.hd canvas.hd-space,body.hd #hdSpace,body.hd canvas.hd-planet{
       <svg class="abs-cracks" id="absCracks" viewBox="0 0 100 100"><path d="M97.9,52.3 L91.7,58.5 L85.2,47.9 L78.8,50.8 L71.5,53.8 L66.4,47.4 L59.1,50.2 M71.5,53.8 L81.6,49.9" fill="none" stroke="rgba(15,20,25,0.6)" stroke-width="1.3" stroke-linecap="round" style="opacity:0"/><path d="M87.9,79.4 L77.5,82.2 L77.0,75.2 L77.0,66.5 L70.4,62.0 L63.4,60.0 L58.2,56.4 M70.4,62.0 L77.8,61.4" fill="none" stroke="rgba(15,20,25,0.6)" stroke-width="1.3" stroke-linecap="round" style="opacity:0"/><path d="M72.2,92.5 L75.7,80.8 L69.4,76.5 L66.0,69.2 L56.8,65.9 L52.5,59.4 L52.1,53.4 M66.0,69.2 L71.0,75.5 M69.4,76.5 L67.4,87.1" fill="none" stroke="rgba(15,20,25,0.6)" stroke-width="1.3" stroke-linecap="round" style="opacity:0"/><path d="M39.6,96.9 L47.6,90.1 L35.2,81.8 L48.5,79.5 L46.6,72.3 L48.5,64.8 L49.0,56.9 M48.5,64.8 L42.5,74.6" fill="none" stroke="rgba(15,20,25,0.6)" stroke-width="1.3" stroke-linecap="round" style="opacity:0"/><path d="M9.2,75.3 L16.4,74.1 L23.0,70.4 L27.9,66.0 L30.2,57.2 L36.8,58.6 L41.8,55.9 M27.9,66.0 L18.8,64.2 M23.0,70.4 L17.5,74.7" fill="none" stroke="rgba(15,20,25,0.6)" stroke-width="1.3" stroke-linecap="round" style="opacity:0"/><path d="M2.0,51.1 L8.7,42.1 L16.3,44.5 L23.5,46.2 L28.2,49.3 L34.0,48.7 L40.3,50.0 M34.0,48.7 L25.2,50.4" fill="none" stroke="rgba(15,20,25,0.6)" stroke-width="1.3" stroke-linecap="round" style="opacity:0"/><path d="M10.1,23.3 L16.6,23.2 L18.5,29.7 L27.1,30.0 L30.0,36.6 L33.9,39.9 L40.5,41.3 M30.0,36.6 L18.9,36.5 M16.6,23.2 L10.4,20.8" fill="none" stroke="rgba(15,20,25,0.6)" stroke-width="1.3" stroke-linecap="round" style="opacity:0"/><path d="M35.4,4.3 L33.4,12.0 L35.8,18.5 L47.1,22.0 L41.3,28.8 L42.5,36.0 L48.3,39.7 M47.1,22.0 L42.5,17.5 M47.1,22.0 L53.2,12.4" fill="none" stroke="rgba(15,20,25,0.6)" stroke-width="1.3" stroke-linecap="round" style="opacity:0"/><path d="M63.7,4.0 L63.8,9.4 L61.0,13.8 L55.9,20.7 L57.5,29.4 L51.1,35.7 L52.1,43.2 M57.5,29.4 L58.2,22.7 M51.1,35.7 L56.5,28.2" fill="none" stroke="rgba(15,20,25,0.6)" stroke-width="1.3" stroke-linecap="round" style="opacity:0"/><path d="M91.7,26.2 L87.2,31.5 L83.4,38.4 L78.9,40.9 L71.5,41.3 L62.6,40.4 L57.5,46.4 M87.2,31.5 L95.8,32.6" fill="none" stroke="rgba(15,20,25,0.6)" stroke-width="1.3" stroke-linecap="round" style="opacity:0"/></svg>
       <svg class="abs-shatter" id="absShatter" viewBox="0 0 100 100"><polygon points="49.9,50.2 99.0,50.0 98.8,59.7 95.3,68.8" style="--tx:38.2px;--ty:103.0px;--rot:24deg"/><polygon points="49.1,50.0 95.3,68.8 90.7,77.2 84.6,84.6" style="--tx:40.6px;--ty:101.8px;--rot:-55deg"/><polygon points="48.8,50.9 84.6,84.6 77.3,90.8 68.8,95.3" style="--tx:14.6px;--ty:140.9px;--rot:130deg"/><polygon points="50.5,50.3 68.8,95.3 59.3,96.6 50.0,99.0" style="--tx:5.0px;--ty:121.4px;--rot:-123deg"/><polygon points="49.1,49.2 50.0,99.0 40.8,96.2 31.2,95.3" style="--tx:-7.6px;--ty:130.2px;--rot:96deg"/><polygon points="50.1,50.4 31.2,95.3 23.1,90.3 15.4,84.6" style="--tx:-24.9px;--ty:130.2px;--rot:-62deg"/><polygon points="51.5,51.5 15.4,84.6 8.8,77.5 4.7,68.8" style="--tx:-38.4px;--ty:111.5px;--rot:-76deg"/><polygon points="49.4,48.7 4.7,68.8 1.6,59.6 1.0,50.0" style="--tx:-36.3px;--ty:119.5px;--rot:-32deg"/><polygon points="51.4,51.0 1.0,50.0 3.9,40.8 4.7,31.2" style="--tx:-30.7px;--ty:109.4px;--rot:-8deg"/><polygon points="51.4,49.7 4.7,31.2 10.7,23.8 15.4,15.4" style="--tx:-36.5px;--ty:84.5px;--rot:-64deg"/><polygon points="48.8,49.5 15.4,15.4 22.3,8.5 31.2,4.7" style="--tx:-26.5px;--ty:36.2px;--rot:-71deg"/><polygon points="48.8,48.7 31.2,4.7 40.4,1.6 50.0,1.0" style="--tx:-5.9px;--ty:68.2px;--rot:-15deg"/><polygon points="49.1,50.7 50.0,1.0 59.2,3.5 68.8,4.7" style="--tx:8.6px;--ty:32.4px;--rot:-22deg"/><polygon points="49.1,49.3 68.8,4.7 77.7,8.5 84.6,15.4" style="--tx:27.3px;--ty:44.4px;--rot:108deg"/><polygon points="49.1,49.7 84.6,15.4 91.2,22.5 95.3,31.2" style="--tx:36.8px;--ty:50.4px;--rot:137deg"/><polygon points="49.1,49.3 95.3,31.2 98.4,40.4 99.0,50.0" style="--tx:34.2px;--ty:78.0px;--rot:-119deg"/></svg>
       <svg class="inf-fig8" id="infFig8" viewBox="0 0 100 100"><path d="M50.0,6.0 L52.3,6.2 L54.5,6.7 L56.6,7.6 L58.6,8.7 L60.3,10.2 L61.8,11.8 L63.0,13.6 L64.0,15.5 L64.8,17.5 L65.2,19.5 L65.5,21.5 L65.6,23.5 L65.4,25.5 L65.1,27.4 L64.7,29.3 L64.1,31.0 L63.4,32.7 L62.6,34.4 L61.8,35.9 L60.9,37.4 L59.9,38.9 L58.9,40.2 L57.9,41.6 L56.8,42.9 L55.7,44.1 L54.6,45.3 L53.4,46.5 L52.3,47.7 L51.2,48.8 L50.0,50.0 L48.8,51.2 L47.7,52.3 L46.6,53.5 L45.4,54.7 L44.3,55.9 L43.2,57.1 L42.1,58.4 L41.1,59.8 L40.1,61.1 L39.1,62.6 L38.2,64.1 L37.4,65.6 L36.6,67.3 L35.9,69.0 L35.3,70.7 L34.9,72.6 L34.6,74.5 L34.4,76.5 L34.5,78.5 L34.8,80.5 L35.2,82.5 L36.0,84.5 L37.0,86.4 L38.2,88.2 L39.7,89.8 L41.4,91.3 L43.4,92.4 L45.5,93.3 L47.7,93.8 L50.0,94.0 L52.3,93.8 L54.5,93.3 L56.6,92.4 L58.6,91.3 L60.3,89.8 L61.8,88.2 L63.0,86.4 L64.0,84.5 L64.8,82.5 L65.2,80.5 L65.5,78.5 L65.6,76.5 L65.4,74.5 L65.1,72.6 L64.7,70.7 L64.1,69.0 L63.4,67.3 L62.6,65.6 L61.8,64.1 L60.9,62.6 L59.9,61.1 L58.9,59.8 L57.9,58.4 L56.8,57.1 L55.7,55.9 L54.6,54.7 L53.4,53.5 L52.3,52.3 L51.2,51.2 L50.0,50.0 L48.8,48.8 L47.7,47.7 L46.6,46.5 L45.4,45.3 L44.3,44.1 L43.2,42.9 L42.1,41.6 L41.1,40.2 L40.1,38.9 L39.1,37.4 L38.2,35.9 L37.4,34.4 L36.6,32.7 L35.9,31.0 L35.3,29.3 L34.9,27.4 L34.6,25.5 L34.4,23.5 L34.5,21.5 L34.8,19.5 L35.2,17.5 L36.0,15.5 L37.0,13.6 L38.2,11.8 L39.7,10.2 L41.4,8.7 L43.4,7.6 L45.5,6.7 L47.7,6.2 L50.0,6.0 Z" fill="none" stroke-linecap="round"/></svg>
-      <div class="bc-top"><div class="bc-lvl" id="bcLvl">0-1</div><div class="bc-name" id="bcName">Блоха</div><div class="bc-hp"><span class="ic pplic">👥</span> <b id="bcHp">1</b></div><div class="bc-heal"><svg class="medcross" viewBox="0 0 24 24" width="10" height="10"><path d="M9 2h6v7h7v6h-7v7H9v-7H2V9h7z" fill="#4fd67a"/></svg> <b id="bcHeal">2</b></div><div class="bc-pand" id="bcPandLine"><span data-k="пандемия лечение ×">пандемия лечение ×</span><b id="bcPandM">1</b></div></div>
+      <div class="bc-top"><div class="bc-lvl" id="bcLvl">0-1</div><div class="bc-name" id="bcName">Блоха</div><div class="bc-hp"><span class="ic pplic">👥</span> <b id="bcHp">1</b></div><div class="bc-heal"><svg class="medcross" viewBox="0 0 24 24" width="10" height="10"><path d="M9 2h6v7h7v6h-7v7H9v-7H2V9h7z" fill="#4fd67a"/></svg> <b id="bcHeal">2</b></div><div class="bc-pand" id="bcPandLine"><span data-k="лечение ×">лечение ×</span><b id="bcPandM">1</b></div></div>
       <div class="bc-mid"><div class="bc-icon" id="bcIcon"></div></div>
       <div class="bc-cta"><div class="bc-label" id="bcLabel">ЗАРАЖАТЬ</div>
       <div class="bc-info" id="bcInfo">
@@ -2260,7 +2367,7 @@ body.hd canvas.hd-space,body.hd #hdSpace,body.hd canvas.hd-planet{
   <div class="poptitle"><svg class="gear-ic" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54A.48.48 0 0014.32 3h-3.84a.48.48 0 00-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87a.49.49 0 00.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32a.49.49 0 00-.12-.61l-2.01-1.58zM12 15.6a3.6 3.6 0 110-7.2 3.6 3.6 0 010 7.2z"/></svg><span data-k="НАСТРОЙКИ">НАСТРОЙКИ</span> <div class="langtoggle" id="langToggle"><span class="lopt" data-lang="en">EN</span><span class="lopt" data-lang="ru">RU</span></div><button class="popclose setclose" data-pop="helpBox">✕</button></div>
   <div class="av-toggles"><div class="av-row"><span class="av-lbl"><svg viewBox="0 0 24 24"><path d="M9 17V5l9-2v9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><ellipse cx="6.2" cy="17" rx="3.4" ry="2.7" fill="currentColor"/><ellipse cx="15.2" cy="14.5" rx="3.4" ry="2.7" fill="currentColor"/></svg></span><button class="av-sw on" id="musicSw"></button></div><div class="av-row"><span class="av-lbl"><svg viewBox="0 0 24 24"><path d="M3 9v6h4.5L13 19V5L7.5 9H3z" fill="currentColor"/><path d="M16 8.5a5 5 0 010 7M18.7 6a8.5 8.5 0 010 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><button class="av-sw on" id="soundSw"></button></div></div><div class="stats-row"><button class="stats-btn" id="statsBtn"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M4 20V11M10 20V4M16 20v-6M21 20H3" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-k="Статистика">Статистика</span></button><button class="stats-btn restart-btn" id="restartBtn"><svg viewBox="0 0 24 24" width="15" height="15"><path d="M4 12a8 8 0 1 1 2.3 5.6M4 12V7M4 12h5" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg> <span data-k="Рестарт">Рестарт</span></button></div>
   <div class="hint guide">
-    <div class="testbar"><button class="testspd" id="jump81Btn">→ 8-1</button><button class="testspd" id="jump85Btn">→ 8-5</button><button class="testspd" id="jump91Btn">→ 9-1</button><button class="testspd" id="jump101Btn">→ 10-1</button><button class="testspd" id="jump111Btn">→ 11-1</button><button class="testspd" id="jump111a1999Btn">→ 11-1 9999л</button><button class="testspd" id="jump121Btn">→ 12-1</button><button class="testspd" id="jump155Btn">→ 15-5 500Мл 10Т</button><button class="testspd" id="jump133Btn">→ 133 500Мл макс</button><button class="testspd" id="jumpGraniBtn">→ Грани 231</button><button class="testspd" id="jumpTimeBtn">→ Время 251</button><button class="testspd" id="jumpAbsBtn">→ Абсолют 356</button><button class="testspd" id="testAbsBannerBtn">Баннер 15</button><button class="testspd" id="jump291Btn">→ 29-1</button><button class="testspd" id="jump292Btn">→ 29-2</button><button class="testspd" id="jump293Btn">→ 29-3</button><button class="testspd" id="jump21Btn">→ 2-1</button><button class="testspd" id="resetBtn">→ 0-0</button><button class="testspd" id="testSpdBtn">×5 скорость</button><button class="testspd" id="mobileBtn">📱 Телефон</button><button class="testspd" id="playBanner1Btn" data-k="🌍 Баннер10">🌍 Баннер10</button><button class="testspd" id="playBanner11Btn" data-k="⭐ Баннер11">⭐ Баннер11</button><button class="testspd" id="playBanner12Btn" data-k="🌌 Баннер12">🌌 Баннер12</button><button class="testspd" id="playBanner13Btn" data-k="🌑 Баннер13">🌑 Баннер13</button><button class="testspd" id="playBanner14Btn" data-k="🏆 Баннер14">🏆 Баннер14</button><button class="testspd" id="playBanner2Btn" data-k="🦠 Баннер2">🦠 Баннер2</button><button class="testspd" id="playBanner3Btn" data-k="💪 Баннер3">💪 Баннер3</button><button class="testspd" id="playBanner4Btn" data-k="☣ Баннер4">☣ Баннер4</button><button class="testspd" id="playBanner5Btn" data-k="❤ Баннер5">❤ Баннер5</button><button class="testspd" id="playBanner6Btn" data-k="💀 Баннер6">💀 Баннер6</button><button class="testspd" id="test10kChbBtn">◆ 10к ЧБ</button><button class="testspd" id="banner1Btn">🦠 Баннер1</button></div>
+    <div class="testbar"><button class="testspd" id="jump61Btn">→ 6-1 · органы 40M · мат 50K</button><button class="testspd" id="jump62Btn">→ 6-2</button><button class="testspd" id="jump81Btn">→ 8-1</button><button class="testspd" id="jump85Btn">→ 8-5</button><button class="testspd" id="jump91Btn">→ 9-1</button><button class="testspd" id="jump101Btn">→ 10-1</button><button class="testspd" id="jump111Btn">→ 11-1</button><button class="testspd" id="jump111a1999Btn">→ 11-1 9999л</button><button class="testspd" id="jump121Btn">→ 12-1</button><button class="testspd" id="jump155Btn">→ 15-5 500Мл 10Т</button><button class="testspd" id="jump133Btn">→ 133 500Мл макс</button><button class="testspd" id="jumpGraniBtn">→ Грани 231</button><button class="testspd" id="jumpTimeBtn">→ Время 251</button><button class="testspd" id="jumpAbsBtn">→ Абсолют 356</button><button class="testspd" id="testAbsBannerBtn">Баннер 15</button><button class="testspd" id="jump291Btn">→ 29-1</button><button class="testspd" id="jump292Btn">→ 29-2</button><button class="testspd" id="jump293Btn">→ 29-3</button><button class="testspd" id="jump21Btn">→ 2-1</button><button class="testspd" id="resetBtn">→ 0-0</button><button class="testspd" id="testSpdBtn">×5 скорость</button><button class="testspd" id="mobileBtn">📱 Телефон</button><button class="testspd" id="playBanner1Btn" data-k="🌍 Баннер10">🌍 Баннер10</button><button class="testspd" id="playBanner11Btn" data-k="⭐ Баннер11">⭐ Баннер11</button><button class="testspd" id="playBanner12Btn" data-k="🌌 Баннер12">🌌 Баннер12</button><button class="testspd" id="playBanner13Btn" data-k="🌑 Баннер13">🌑 Баннер13</button><button class="testspd" id="playBanner14Btn" data-k="🏆 Баннер14">🏆 Баннер14</button><button class="testspd" id="playBanner2Btn" data-k="🦠 Баннер2">🦠 Баннер2</button><button class="testspd" id="playBanner3Btn" data-k="💪 Баннер3">💪 Баннер3</button><button class="testspd" id="playBanner4Btn" data-k="☣ Баннер4">☣ Баннер4</button><button class="testspd" id="playBanner5Btn" data-k="❤ Баннер5">❤ Баннер5</button><button class="testspd" id="playBanner6Btn" data-k="💀 Баннер6">💀 Баннер6</button><button class="testspd" id="test10kChbBtn">◆ 10к ЧБ</button><button class="testspd" id="banner1Btn">🦠 Баннер1</button></div>
     <div class="devbar">
       <button class="devbtn" data-w="0" data-k="🖥 авто">🖥 авто</button>
       <button class="devbtn" data-w="360">Android S · 360</button>
@@ -2873,7 +2980,7 @@ body.hd canvas.hd-space,body.hd #hdSpace,body.hd canvas.hd-planet{
     'Марс':'Mars','Юпитер':'Jupiter','Сатурн':'Saturn','Солнце':'Sun','Уран':'Uranus','Нептун':'Neptune','Венера':'Venus','Меркурий':'Mercury',
     'ЗАРАЖАТЬ':'INFECT','РАСПРОСТРАНЯТЬ':'SPREAD','Начать заражение':'Start infection','Заражать массово':'Mass infect',
     'идёт заражение':'infecting…','ИДЁТ ЗАРАЖЕНИЕ':'INFECTING','ИСЦЕЛЕНИЕ':'CLEANSED','ЗАРАЖЕНЫ':'INFECTED','КОЛОНИЯ':'COLONY',
-    'ДЕЛЕНИЕ':'DIVIDE','🔒 нужен талант «ДРОП СЕРДЕЦ»':'🔒 need "HEART DROP" talent','БАКТЕРИИ':'BACTERIA','Лечение:':'Healing:','вернуть':'undo','не активен':'inactive','макс':'max','/сек':'/sec','сек':'sec','шанс':'chance','к заражению':'to infection','раз в сутки':'once a day','×5 ВКЛ':'×5 ON','🖥 Десктоп':'🖥 Desktop','📱 Телефон':'📱 Phone','🖥 авто':'🖥 auto','🎬 Заставка':'🎬 Intro','🌍 Баннер10':'🌍 Banner10','×5 скорость':'×5 speed','🧫 ОЧАГ':'🧫 OUTBREAK','☣ ПАНДЕМИЯ':'☣ PANDEMIC','🐀 КРЫСЫ':'🐀 RATS','🦟 БЛОХИ':'🦟 FLEAS','☠ ЧЁРНАЯ СМЕРТЬ':'☠ BLACK DEATH','смертность':'mortality','очаг':'outbreak','пандемия лечение ×':'pandemic heal ×','заражения':'infection','на':'on','✓ куплено':'✓ owned','✓ доступно':'✓ available','✓ доступно (4-1)':'✓ available (4-1)','✓ доступно (2-1)':'✓ available (2-1)','✓ доступно (6-2)':'✓ available (6-2)','🔒 нужен 4-1 уровень':'🔒 need tier 4-1','🔒 нужен 2-1 уровень':'🔒 need tier 2-1','🔒 нужен 6-2 уровень':'🔒 need tier 6-2','🔒 нужен разблокированный Мор':'🔒 need Plague unlocked','🔒 нужна матёрость 1M':'🔒 need potency 1M','🔒 нужен 7-2 уровень':'🔒 need tier 7-2','🔒 нужно 500k глаз':'🔒 need 500k eyes','🔒 нужна матёрость 200k':'🔒 need potency 200k','🔒 нужен 6-3 уровень':'🔒 need tier 6-3','🔒 нужно 500k сердец':'🔒 need 500k hearts','🔒 нужно 100M сердец':'🔒 need 100M hearts','🔒 7-1 для след. ур.':'🔒 7-1 for next lv.','🔒 нужен 7-1':'🔒 need 7-1','СМЕРТНОСТЬ':'MORTALITY','Оплата в Telegram Stars ⭐. Покупайте таланты в эпидемии и многое другое за':'Pay with Telegram Stars ⭐. Buy talents in Epidemic and much more for',', стройте различные билды.':', and build your own strategies.','Оплата в Telegram Stars ⭐. Баланс хранится на сервере.':'Payment in Telegram Stars ⭐. Balance is stored on the server.','Покупка доступна только в Telegram':'Purchase is available only in Telegram','🧪 ОЭ':'🧪 EP','🦴 ОГ':'🦴 RP','версия 2.5':'version 2.5','ДРОП ПЕЧЕНИ ×10':'LIVER DROP ×10','❤️ ДРОП СЕРДЕЦ':'❤️ HEART DROP','после исцеления остаётся':'after cleansing remains','10% колонии':'10% of colony','режим бешеного заражения — 15% шанс, +50% урона за тик':'rabid infection — 15% chance, +50% damage per tick','в очаге болезни 10% шанс: DoT ×100 урона/сек на 3с, стакается':'in an outbreak 10% chance: DoT ×100 damage/sec for 3s, stacks','при одновременных Очаге, Пандемии, Крысах, Блохах копит тики×макс.тик 5с (10с при 200k), затем удар':'with Outbreak, Pandemic, Rats, Fleas together stores ticks×maxTick 5s (10s at 200k), then strikes','включает «Рост в секунду»: +текущий приход матёрости каждую секунду. Разово.':'enables "Growth/sec": +current potency gain each second. Once.','в крысах ХП +5% каждые 0.1с (можно выше макс.), после −10%/с до макс.;':'in rats HP +5% every 0.1s (can exceed max), then −10%/s to max;','Растёт на +':'Grows by +','за каждый удар заражением (клики, тики, DoT).':'per infection hit (clicks, ticks, DoT).','Твои чёрные бриллианты:':'Your black diamonds:','10 бриллиантов':'10 diamonds','100 бриллиантов':'100 diamonds','500 бриллиантов':'500 diamonds','1000 бриллиантов':'1000 diamonds','10 бриллиантов → ❤️ 10 000 сердец':'10 diamonds → ❤️ 10 000 hearts','✅ Бонус получен':'✅ Bonus claimed','📤 Поделиться игрой → 10 бриллиантов':'📤 Share the game → 10 diamonds','Тест-режим: покупка начисляет чёрные бриллианты без оплаты. Подключи платёжный сервер, чтобы принимать деньги.':'Test mode: purchase grants black diamonds without payment. Connect a payment server to accept money.','1346 ГОД':'YEAR 1346','🧪 Очки Эпидемии':'🧪 Epidemic Points','🦴 Очки Гниения':'🦴 Rot Points','+0.2 к базовой цифре заражения (разово)':'+0.2 to base infection (once)','в пандемии 10% на крыс: +100%/сек к урону по врагу на 5с':'in a pandemic 10% for rats: +100%/sec to enemy for 5s','разово, ×10 к дропу':'once, ×10 to drop','🧪 2 Очка Эпидемии':'🧪 2 Epidemic Points','🧪 1 Очко Эпидемии':'🧪 1 Epidemic Point','🧪 5 Очков Эпидемии':'🧪 5 Epidemic Points','🧪 10 Очков Эпидемии':'🧪 10 Epidemic Points','🦴 2 Очка Гниения':'🦴 2 Rot Points','🦴 1 Очко Гниения':'🦴 1 Rot Point','❤️ 100M сердец':'❤️ 100M hearts','👁 500k глаз':'👁 500k eyes','множится поверх остальных усилений':'stacks on top of other boosts','меньше урона от лечения':'less damage from healing','быстрее перезарядка деления · макс 3':'faster division cooldown · max 3','куплено':'bought','сейчас':'now','умножает весь падающий дроп на ×2 (многоразово) · сейчас':'multiplies all loot ×2 (repeatable) · now','+30% сопротивления лечению':'+30% heal resistance','вместо 1 бактерии':'instead of 1 bacterium','×10 к падающим сердцам (разово)':'×10 to dropping hearts (once)','с 6-2 Деление → Мор: урон растёт каждую секунду (до +1000% за 10с; кулдаун-таланты делают короче). Разово.':'from 6-2 Division → Plague: damage grows each second (up to +1000% over 10s; cooldown talents shorten it). Once.','после исцеления колония делится ×2/сек в течение 5 секунд':'after cleansing the colony splits ×2/sec for 5 seconds','Мор съедает на 70% меньше матёрости. Разово.':'Plague eats 70% less potency. Once.','множит весь прирост матёрости +10% за уровень · сейчас':'boosts all potency gain +10% per level · now','заражение +10% за уровень · сейчас ×':'infection +10% per level · now ×','весь дроп +10% за уровень · сейчас ×':'all drops +10% per level · now ×','+10% к росту матёрости в секунду (7 ур.) · сейчас':'+10% potency/sec growth (7 lv.) · now','При Исцелении матёрость падает до':'On Cleansing potency drops to','Рост в сек при заражении:':'Growth/sec while infecting:','ВСЯ ЗЕМЛЯ':'THE EARTH','ЗАРАЖЕНА!':'INFECTED!','ПРОДОЛЖИТЬ':'CONTINUE','Все права защищены':'All rights reserved','Ежедневная награда':'Daily reward','Чем умнее тем взрослее':'The smarter, the older','Чумная лаборатория':'Plague Laboratory','Скормить Чуме':'Feed the Plague','Мастерство':'Mastery','таланты эпидемии обновились':'epidemic talents updated','МАСТЕРСТВО ЧУМЫ':'PLAGUE MASTERY','+10% к общей цифре мастерства за уровень · сейчас ×':'+10% to total mastery per level · now ×','Вспышка Мора':'Plague Flash','Мор больше не требует матёрости':'Plague no longer requires potency','Талант Чёрная Смерть':'Black Death Talent','Звезда':'Star','Опасность для звёзд':'Danger to stars','Колония:':'Colony:','Мультивселенная':'Multiverse','Грани Гравитации':'Edge of Gravity','Грани Времени':'Edge of Time','Грани Бесконечности':'Edge of Infinity','Абсолют':'Absolute','Чума получила Божественную Частицу. Ничего больше нет, жизнь теперь это ЯЧУМА!':'The Plague obtained the Divine Particle. Nothing else remains, life is now I, PLAGUE!','То ли жизнь, то ли смерть, то ли СОН...':'Maybe life, maybe death, maybe a DREAM...','КОНЕЦ':'THE END','ВСЕЛЕННАЯ':'UNIVERSE','Дальше':'Next','ПОЗДРАВЛЯЕМ!':'CONGRATULATIONS!','ЯЧУМА пройдена!':'I, PLAGUE completed!','Ура!':'Hooray!','ВСЯ':'THE WHOLE','должна быть заражена...':'must be infected...','ВСЕ ЗВЁЗДЫ':'ALL STARS','ЗАРАЖЕНЫ!':'INFECTED!','Чума расползается по всей галактике!':'The Plague spreads across the whole galaxy!','схемы':'recipes','Схемы':'Recipes','нет схем':'no recipes','Максимум:':'Maximum:','Молодая Чума и матёрая':'Young and Seasoned Plague','Матёрость растёт в 2 раза быстрее. Каждый миллиард матёрости — заражение +10%':'Potency grows 2x faster. Each billion of potency — infection +10%','Млечный Путь':'Milky Way','Вселенная':'Universe','Андромеда':'Andromeda','Водоворот M51':'Whirlpool M51','Галактика':'Galaxy','Сириус':'Sirius','Альдебаран':'Aldebaran','Антарес':'Antares','Арктур':'Arcturus','Спика':'Spica','Проксима Центавра':'Proxima Centauri','Полярная':'Polaris','Ригель':'Rigel','Бетельгейзе':'Betelgeuse','Вега':'Vega','Охота на звёзды!':'Hunt for the Stars!','Солнечная система заражена. Впереди — звёзды.':'The Solar System is infected. The stars lie ahead.','⭐ Баннер11':'⭐ Banner11','нужен 11-1 уровень':'need tier 11-1','нужен 8-1 уровень':'need tier 8-1','🔒 нужен 7-1 уровень':'🔒 need tier 7-1','Очаг болезни работает фоном':'Disease Outbreak runs in the background','Поверни телефон':'Rotate your phone','вертикально':'vertically','Покоритель звёзд':'Conqueror of Stars','После МОРА может выпасть ещё одна искра звёзд':'After the Plague, another star spark may drop','достигнут лимит':'limit reached','к возрасту чумы за тап':'to plague age per tap','сила искр':'spark power','Шанс при тапе':'Tap chance','Сила заражения':'Infection power','к мастерству':'to mastery','к уменьшению таймера тотального деления':'to total division timer reduction','к дропу органов':'to organ drop','к лимиту Ног':'to legs limit','к лимиту Глаз':'to eyes limit','к лимиту Мозгов':'to brains limit','к максимуму матёрости':'to potency maximum','дальше матёрость не растёт, текущий максимум':'potency no longer grows, current max','Улучшайте в чумной лаборатории':'Upgrade it in the Plague Laboratory','Злая Бактерия':'Evil Bacteria','Злая бактерия':'Evil Bacteria','Каждое действие может нанести дополнительное заражение. Усиливайте злых бактерий в чумной лаборатории':'Every action can deal additional infection. Strengthen evil bacteria in the Plague Laboratory','шанс 1% на срабатывание · +10% к заражению':'1% proc chance · +10% to infection','Фатальность':'Fatality','Фатальность Вселенной':'Universe Fatality','Точка заражения, во Вселенной идут отзвуки Чумного воздействия, но Звезды уже почувствовали заразу':'Point of infection — echoes of the Plague ripple through the Universe, and the Stars have already sensed the contagion','Гниль звезд разрастается':'The rot of stars spreads','Гниль звёзд разрастается. Заражение +1% за каждую 1000 лет возраста чумы, пока чума грызёт космический объект':'The rot of stars spreads. Infection +1% per 1000 years of plague age while the plague gnaws a cosmic object','Звезды не держат заразу ЧУМА РАСТЕТ уже и ГАЛАКТИКИ бьют тревогу!':'The stars cannot hold the contagion — the PLAGUE is spreading and even the GALAXIES sound the alarm!','Стражи Вселенной, галактики, возможно они Чуму и остановят. Заражение всех галактик откроет путь к заражению всей ВСЕЛЕННОЙ!':'Guardians of the Universe — the galaxies. Perhaps they will stop the Plague. Infecting every galaxy will open the path to infecting the entire UNIVERSE!','Чума опасна для звёзд, они следят за ней. Заражение +10% за каждую звезду':'Plague is dangerous to stars, they watch it. Infection +10% per star','+1 к эффекту каждые 1000 лет возраста':'+1 to effect every 1000 years of age','ЧЁРНАЯ СМЕРТЬ':'BLACK DEATH','к базовой цифре заражения (разово)':'to base infection figure (once)','взрывное деление бактерий!':'explosive bacteria division!','ЭХО':'ECHO','уже получено':'already obtained','Улучшить %':'Upgrade %','Закрыть':'Close','Усиления:':'Buffs:','Уникальные способности:':'Unique abilities:','Дроп органов:':'Organ drop:','Умения:':'Skills:','к заражению':'to infection','Купить искру':'Buy spark','зелёный':'green','синий':'blue','фиолетовый':'purple','золотой':'gold','красный':'red','белый':'white','чёрный':'black','ГНИЕНИЕ МИРОВ':'WORLD ROT','ЧБ':'◆','📤 Пригласить друга':'📤 Invite a friend','Шанс от Мора':'Plague drop','Шанс':'Chance','к росту возраста за тап':'to age growth per tap','к основе роста возраста за тап':'to base age growth per tap','Пригласи друга':'Invite a friend','Чумная воля':'Plague Will','Сила Мора':'Power of Plague','Если чума уже на Уране, то каждый удачный МОР даст возможность матёрым бактериям найти <span class="ab-g">Искру Звёзд</span>. Поспеши её собрать!':'If the plague is already on Uranus, every successful Plague lets seasoned bacteria find a <span class="ab-g">Star Spark</span>. Hurry to collect it!','Мор наносит заражение в 2 раза быстрее':'Plague deals infection twice as fast','Тап ускоряет откат тотального деления':'Tap speeds up total division cooldown','Пригласить друга':'Invite a friend','Пришло по ссылке:':'Joined via your link:','за каждого':'each','Забрать 5 бриллиантов':'Claim 5 diamonds','Забрано. Следующая через':'Claimed. Next in','ЯЧУМА':'I, PLAGUE','Чингисхан':'Genghis Khan','ИГРАТЬ':'PLAY','Если бы вы не совершали великих грехов, Бог не послал бы на вас такого наказания, как я!':'If you had not committed great sins, God would not have sent a punishment like me upon you!','Чума покорила планету. Впереди — космос.':'The plague conquered the planet. Space awaits.','Спасибо что вы с нами! Поддержите нас купив черные бриллианты, для заражения вселенной они вам обязательно пригодятся :)':'Thanks for being with us! Support us by buying black diamonds — they will surely help you infect the universe :)','НАЧАТЬ':'START','чума пробуждается…':'the plague awakens…','Купить чёрные бриллианты':'Buy black diamonds','Обмен':'Exchange','Бонус':'Bonus','СМЕРТНОСТЬ':'MORTALITY','🔒 нужна матёрость 50000':'🔒 need potency 50000','макс. тик:':'max tick:','раз в час':'once an hour','МОР':'PLAGUE','РОСТ':'GROW','МАКС':'MAX','готово':'ready','за время':'by time','ДРОП СЕРДЕЦ +10%':'HEART DROP +10%','УЗЕЛ 50K +10%':'NODE 50K +10%','ЗАРАЖЕНИЕ':'INFECTION','ШАНС СМЕРТНОСТИ +1%':'MORTALITY CHANCE +1%','СИЛА СМЕРТНОСТИ +1':'MORTALITY POWER +1','ОТКРЫТЬ ОЧАГ БОЛЕЗНИ':'UNLOCK OUTBREAK','ВРЕМЯ ОЧАГА +0.2с':'OUTBREAK TIME +0.2s','ШАНС ОЧАГА +2%':'OUTBREAK CHANCE +2%','ОТКРЫТЬ ПАНДЕМИЮ':'UNLOCK PANDEMIC','УРОН ПАНДЕМИИ +':'PANDEMIC DAMAGE +','ВРЕМЯ ПАНДЕМИИ +0.25с':'PANDEMIC TIME +0.25s','ТОТАЛЬНОЕ ДЕЛЕНИЕ':'TOTAL DIVISION','Матёрые бактерии:':'Seasoned bacteria:','Деление в Море:':'Division in Plague:','След:':'Next:','бактерий → деление':'bacteria → division','Поднять уровень':'Level up','/тик':'/tick','Возраст Чумы':'Plague Age','Пора взрослеть!':'Time to grow up!','Каждый тап увеличивает возраст чумы на':'Each tap increases plague age by','6 дней':'6 days','дней':'days','усиление взросления +10% за уровень · сейчас ×':'aging boost +10% per level · now ×','Гниение миров':'Rot of Worlds','Усиление взросления при действии на 10%.':'Aging boost per action +10%.','Сейчас':'Now','к взрослению':'to aging','нужен 8-1':'need 8-1','МАКС':'MAX','✓ макс':'✓ max','✓ доступно':'✓ available','и уменьшает таймер Тотального деления на':'and reduces Total Division timer by','1 минуту':'1 minute','минуту':'minute','минут':'minutes','Космический Очаг болезни':'Cosmic Disease Outbreak','Время действия очага':'Outbreak duration','6 секунд':'6 seconds','Больше действий':'More actions','Сжирать и расти':'Devour and grow','Потрошитель космоса':'Space Ripper','Больше бактерий':'More bacteria','к размножению матёрых бактерий Мором':'to Plague reproduction of seasoned bacteria','Максимум глаз 👁, мозгов 🧠 повышен до':'Max 👁 eyes, 🧠 brains raised to','Космические способности':'Cosmic abilities','рост (за тап) +2% за 1Т накопленных ног · сейчас':'growth (per tap) +2% per 1T accumulated legs · now','+1 очко гниения за каждые +5 лет чумы (до 305)':'+1 rot point per +5 plague years (up to 305)','+10% взросления (дней за тап) за каждый этап заражения объектов космоса · сейчас':'+10% aging (days per tap) per infection stage of space objects · now','Максимум ног повышен до':'Leg cap raised to','Стоимость повышения заражения':'Infection upgrade cost','шанс появления':'appear chance','очаг стакается до':'outbreak stacks up to','25 стаков':'25 stacks','Возраст чумы:':'Plague Age:','матёрых бактерий':'seasoned bacteria','матёрых':'seasoned','рост':'growth','с':'s','матёрые бактерии':'seasoned bacteria','☠ ЧЁРНАЯ СМЕРТЬ +0.2':'☠ BLACK DEATH +0.2','☣ УСИЛИТЬ ЗАРАЖЕНИЕ +10%':'☣ BOOST INFECTION +10%','🩹 СОПРОТ. ЛЕЧЕНИЮ +10%':'🩹 HEAL RESIST +10%','⏱ ВОССТАНОВЛЕНИЕ ДЕЛЕНИЯ −1с':'⏱ DIVISION COOLDOWN −1s','📦 ВЕСЬ ДРОП ×2':'📦 ALL DROP ×2','👁 ДРОП ГЛАЗ ×10':'👁 EYE DROP ×10','🧠 ДРОП МОЗГОВ ×10':'🧠 BRAIN DROP ×10','🦵 ДРОП НОГ ×10':'🦵 LEG DROP ×10','🫀 ДРОП ПЕЧЕНИ ×10':'🫀 LIVER DROP ×10','🐀 РАЗБЛОКИРОВАТЬ КРЫС':'🐀 UNLOCK RATS','🐀 БЕШЕНЫЕ КРЫСЫ':'🐀 RABID RATS','🧬 ЖИВУЧИЕ ОСОБИ':'🧬 HARDY STRAIN','☠ ЧЁРНАЯ СМЕРТЬ (КАРА)':'☠ BLACK DEATH (WRATH)','💀 АКТИВИРОВАТЬ МОР':'💀 ACTIVATE PLAGUE','❓ обучение':'❓ tutorial','Как играть':'How to play','Подробнее':'More','ОК':'OK','Активируйте Мор в Эпидемии':'Activate the Plague in Epidemic','🧬 СТАРЫЕ ОСОБИ':'🧬 OLD STRAINS','🦠 БУБОННАЯ ЧУМА':'🦠 BUBONIC PLAGUE','🧟 ГНИЛОЙ МОР':'🧟 ROTTEN PLAGUE','◆ РОСТ МАТЁРОСТИ +10%':'◆ POTENCY GROWTH +10%','◆ ЗАРАЗНАЯ ЧУМА +10%':'◆ CONTAGIOUS PLAGUE +10%','◆ ЧУМНАЯ ЖАТВА +10%':'◆ PLAGUE HARVEST +10%','◆ РОСТ/СЕК +10%':'◆ GROWTH/SEC +10%','скрыться':'hide','бактерий':'bacteria','Музыка':'Music','Звуки':'Sounds','ВКЛ':'ON','ВЫКЛ':'OFF','Заражение в сек:':'Infection/sec:','МАГАЗИН':'SHOP','ур.':'lv.','дроп ×5':'drop ×5','ДЕЛЕНИЕ':'DIVIDE'
+    'ДЕЛЕНИЕ':'DIVIDE','🔒 нужен талант «ДРОП СЕРДЕЦ»':'🔒 need "HEART DROP" talent','БАКТЕРИИ':'BACTERIA','Лечение:':'Healing:','вернуть':'undo','не активен':'inactive','макс':'max','/сек':'/sec','сек':'sec','шанс':'chance','к заражению':'to infection','раз в сутки':'once a day','×5 ВКЛ':'×5 ON','🖥 Десктоп':'🖥 Desktop','📱 Телефон':'📱 Phone','🖥 авто':'🖥 auto','🎬 Заставка':'🎬 Intro','🌍 Баннер10':'🌍 Banner10','×5 скорость':'×5 speed','🧫 ОЧАГ':'🧫 OUTBREAK','☣ ПАНДЕМИЯ':'☣ PANDEMIC','🐀 КРЫСЫ':'🐀 RATS','🦟 БЛОХИ':'🦟 FLEAS','☠ ЧЁРНАЯ СМЕРТЬ':'☠ BLACK DEATH','смертность':'mortality','очаг':'outbreak','лечение ×':'heal ×','заражения':'infection','на':'on','✓ куплено':'✓ owned','✓ доступно':'✓ available','✓ доступно (4-1)':'✓ available (4-1)','✓ доступно (2-1)':'✓ available (2-1)','✓ доступно (6-2)':'✓ available (6-2)','🔒 нужен 4-1 уровень':'🔒 need tier 4-1','🔒 нужен 2-1 уровень':'🔒 need tier 2-1','🔒 нужен 6-2 уровень':'🔒 need tier 6-2','🔒 нужен разблокированный Мор':'🔒 need Plague unlocked','🔒 нужна матёрость 1M':'🔒 need potency 1M','🔒 нужен 7-2 уровень':'🔒 need tier 7-2','🔒 нужно 500k глаз':'🔒 need 500k eyes','🔒 нужна матёрость 200k':'🔒 need potency 200k','🔒 нужен 6-3 уровень':'🔒 need tier 6-3','🔒 нужно 500k сердец':'🔒 need 500k hearts','🔒 нужно 100M сердец':'🔒 need 100M hearts','🔒 7-1 для след. ур.':'🔒 7-1 for next lv.','🔒 нужен 7-1':'🔒 need 7-1','СМЕРТНОСТЬ':'MORTALITY','Оплата в Telegram Stars ⭐. Покупайте таланты в эпидемии и многое другое за':'Pay with Telegram Stars ⭐. Buy talents in Epidemic and much more for',', стройте различные билды.':', and build your own strategies.','Оплата в Telegram Stars ⭐. Баланс хранится на сервере.':'Payment in Telegram Stars ⭐. Balance is stored on the server.','Покупка доступна только в Telegram':'Purchase is available only in Telegram','🧪 ОЭ':'🧪 EP','🦴 ОГ':'🦴 RP','версия 2.5':'version 2.5','ДРОП ПЕЧЕНИ ×10':'LIVER DROP ×10','❤️ ДРОП СЕРДЕЦ':'❤️ HEART DROP','после исцеления остаётся':'after cleansing remains','10% колонии':'10% of colony','режим бешеного заражения — 15% шанс, +50% урона за тик':'rabid infection — 15% chance, +50% damage per tick','в очаге болезни 10% шанс: DoT ×100 урона/сек на 3с, стакается':'in an outbreak 10% chance: DoT ×100 damage/sec for 3s, stacks','при одновременных Очаге, Пандемии, Крысах, Блохах копит тики×макс.тик 5с (10с при 200k), затем удар':'with Outbreak, Pandemic, Rats, Fleas together stores ticks×maxTick 5s (10s at 200k), then strikes','включает «Рост в секунду»: +текущий приход матёрости каждую секунду. Разово.':'enables "Growth/sec": +current potency gain each second. Once.','в крысах ХП +5% каждые 0.1с (можно выше макс.), после −10%/с до макс.;':'in rats HP +5% every 0.1s (can exceed max), then −10%/s to max;','Растёт на +':'Grows by +','за каждый удар заражением (клики, тики, DoT).':'per infection hit (clicks, ticks, DoT).','Твои чёрные бриллианты:':'Your black diamonds:','10 бриллиантов':'10 diamonds','100 бриллиантов':'100 diamonds','500 бриллиантов':'500 diamonds','1000 бриллиантов':'1000 diamonds','10 бриллиантов → ❤️ 10 000 сердец':'10 diamonds → ❤️ 10 000 hearts','✅ Бонус получен':'✅ Bonus claimed','📤 Поделиться игрой → 10 бриллиантов':'📤 Share the game → 10 diamonds','Тест-режим: покупка начисляет чёрные бриллианты без оплаты. Подключи платёжный сервер, чтобы принимать деньги.':'Test mode: purchase grants black diamonds without payment. Connect a payment server to accept money.','1346 ГОД':'YEAR 1346','🧪 Очки Эпидемии':'🧪 Epidemic Points','🦴 Очки Гниения':'🦴 Rot Points','+0.2 к базовой цифре заражения (разово)':'+0.2 to base infection (once)','в пандемии 10% на крыс: +100%/сек к урону по врагу на 5с':'in a pandemic 10% for rats: +100%/sec to enemy for 5s','разово, ×10 к дропу':'once, ×10 to drop','🧪 2 Очка Эпидемии':'🧪 2 Epidemic Points','🧪 1 Очко Эпидемии':'🧪 1 Epidemic Point','🧪 5 Очков Эпидемии':'🧪 5 Epidemic Points','🧪 10 Очков Эпидемии':'🧪 10 Epidemic Points','🦴 2 Очка Гниения':'🦴 2 Rot Points','🦴 1 Очко Гниения':'🦴 1 Rot Point','❤️ 100M сердец':'❤️ 100M hearts','👁 500k глаз':'👁 500k eyes','множится поверх остальных усилений':'stacks on top of other boosts','меньше урона от лечения':'less damage from healing','быстрее перезарядка деления · макс 3':'faster division cooldown · max 3','куплено':'bought','сейчас':'now','умножает весь падающий дроп на ×2 (многоразово) · сейчас':'multiplies all loot ×2 (repeatable) · now','+30% сопротивления лечению':'+30% heal resistance','вместо 1 бактерии':'instead of 1 bacterium','×10 к падающим сердцам (разово)':'×10 to dropping hearts (once)','с 6-2 Деление → Мор: урон растёт каждую секунду (до +1000% за 10с; кулдаун-таланты делают короче). Разово.':'from 6-2 Division → Plague: damage grows each second (up to +1000% over 10s; cooldown talents shorten it). Once.','после исцеления колония делится ×2/сек в течение 5 секунд':'after cleansing the colony splits ×2/sec for 5 seconds','Мор съедает на 70% меньше матёрости. Разово.':'Plague eats 70% less potency. Once.','множит весь прирост матёрости +10% за уровень · сейчас':'boosts all potency gain +10% per level · now','заражение +10% за уровень · сейчас ×':'infection +10% per level · now ×','весь дроп +10% за уровень · сейчас ×':'all drops +10% per level · now ×','+10% к росту матёрости в секунду (7 ур.) · сейчас':'+10% potency/sec growth (7 lv.) · now','При Исцелении матёрость падает до':'On Cleansing potency drops to','Рост в сек при заражении:':'Growth/sec while infecting:','ВСЯ ЗЕМЛЯ':'THE EARTH','ЗАРАЖЕНА!':'INFECTED!','ПРОДОЛЖИТЬ':'CONTINUE','Все права защищены':'All rights reserved','Ежедневная награда':'Daily reward','Чем умнее тем взрослее':'The smarter, the older','Чумная лаборатория':'Plague Laboratory','Скормить Чуме':'Feed the Plague','Мастерство':'Mastery','таланты эпидемии обновились':'epidemic talents updated','МАСТЕРСТВО ЧУМЫ':'PLAGUE MASTERY','+10% к общей цифре мастерства за уровень · сейчас ×':'+10% to total mastery per level · now ×','Вспышка Мора':'Plague Flash','Мор больше не требует матёрости':'Plague no longer requires potency','Талант Чёрная Смерть':'Black Death Talent','Звезда':'Star','Опасность для звёзд':'Danger to stars','Колония:':'Colony:','Мультивселенная':'Multiverse','Грани Гравитации':'Edge of Gravity','Грани Времени':'Edge of Time','Грани Бесконечности':'Edge of Infinity','Абсолют':'Absolute','Чума получила Божественную Частицу. Ничего больше нет, жизнь теперь это ЯЧУМА!':'The Plague obtained the Divine Particle. Nothing else remains, life is now I, PLAGUE!','То ли жизнь, то ли смерть, то ли СОН...':'Maybe life, maybe death, maybe a DREAM...','КОНЕЦ':'THE END','ВСЕЛЕННАЯ':'UNIVERSE','Дальше':'Next','ПОЗДРАВЛЯЕМ!':'CONGRATULATIONS!','ЯЧУМА пройдена!':'I, PLAGUE completed!','Ура!':'Hooray!','ВСЯ':'THE WHOLE','должна быть заражена...':'must be infected...','ВСЕ ЗВЁЗДЫ':'ALL STARS','ЗАРАЖЕНЫ!':'INFECTED!','Чума расползается по всей галактике!':'The Plague spreads across the whole galaxy!','схемы':'recipes','Схемы':'Recipes','нет схем':'no recipes','Максимум:':'Maximum:','Молодая Чума и матёрая':'Young and Seasoned Plague','Матёрость растёт в 2 раза быстрее. Каждый миллиард матёрости — заражение +10%':'Potency grows 2x faster. Each billion of potency — infection +10%','Млечный Путь':'Milky Way','Вселенная':'Universe','Андромеда':'Andromeda','Водоворот M51':'Whirlpool M51','Галактика':'Galaxy','Сириус':'Sirius','Альдебаран':'Aldebaran','Антарес':'Antares','Арктур':'Arcturus','Спика':'Spica','Проксима Центавра':'Proxima Centauri','Полярная':'Polaris','Ригель':'Rigel','Бетельгейзе':'Betelgeuse','Вега':'Vega','Охота на звёзды!':'Hunt for the Stars!','Солнечная система заражена. Впереди — звёзды.':'The Solar System is infected. The stars lie ahead.','⭐ Баннер11':'⭐ Banner11','нужен 11-1 уровень':'need tier 11-1','нужен 8-1 уровень':'need tier 8-1','🔒 нужен 7-1 уровень':'🔒 need tier 7-1','Очаг болезни работает фоном':'Disease Outbreak runs in the background','Поверни телефон':'Rotate your phone','вертикально':'vertically','Покоритель звёзд':'Conqueror of Stars','После МОРА может выпасть ещё одна искра звёзд':'After the Plague, another star spark may drop','достигнут лимит':'limit reached','к возрасту чумы за тап':'to plague age per tap','сила искр':'spark power','Шанс при тапе':'Tap chance','Сила заражения':'Infection power','к мастерству':'to mastery','к уменьшению таймера тотального деления':'to total division timer reduction','к дропу органов':'to organ drop','к лимиту Ног':'to legs limit','к лимиту Глаз':'to eyes limit','к лимиту Мозгов':'to brains limit','к максимуму матёрости':'to potency maximum','дальше матёрость не растёт, текущий максимум':'potency no longer grows, current max','Улучшайте в чумной лаборатории':'Upgrade it in the Plague Laboratory','Злая Бактерия':'Evil Bacteria','Злая бактерия':'Evil Bacteria','Каждое действие может нанести дополнительное заражение. Усиливайте злых бактерий в чумной лаборатории':'Every action can deal additional infection. Strengthen evil bacteria in the Plague Laboratory','шанс 1% на срабатывание · +10% к заражению':'1% proc chance · +10% to infection','Фатальность':'Fatality','Фатальность Вселенной':'Universe Fatality','Точка заражения, во Вселенной идут отзвуки Чумного воздействия, но Звезды уже почувствовали заразу':'Point of infection — echoes of the Plague ripple through the Universe, and the Stars have already sensed the contagion','Гниль звезд разрастается':'The rot of stars spreads','Гниль звёзд разрастается. Заражение +1% за каждую 1000 лет возраста чумы, пока чума грызёт космический объект':'The rot of stars spreads. Infection +1% per 1000 years of plague age while the plague gnaws a cosmic object','Звезды не держат заразу ЧУМА РАСТЕТ уже и ГАЛАКТИКИ бьют тревогу!':'The stars cannot hold the contagion — the PLAGUE is spreading and even the GALAXIES sound the alarm!','Стражи Вселенной, галактики, возможно они Чуму и остановят. Заражение всех галактик откроет путь к заражению всей ВСЕЛЕННОЙ!':'Guardians of the Universe — the galaxies. Perhaps they will stop the Plague. Infecting every galaxy will open the path to infecting the entire UNIVERSE!','Чума опасна для звёзд, они следят за ней. Заражение +10% за каждую звезду':'Plague is dangerous to stars, they watch it. Infection +10% per star','+1 к эффекту каждые 1000 лет возраста':'+1 to effect every 1000 years of age','ЧЁРНАЯ СМЕРТЬ':'BLACK DEATH','к базовой цифре заражения (разово)':'to base infection figure (once)','взрывное деление бактерий!':'explosive bacteria division!','ЭХО':'ECHO','уже получено':'already obtained','Улучшить %':'Upgrade %','Закрыть':'Close','Усиления:':'Buffs:','Уникальные способности:':'Unique abilities:','Дроп органов:':'Organ drop:','Умения:':'Skills:','к заражению':'to infection','Купить искру':'Buy spark','зелёный':'green','синий':'blue','фиолетовый':'purple','золотой':'gold','красный':'red','белый':'white','чёрный':'black','ГНИЕНИЕ МИРОВ':'WORLD ROT','ЧБ':'◆','📤 Пригласить друга':'📤 Invite a friend','Шанс от Мора':'Plague drop','Шанс':'Chance','к росту возраста за тап':'to age growth per tap','к основе роста возраста за тап':'to base age growth per tap','Пригласи друга':'Invite a friend','Чумная воля':'Plague Will','Сила Мора':'Power of Plague','Если чума уже на Уране, то каждый удачный МОР даст возможность матёрым бактериям найти <span class="ab-g">Искру Звёзд</span>. Поспеши её собрать!':'If the plague is already on Uranus, every successful Plague lets seasoned bacteria find a <span class="ab-g">Star Spark</span>. Hurry to collect it!','Мор наносит заражение в 2 раза быстрее':'Plague deals infection twice as fast','Тап ускоряет откат тотального деления':'Tap speeds up total division cooldown','Пригласить друга':'Invite a friend','Пришло по ссылке:':'Joined via your link:','за каждого':'each','Забрать 5 бриллиантов':'Claim 5 diamonds','Забрано. Следующая через':'Claimed. Next in','ЯЧУМА':'I, PLAGUE','Чингисхан':'Genghis Khan','ИГРАТЬ':'PLAY','Если бы вы не совершали великих грехов, Бог не послал бы на вас такого наказания, как я!':'If you had not committed great sins, God would not have sent a punishment like me upon you!','Чума покорила планету. Впереди — космос.':'The plague conquered the planet. Space awaits.','Спасибо что вы с нами! Поддержите нас купив черные бриллианты, для заражения вселенной они вам обязательно пригодятся :)':'Thanks for being with us! Support us by buying black diamonds — they will surely help you infect the universe :)','НАЧАТЬ':'START','чума пробуждается…':'the plague awakens…','Купить чёрные бриллианты':'Buy black diamonds','Обмен':'Exchange','Бонус':'Bonus','СМЕРТНОСТЬ':'MORTALITY','🔒 нужна матёрость 50000':'🔒 need potency 50000','макс. тик:':'max tick:','раз в час':'once an hour','МОР':'PLAGUE','РОСТ':'GROW','МАКС':'MAX','готово':'ready','за время':'by time','ДРОП СЕРДЕЦ +10%':'HEART DROP +10%','УЗЕЛ 50K +10%':'NODE 50K +10%','ЗАРАЖЕНИЕ':'INFECTION','ШАНС СМЕРТНОСТИ +1%':'MORTALITY CHANCE +1%','СИЛА СМЕРТНОСТИ +1':'MORTALITY POWER +1','ОТКРЫТЬ ОЧАГ БОЛЕЗНИ':'UNLOCK OUTBREAK','ВРЕМЯ ОЧАГА +0.2с':'OUTBREAK TIME +0.2s','ШАНС ОЧАГА +2%':'OUTBREAK CHANCE +2%','ОТКРЫТЬ ПАНДЕМИЮ':'UNLOCK PANDEMIC','УРОН ПАНДЕМИИ +':'PANDEMIC DAMAGE +','ВРЕМЯ ПАНДЕМИИ +0.25с':'PANDEMIC TIME +0.25s','ТОТАЛЬНОЕ ДЕЛЕНИЕ':'TOTAL DIVISION','Матёрые бактерии:':'Seasoned bacteria:','Деление в Море:':'Division in Plague:','След:':'Next:','бактерий → деление':'bacteria → division','Поднять уровень':'Level up','/тик':'/tick','Возраст Чумы':'Plague Age','Пора взрослеть!':'Time to grow up!','Каждый тап увеличивает возраст чумы на':'Each tap increases plague age by','6 дней':'6 days','дней':'days','усиление взросления +10% за уровень · сейчас ×':'aging boost +10% per level · now ×','Гниение миров':'Rot of Worlds','Усиление взросления при действии на 10%.':'Aging boost per action +10%.','Сейчас':'Now','к взрослению':'to aging','нужен 8-1':'need 8-1','МАКС':'MAX','✓ макс':'✓ max','✓ доступно':'✓ available','и уменьшает таймер Тотального деления на':'and reduces Total Division timer by','1 минуту':'1 minute','минуту':'minute','минут':'minutes','Космический Очаг болезни':'Cosmic Disease Outbreak','Время действия очага':'Outbreak duration','6 секунд':'6 seconds','Больше действий':'More actions','Сжирать и расти':'Devour and grow','Потрошитель космоса':'Space Ripper','Больше бактерий':'More bacteria','к размножению матёрых бактерий Мором':'to Plague reproduction of seasoned bacteria','Максимум глаз 👁, мозгов 🧠 повышен до':'Max 👁 eyes, 🧠 brains raised to','Космические способности':'Cosmic abilities','рост (за тап) +2% за 1Т накопленных ног · сейчас':'growth (per tap) +2% per 1T accumulated legs · now','+1 очко гниения за каждые +5 лет чумы (до 305)':'+1 rot point per +5 plague years (up to 305)','+10% взросления (дней за тап) за каждый этап заражения объектов космоса · сейчас':'+10% aging (days per tap) per infection stage of space objects · now','Максимум ног повышен до':'Leg cap raised to','Стоимость повышения заражения':'Infection upgrade cost','шанс появления':'appear chance','очаг стакается до':'outbreak stacks up to','25 стаков':'25 stacks','Возраст чумы:':'Plague Age:','матёрых бактерий':'seasoned bacteria','матёрых':'seasoned','рост':'growth','с':'s','матёрые бактерии':'seasoned bacteria','☠ ЧЁРНАЯ СМЕРТЬ +0.2':'☠ BLACK DEATH +0.2','☣ УСИЛИТЬ ЗАРАЖЕНИЕ +10%':'☣ BOOST INFECTION +10%','🩹 СОПРОТ. ЛЕЧЕНИЮ +10%':'🩹 HEAL RESIST +10%','⏱ ВОССТАНОВЛЕНИЕ ДЕЛЕНИЯ −1с':'⏱ DIVISION COOLDOWN −1s','📦 ВЕСЬ ДРОП ×2':'📦 ALL DROP ×2','👁 ДРОП ГЛАЗ ×10':'👁 EYE DROP ×10','🧠 ДРОП МОЗГОВ ×10':'🧠 BRAIN DROP ×10','🦵 ДРОП НОГ ×10':'🦵 LEG DROP ×10','🫀 ДРОП ПЕЧЕНИ ×10':'🫀 LIVER DROP ×10','🐀 РАЗБЛОКИРОВАТЬ КРЫС':'🐀 UNLOCK RATS','🐀 БЕШЕНЫЕ КРЫСЫ':'🐀 RABID RATS','🧬 ЖИВУЧИЕ ОСОБИ':'🧬 HARDY STRAIN','☠ ЧЁРНАЯ СМЕРТЬ (КАРА)':'☠ BLACK DEATH (WRATH)','💀 АКТИВИРОВАТЬ МОР':'💀 ACTIVATE PLAGUE','❓ обучение':'❓ tutorial','Как играть':'How to play','Подробнее':'More','ОК':'OK','Активируйте Мор в Эпидемии':'Activate the Plague in Epidemic','🧬 СТАРЫЕ ОСОБИ':'🧬 OLD STRAINS','🦠 БУБОННАЯ ЧУМА':'🦠 BUBONIC PLAGUE','🧟 ГНИЛОЙ МОР':'🧟 ROTTEN PLAGUE','◆ РОСТ МАТЁРОСТИ +10%':'◆ POTENCY GROWTH +10%','◆ ЗАРАЗНАЯ ЧУМА +10%':'◆ CONTAGIOUS PLAGUE +10%','◆ ЧУМНАЯ ЖАТВА +10%':'◆ PLAGUE HARVEST +10%','◆ РОСТ/СЕК +10%':'◆ GROWTH/SEC +10%','скрыться':'hide','бактерий':'bacteria','Музыка':'Music','Звуки':'Sounds','ВКЛ':'ON','ВЫКЛ':'OFF','Заражение в сек:':'Infection/sec:','МАГАЗИН':'SHOP','ур.':'lv.','дроп ×5':'drop ×5','ДЕЛЕНИЕ':'DIVIDE'
   }};
   const GUIDE_EN=`<b class="guide-title">I, PLAGUE — how to infect the universe!?</b><div class="guide-parts"><button id="guidePartBtn1" class="gpart">part one</button><button id="guidePartBtn2" class="gpart">part two</button></div><div id="guidePart1" style="display:none">
     <div class="gh">Part 1 · Getting started</div>
@@ -4078,6 +4185,29 @@ body.hd canvas.hd-space,body.hd #hdSpace,body.hd canvas.hd-planet{
   {const _t10=$('test10kChbBtn');if(_t10)_t10.addEventListener('click',function(){S.diamonds=(S.diamonds||0)+10000;render();updateButton();saveGame();});}
     $('jump85Btn').addEventListener('click',jumpTo85);$('jump91Btn').addEventListener('click',jumpTo91);$('jump101Btn').addEventListener('click',jumpTo101);$('jump111Btn').addEventListener('click',jumpTo111);$('jump111a1999Btn').addEventListener('click',function(){jumpTo111();S.plagueAge=9999;saveGame();render();});$('jump121Btn').addEventListener('click',jumpTo121);$('jump155Btn').addEventListener('click',jumpTo155);$('jump133Btn')&&$('jump133Btn').addEventListener('click',jumpTo133);$('jumpGraniBtn')&&$('jumpGraniBtn').addEventListener('click',jumpToGrani);$('jumpTimeBtn')&&$('jumpTimeBtn').addEventListener('click',jumpToTime);$('jumpAbsBtn')&&$('jumpAbsBtn').addEventListener('click',jumpToAbsolute);$('testAbsBannerBtn')&&$('testAbsBannerBtn').addEventListener('click',showAbsTierSplash);$('jump291Btn').addEventListener('click',function(){jumpTo29(1);});$('jump292Btn').addEventListener('click',function(){jumpTo29(2);});$('jump293Btn').addEventListener('click',function(){jumpTo29(3);});
   $('jump21Btn').addEventListener('click',jumpTo21);
+  function jumpTo62(){
+    stopInfection();endBonfire();stopBlackDeath();
+    S.enemyLevel=30; // 6-2
+    S.fingers=5e7;
+    S.eyes=20000;S.brains=20000;S.legs=20000;S.liver=20000;S.hearts=20000;
+    S.viralUnlocked=true;S.viralDurLevel=9;S.viralProbLevel=9;S.oe=20;S.og=20;
+    S.dmgLevel=110;S.hpTier=28;S.playerMaxHp=1e8;
+    S.enemyHp=enemyMaxHp();S.playerHp=maxHp();speedMult=1;
+    render();updateButton();updateSpeedButtons();
+  }
+  {const _b62=$('jump62Btn');if(_b62)_b62.addEventListener('click',jumpTo62);}
+  function jumpTo61(){
+    stopInfection();endBonfire();stopBlackDeath();
+    S.enemyLevel=29; // 6-1
+    S.fingers=5e7;
+    S.eyes=40000000;S.brains=40000000;S.legs=40000000;S.liver=40000000;S.hearts=40000000;
+    S.mat=50000;bumpMatFlags();
+    S.viralUnlocked=true;S.viralDurLevel=9;S.viralProbLevel=9;S.oe=20;S.og=20;
+    S.dmgLevel=110;S.hpTier=28;S.playerMaxHp=1e8;
+    S.enemyHp=enemyMaxHp();S.playerHp=maxHp();speedMult=1;
+    saveGame();render();updateButton();updateSpeedButtons();
+  }
+  {const _b61=$('jump61Btn');if(_b61)_b61.addEventListener('click',jumpTo61);}
   function resetToStart(){
     fullReset();
     S.enemyHp=enemyMaxHp();S.playerHp=maxHp();
