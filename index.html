@@ -1022,6 +1022,15 @@
   /* ==== НАЧАТЬ ЗАНОВО ==== */
   #restartModal{z-index:500}
   .stats-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .sky-spark{--sc:#5fe07a;position:fixed;left:0;top:0;width:34px;height:34px;padding:0;
+    border:none;background:transparent;cursor:pointer;line-height:0;z-index:9999;
+    filter:drop-shadow(0 0 6px rgba(95,224,122,.85)) drop-shadow(0 0 16px rgba(95,224,122,.45))}
+  /* вращение вокруг своей оси, плоское — не переворот в 3D */
+  .sky-spark svg{width:34px;height:34px;display:block;transform-origin:50% 50%;
+    animation:skySpin 3.5s linear infinite}
+  .sky-spark .gd-count{position:absolute;right:-4px;bottom:-4px;font-family:var(--arcade);
+    font-size:9px;color:#eaffea;text-shadow:1px 1px 0 #000,0 0 6px rgba(0,0,0,.9);line-height:1}
+  @keyframes skySpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
   .music-modal{border-color:#4a5f28}
   .mus-list{display:flex;flex-direction:column;gap:10px}
   .mus-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;cursor:pointer;
@@ -2607,7 +2616,10 @@ body.hd #diamondModal .daily-wait + .shop-sec{
         if (!soundAllowed() || sNoise) return;
         killTail();
         try {
-          if (!sAC) sAC = new (window.AudioContext || window.webkitAudioContext)();
+          // один контекст на всю игру: шум удержания идёт в ту же шину эффектов,
+          // поэтому лимитер его учитывает, а музыка под него ныряет
+          if (!sAC) sAC = (window.__yaAudio && window.__yaAudio.ctx()) ||
+                          new (window.AudioContext || window.webkitAudioContext)();
           if (sAC.state === 'suspended') sAC.resume();
           var len = Math.floor(sAC.sampleRate * 2), buf = sAC.createBuffer(1, len, sAC.sampleRate);
           var d = buf.getChannelData(0), last = 0;
@@ -2619,11 +2631,15 @@ body.hd #diamondModal .daily-wait + .shop-sec{
           sFilt = sAC.createBiquadFilter(); sFilt.type = 'lowpass';
           sFilt.frequency.value = 320; sFilt.Q.value = 0.7;
           sGain = sAC.createGain(); sGain.gain.value = 0.0001;
-          sNoise.connect(sFilt); sFilt.connect(sGain); sGain.connect(sAC.destination);
+          var out = sAC.destination;
+          try { if (window.__yaAudio) { var b = window.__yaAudio.bus(); if (b) out = b; } } catch (e) {}
+          sNoise.connect(sFilt); sFilt.connect(sGain); sGain.connect(out);
           sNoise.start();
         } catch (e) { sNoise = null; }
       }
       function spreadSndLevel(p, heldMs) {
+        // шум удержания звучит непрерывно — держим музыку пригнутой всё это время
+        try { if (window.__yaAudio && window.__yaAudio.duck) window.__yaAudio.duck(); } catch (e) {}
         if (!sAC || !sGain) return;
         var k = 1;                                  // спад после 6 секунд
         if (heldMs > QUIET_AT) {
@@ -3627,7 +3643,7 @@ body.hd #diamondModal .daily-wait + .shop-sec{
     'Марс':'Mars','Юпитер':'Jupiter','Сатурн':'Saturn','Солнце':'Sun','Уран':'Uranus','Нептун':'Neptune','Венера':'Venus','Меркурий':'Mercury',
     'ЗАРАЖАТЬ':'INFECT','РАСПРОСТРАНЯТЬ':'SPREAD','Начать заражение':'Start infection','Заражать массово':'Mass infect',
     'идёт заражение':'infecting…','ИДЁТ ЗАРАЖЕНИЕ':'INFECTING','ИСЦЕЛЕНИЕ':'CLEANSED','ЗАРАЖЕНЫ':'INFECTED','КОЛОНИЯ':'COLONY',
-    'ДЕЛЕНИЕ':'DIVIDE','🔒 нужен талант «ДРОП СЕРДЕЦ»':'🔒 need "HEART DROP" talent','БАКТЕРИИ':'BACTERIA','Лечение:':'Healing:','вернуть':'undo','не активен':'inactive','макс':'max','/сек':'/sec','сек':'sec','шанс':'chance','к заражению':'to infection','раз в сутки':'once a day','×5 ВКЛ':'×5 ON','🖥 Десктоп':'🖥 Desktop','📱 Телефон':'📱 Phone','🖥 авто':'🖥 auto','🎬 Заставка':'🎬 Intro','🌍 Баннер10':'🌍 Banner10','×5 скорость':'×5 speed','🧫 ОЧАГ':'🧫 OUTBREAK','☣ ПАНДЕМИЯ':'☣ PANDEMIC','🐀 КРЫСЫ':'🐀 RATS','🦟 БЛОХИ':'🦟 FLEAS','☠ ЧЁРНАЯ СМЕРТЬ':'☠ BLACK DEATH','смертность':'mortality','очаг':'outbreak','лечение ×':'heal ×','заражения':'infection','на':'on','✓ куплено':'✓ owned','✓ доступно':'✓ available','✓ доступно (4-1)':'✓ available (4-1)','✓ доступно (2-1)':'✓ available (2-1)','✓ доступно (6-2)':'✓ available (6-2)','🔒 нужен 4-1 уровень':'🔒 need tier 4-1','🔒 нужен 2-1 уровень':'🔒 need tier 2-1','🔒 нужен 6-2 уровень':'🔒 need tier 6-2','🔒 нужен разблокированный Мор':'🔒 need Plague unlocked','🔒 нужна матёрость 1M':'🔒 need potency 1M','🔒 нужен 7-2 уровень':'🔒 need tier 7-2','🔒 нужно 500k глаз':'🔒 need 500k eyes','🔒 нужна матёрость 200k':'🔒 need potency 200k','🔒 нужен 6-3 уровень':'🔒 need tier 6-3','🔒 нужно 500k сердец':'🔒 need 500k hearts','🔒 нужно 100M сердец':'🔒 need 100M hearts','🔒 7-1 для след. ур.':'🔒 7-1 for next lv.','🔒 нужен 7-1':'🔒 need 7-1','СМЕРТНОСТЬ':'MORTALITY','🧪 ОЭ':'🧪 EP','🦴 ОГ':'🦴 RP','версия 2.5':'version 2.5','ДРОП ПЕЧЕНИ ×10':'LIVER DROP ×10','❤️ ДРОП СЕРДЕЦ':'❤️ HEART DROP','после исцеления остаётся':'after cleansing remains','10% колонии':'10% of colony','режим бешеного заражения — 15% шанс, +50% урона за тик':'rabid infection — 15% chance, +50% damage per tick','в очаге болезни 10% шанс: DoT ×100 урона/сек на 3с, стакается':'in an outbreak 10% chance: DoT ×100 damage/sec for 3s, stacks','при одновременных Очаге, Пандемии, Крысах, Блохах копит тики×макс.тик 5с (10с при 200k), затем удар':'with Outbreak, Pandemic, Rats, Fleas together stores ticks×maxTick 5s (10s at 200k), then strikes','включает «Рост в секунду»: +текущий приход матёрости каждую секунду. Разово.':'enables "Growth/sec": +current potency gain each second. Once.','в крысах ХП +5% каждые 0.1с (можно выше макс.), после −10%/с до макс.;':'in rats HP +5% every 0.1s (can exceed max), then −10%/s to max;','Растёт на +':'Grows by +','за каждый удар заражением (клики, тики, DoT).':'per infection hit (clicks, ticks, DoT).','Твои Чёрные Души:':'Your Black Souls:','1346 ГОД':'YEAR 1346','🧪 Очки Эпидемии':'🧪 Epidemic Points','🦴 Очки Гниения':'🦴 Rot Points','+0.2 к базовой цифре заражения (разово)':'+0.2 to base infection (once)','в пандемии 10% на крыс: +100%/сек к урону по врагу на 5с':'in a pandemic 10% for rats: +100%/sec to enemy for 5s','разово, ×10 к дропу':'once, ×10 to drop','🧪 2 Очка Эпидемии':'🧪 2 Epidemic Points','🧪 1 Очко Эпидемии':'🧪 1 Epidemic Point','🧪 5 Очков Эпидемии':'🧪 5 Epidemic Points','🧪 10 Очков Эпидемии':'🧪 10 Epidemic Points','🦴 2 Очка Гниения':'🦴 2 Rot Points','🦴 1 Очко Гниения':'🦴 1 Rot Point','❤️ 100M сердец':'❤️ 100M hearts','👁 500k глаз':'👁 500k eyes','множится поверх остальных усилений':'stacks on top of other boosts','меньше урона от лечения':'less damage from healing','быстрее перезарядка деления · макс 3':'faster division cooldown · max 3','куплено':'bought','сейчас':'now','умножает весь падающий дроп на ×2 (многоразово) · сейчас':'multiplies all loot ×2 (repeatable) · now','+30% сопротивления лечению':'+30% heal resistance','вместо 1 бактерии':'instead of 1 bacterium','×10 к падающим сердцам (разово)':'×10 to dropping hearts (once)','с 6-2 Деление → Мор: урон растёт каждую секунду (до +1000% за 10с; кулдаун-таланты делают короче). Разово.':'from 6-2 Division → Plague: damage grows each second (up to +1000% over 10s; cooldown talents shorten it). Once.','после исцеления колония делится ×2/сек в течение 5 секунд':'after cleansing the colony splits ×2/sec for 5 seconds','Мор съедает на 70% меньше матёрости. Разово.':'Plague eats 70% less potency. Once.','множит весь прирост матёрости +10% за уровень · сейчас':'boosts all potency gain +10% per level · now','заражение +10% за уровень · сейчас ×':'infection +10% per level · now ×','весь дроп +10% за уровень · сейчас ×':'all drops +10% per level · now ×','+10% к росту матёрости в секунду (7 ур.) · сейчас':'+10% potency/sec growth (7 lv.) · now','При Исцелении матёрость падает до':'On Cleansing potency drops to','Рост в сек при заражении:':'Growth/sec while infecting:','ВСЯ ЗЕМЛЯ':'THE EARTH','ЗАРАЖЕНА!':'INFECTED!','ПРОДОЛЖИТЬ':'CONTINUE','Все права защищены':'All rights reserved','КЛАДБИЩЕ: 30 мин':'GRAVEYARD: 30 min','ДУШИ':'SOULS','Получение Душ':'Getting Souls','играет':'now playing','Соберите души!':'Collect your souls!','Космическое заражение: заразить':'Space infection: infect','и получить':'to earn','Тотальный Напор: 1 чёрных душ за':'Total Surge: 1 black soul per','ударов':'hits','Забрать':'Claim','душ':'souls','Чем умнее тем взрослее':'The smarter, the older','Чумная лаборатория':'Plague Laboratory','ОТКРОЕТСЯ НА УРАНЕ':'UNLOCKS AT URANUS','Скормить Чуме':'Feed the Plague','Мастерство':'Mastery','таланты эпидемии обновились':'epidemic talents updated','МАСТЕРСТВО ЧУМЫ':'PLAGUE MASTERY','+10% к общей цифре мастерства за уровень · сейчас ×':'+10% to total mastery per level · now ×','Вспышка Мора':'Plague Flash','Мор больше не требует матёрости':'Plague no longer requires potency','Талант Чёрная Смерть':'Black Death Talent','Звезда':'Star','Опасность для звёзд':'Danger to stars','Колония:':'Colony:','Мультивселенная':'Multiverse','Грани Гравитации':'Edge of Gravity','Грани Времени':'Edge of Time','Грани Бесконечности':'Edge of Infinity','Абсолют':'Absolute','Чума получила Божественную Частицу. Ничего больше нет, жизнь теперь это ЯЧУМА!':'The Plague obtained the Divine Particle. Nothing else remains, life is now I, PLAGUE!','То ли жизнь, то ли смерть, то ли СОН...':'Maybe life, maybe death, maybe a DREAM...','КОНЕЦ':'THE END','ВСЕЛЕННАЯ':'UNIVERSE','Дальше':'Next','ПОЗДРАВЛЯЕМ!':'CONGRATULATIONS!','ЯЧУМА пройдена!':'I, PLAGUE completed!','Ура!':'Hooray!','ВСЯ':'THE WHOLE','должна быть заражена...':'must be infected...','ВСЕ ЗВЁЗДЫ':'ALL STARS','ЗАРАЖЕНЫ!':'INFECTED!','Чума расползается по всей галактике!':'The Plague spreads across the whole galaxy!','схемы':'recipes','Схемы':'Recipes','нет схем':'no recipes','Максимум:':'Maximum:','Молодая Чума и матёрая':'Young and Seasoned Plague','Матёрость растёт в 2 раза быстрее. Каждый миллиард матёрости — заражение +10%':'Potency grows 2x faster. Each billion of potency — infection +10%','Млечный Путь':'Milky Way','Вселенная':'Universe','Андромеда':'Andromeda','Водоворот M51':'Whirlpool M51','Галактика':'Galaxy','Сириус':'Sirius','Альдебаран':'Aldebaran','Антарес':'Antares','Арктур':'Arcturus','Спика':'Spica','Проксима Центавра':'Proxima Centauri','Полярная':'Polaris','Ригель':'Rigel','Бетельгейзе':'Betelgeuse','Вега':'Vega','Охота на звёзды!':'Hunt for the Stars!','Солнечная система заражена. Впереди — звёзды.':'The Solar System is infected. The stars lie ahead.','⭐ Баннер11':'⭐ Banner11','нужен 11-1 уровень':'need tier 11-1','нужен 8-1 уровень':'need tier 8-1','🔒 нужен 7-1 уровень':'🔒 need tier 7-1','Очаг болезни работает фоном':'Disease Outbreak runs in the background','Поверни телефон':'Rotate your phone','вертикально':'vertically','Покоритель звёзд':'Conqueror of Stars','После МОРА может выпасть ещё одна искра звёзд':'After the Plague, another star spark may drop','достигнут лимит':'limit reached','к возрасту чумы за клик':'to plague age per click','сила искр':'spark power','Шанс при клике':'Click chance','Сила заражения':'Infection power','к мастерству':'to mastery','к уменьшению таймера тотального деления':'to total division timer reduction','к дропу органов':'to organ drop','к лимиту Ног':'to legs limit','к лимиту Глаз':'to eyes limit','к лимиту Мозгов':'to brains limit','к максимуму матёрости':'to potency maximum','дальше матёрость не растёт, текущий максимум':'potency no longer grows, current max','Улучшайте в чумной лаборатории':'Upgrade it in the Plague Laboratory','Злая Бактерия':'Evil Bacteria','Злая бактерия':'Evil Bacteria','Каждое действие может нанести дополнительное заражение. Усиливайте злых бактерий в чумной лаборатории':'Every action can deal additional infection. Strengthen evil bacteria in the Plague Laboratory','шанс 1% на срабатывание · +10% к заражению':'1% proc chance · +10% to infection','Фатальность':'Fatality','Фатальность Вселенной':'Universe Fatality','Точка заражения, во Вселенной идут отзвуки Чумного воздействия, но Звезды уже почувствовали заразу':'Point of infection — echoes of the Plague ripple through the Universe, and the Stars have already sensed the contagion','Гниль звезд разрастается':'The rot of stars spreads','Гниль звёзд разрастается. Заражение +1% за каждую 1000 лет возраста чумы, пока чума грызёт космический объект':'The rot of stars spreads. Infection +1% per 1000 years of plague age while the plague gnaws a cosmic object','Звезды не держат заразу ЧУМА РАСТЕТ уже и ГАЛАКТИКИ бьют тревогу!':'The stars cannot hold the contagion — the PLAGUE is spreading and even the GALAXIES sound the alarm!','Стражи Вселенной, галактики, возможно они Чуму и остановят. Заражение всех галактик откроет путь к заражению всей ВСЕЛЕННОЙ!':'Guardians of the Universe — the galaxies. Perhaps they will stop the Plague. Infecting every galaxy will open the path to infecting the entire UNIVERSE!','Чума опасна для звёзд, они следят за ней. Заражение +10% за каждую звезду':'Plague is dangerous to stars, they watch it. Infection +10% per star','+1 к эффекту каждые 1000 лет возраста':'+1 to effect every 1000 years of age','ЧЁРНАЯ СМЕРТЬ':'BLACK DEATH','к базовой цифре заражения (разово)':'to base infection figure (once)','взрывное деление бактерий!':'explosive bacteria division!','ЭХО':'ECHO','уже получено':'already obtained','Улучшить %':'Upgrade %','Закрыть':'Close','Усиления:':'Buffs:','Уникальные способности:':'Unique abilities:','Дроп органов:':'Organ drop:','Умения:':'Skills:','к заражению':'to infection','Купить искру':'Buy spark','зелёный':'green','синий':'blue','фиолетовый':'purple','золотой':'gold','красный':'red','белый':'white','чёрный':'black','ГНИЕНИЕ МИРОВ':'WORLD ROT','ЧБ':'◆','Шанс от Мора':'Plague drop','Шанс':'Chance','к росту возраста за клик':'to age growth per click','к основе роста возраста за клик':'to base age growth per click','Чумная воля':'Plague Will','Сила Мора':'Power of Plague','Если чума уже на Уране, то каждый удачный МОР даст возможность матёрым бактериям найти <span class="ab-g">Искру Звёзд</span>. Поспеши её собрать!':'If the plague is already on Uranus, every successful Plague lets seasoned bacteria find a <span class="ab-g">Star Spark</span>. Hurry to collect it!','Мор наносит заражение в 2 раза быстрее':'Plague deals infection twice as fast','Клик ускоряет откат тотального деления':'Click speeds up total division cooldown','Пригласить друга':'Invite a friend','за каждого':'each','Забрать 5 чёрных душ':'Claim 5 Black Souls','Забрано. Следующая через':'Claimed. Next in','ЯЧУМА':'I, PLAGUE','Чингисхан':'Genghis Khan','ИГРАТЬ':'PLAY','Если бы вы не совершали великих грехов, Бог не послал бы на вас такого наказания, как я!':'If you had not committed great sins, God would not have sent a punishment like me upon you!','Чума покорила планету. Впереди — космос.':'The plague conquered the planet. Space awaits.','За каждый заражённый объект в космосе получаете чёрные души!':'Every space object you infect earns you black souls!','НАЧАТЬ':'START','чума пробуждается…':'the plague awakens…','Бонус':'Bonus','СМЕРТНОСТЬ':'MORTALITY','🔒 нужна матёрость 50000':'🔒 need potency 50000','макс. тик:':'max tick:','раз в час':'once an hour','МОР':'PLAGUE','РОСТ':'GROW','МАКС':'MAX','готово':'ready','за время':'by time','ДРОП СЕРДЕЦ +10%':'HEART DROP +10%','УЗЕЛ 50K +10%':'NODE 50K +10%','ЗАРАЖЕНИЕ':'INFECTION','ШАНС СМЕРТНОСТИ +1%':'MORTALITY CHANCE +1%','СИЛА СМЕРТНОСТИ +1':'MORTALITY POWER +1','ОТКРЫТЬ ОЧАГ БОЛЕЗНИ':'UNLOCK OUTBREAK','ВРЕМЯ ОЧАГА +0.2с':'OUTBREAK TIME +0.2s','ШАНС ОЧАГА +2%':'OUTBREAK CHANCE +2%','ОТКРЫТЬ ПАНДЕМИЮ':'UNLOCK PANDEMIC','УРОН ПАНДЕМИИ +':'PANDEMIC DAMAGE +','ВРЕМЯ ПАНДЕМИИ +0.25с':'PANDEMIC TIME +0.25s','ТОТАЛЬНОЕ ДЕЛЕНИЕ':'TOTAL DIVISION','Матёрые бактерии:':'Seasoned bacteria:','Деление в Море:':'Division in Plague:','След:':'Next:','бактерий → деление':'bacteria → division','Поднять уровень':'Level up','/тик':'/tick','Возраст Чумы':'Plague Age','Пора взрослеть!':'Time to grow up!','Каждый клик увеличивает возраст чумы на':'Each click increases plague age by','6 дней':'6 days','дней':'days','усиление взросления +10% за уровень · сейчас ×':'aging boost +10% per level · now ×','Гниение миров':'Rot of Worlds','Усиление взросления при действии на 10%.':'Aging boost per action +10%.','Сейчас':'Now','к взрослению':'to aging','нужен 8-1':'need 8-1','МАКС':'MAX','✓ макс':'✓ max','✓ доступно':'✓ available','и уменьшает таймер Тотального деления на':'and reduces Total Division timer by','1 минуту':'1 minute','минуту':'minute','минут':'minutes','Космический Очаг болезни':'Cosmic Disease Outbreak','Время действия очага':'Outbreak duration','6 секунд':'6 seconds','Больше действий':'More actions','Сжирать и расти':'Devour and grow','Потрошитель космоса':'Space Ripper','Больше бактерий':'More bacteria','к размножению матёрых бактерий Мором':'to Plague reproduction of seasoned bacteria','Максимум глаз 👁, мозгов 🧠 повышен до':'Max 👁 eyes, 🧠 brains raised to','Космические способности':'Cosmic abilities','рост (за клик) +2% за 1Т накопленных ног · сейчас':'growth (per click) +2% per 1T accumulated legs · now','+1 очко гниения за каждые +5 лет чумы (до 305)':'+1 rot point per +5 plague years (up to 305)','+10% взросления (дней за клик) за каждый эклик заражения объектов космоса · сейчас':'+10% aging (days per click) per infection stage of space objects · now','Максимум ног повышен до':'Leg cap raised to','Стоимость повышения заражения':'Infection upgrade cost','шанс появления':'appear chance','очаг стакается до':'outbreak stacks up to','25 стаков':'25 stacks','Возраст чумы:':'Plague Age:','матёрых бактерий':'seasoned bacteria','матёрых':'seasoned','рост':'growth','с':'s','матёрые бактерии':'seasoned bacteria','☠ ЧЁРНАЯ СМЕРТЬ +0.2':'☠ BLACK DEATH +0.2','☣ УСИЛИТЬ ЗАРАЖЕНИЕ +10%':'☣ BOOST INFECTION +10%','🩹 СОПРОТ. ЛЕЧЕНИЮ +10%':'🩹 HEAL RESIST +10%','⏱ ВОССТАНОВЛЕНИЕ ДЕЛЕНИЯ −1с':'⏱ DIVISION COOLDOWN −1s','📦 ВЕСЬ ДРОП ×2':'📦 ALL DROP ×2','👁 ДРОП ГЛАЗ ×10':'👁 EYE DROP ×10','🧠 ДРОП МОЗГОВ ×10':'🧠 BRAIN DROP ×10','🦵 ДРОП НОГ ×10':'🦵 LEG DROP ×10','🫀 ДРОП ПЕЧЕНИ ×10':'🫀 LIVER DROP ×10','🐀 РАЗБЛОКИРОВАТЬ КРЫС':'🐀 UNLOCK RATS','🐀 БЕШЕНЫЕ КРЫСЫ':'🐀 RABID RATS','🧬 ЖИВУЧИЕ ОСОБИ':'🧬 HARDY STRAIN','☠ ЧЁРНАЯ СМЕРТЬ (КАРА)':'☠ BLACK DEATH (WRATH)','💀 АКТИВИРОВАТЬ МОР':'💀 ACTIVATE PLAGUE','❓ обучение':'❓ tutorial','Как играть':'How to play','Подробнее':'More','ОК':'OK','Активируйте Мор в Эпидемии':'Activate the Plague in Epidemic','🧬 СТАРЫЕ ОСОБИ':'🧬 OLD STRAINS','🦠 БУБОННАЯ ЧУМА':'🦠 BUBONIC PLAGUE','🧟 ГНИЛОЙ МОР':'🧟 ROTTEN PLAGUE','◆ РОСТ МАТЁРОСТИ +10%':'◆ POTENCY GROWTH +10%','◆ ЗАРАЗНАЯ ЧУМА +10%':'◆ CONTAGIOUS PLAGUE +10%','◆ ЧУМНАЯ ЖАТВА +10%':'◆ PLAGUE HARVEST +10%','◆ РОСТ/СЕК +10%':'◆ GROWTH/SEC +10%','скрыться':'hide','бактерий':'bacteria','Музыка':'Music','Звуки':'Sounds','ВКЛ':'ON','ВЫКЛ':'OFF','Заражение в сек:':'Infection/sec:','МАГАЗИН':'SHOP','ур.':'lv.','дроп ×5':'drop ×5','ДЕЛЕНИЕ':'DIVIDE'
+    'ДЕЛЕНИЕ':'DIVIDE','🔒 нужен талант «ДРОП СЕРДЕЦ»':'🔒 need "HEART DROP" talent','БАКТЕРИИ':'BACTERIA','Лечение:':'Healing:','вернуть':'undo','не активен':'inactive','макс':'max','/сек':'/sec','сек':'sec','шанс':'chance','к заражению':'to infection','раз в сутки':'once a day','×5 ВКЛ':'×5 ON','🖥 Десктоп':'🖥 Desktop','📱 Телефон':'📱 Phone','🖥 авто':'🖥 auto','🎬 Заставка':'🎬 Intro','🌍 Баннер10':'🌍 Banner10','×5 скорость':'×5 speed','🧫 ОЧАГ':'🧫 OUTBREAK','☣ ПАНДЕМИЯ':'☣ PANDEMIC','🐀 КРЫСЫ':'🐀 RATS','🦟 БЛОХИ':'🦟 FLEAS','☠ ЧЁРНАЯ СМЕРТЬ':'☠ BLACK DEATH','смертность':'mortality','очаг':'outbreak','лечение ×':'heal ×','заражения':'infection','на':'on','✓ куплено':'✓ owned','✓ доступно':'✓ available','✓ доступно (4-1)':'✓ available (4-1)','✓ доступно (2-1)':'✓ available (2-1)','✓ доступно (6-2)':'✓ available (6-2)','🔒 нужен 4-1 уровень':'🔒 need tier 4-1','🔒 нужен 2-1 уровень':'🔒 need tier 2-1','🔒 нужен 6-2 уровень':'🔒 need tier 6-2','🔒 нужен разблокированный Мор':'🔒 need Plague unlocked','🔒 нужна матёрость 1M':'🔒 need potency 1M','🔒 нужен 7-2 уровень':'🔒 need tier 7-2','🔒 нужно 500k глаз':'🔒 need 500k eyes','🔒 нужна матёрость 200k':'🔒 need potency 200k','🔒 нужен 6-3 уровень':'🔒 need tier 6-3','🔒 нужно 500k сердец':'🔒 need 500k hearts','🔒 нужно 100M сердец':'🔒 need 100M hearts','🔒 7-1 для след. ур.':'🔒 7-1 for next lv.','🔒 нужен 7-1':'🔒 need 7-1','СМЕРТНОСТЬ':'MORTALITY','🧪 ОЭ':'🧪 EP','🦴 ОГ':'🦴 RP','версия 2.5':'version 2.5','ДРОП ПЕЧЕНИ ×10':'LIVER DROP ×10','❤️ ДРОП СЕРДЕЦ':'❤️ HEART DROP','после исцеления остаётся':'after cleansing remains','10% колонии':'10% of colony','режим бешеного заражения — 15% шанс, +50% урона за тик':'rabid infection — 15% chance, +50% damage per tick','в очаге болезни 10% шанс: DoT ×100 урона/сек на 3с, стакается':'in an outbreak 10% chance: DoT ×100 damage/sec for 3s, stacks','при одновременных Очаге, Пандемии, Крысах, Блохах копит тики×макс.тик 5с (10с при 200k), затем удар':'with Outbreak, Pandemic, Rats, Fleas together stores ticks×maxTick 5s (10s at 200k), then strikes','включает «Рост в секунду»: +текущий приход матёрости каждую секунду. Разово.':'enables "Growth/sec": +current potency gain each second. Once.','в крысах ХП +5% каждые 0.1с (можно выше макс.), после −10%/с до макс.;':'in rats HP +5% every 0.1s (can exceed max), then −10%/s to max;','Растёт на +':'Grows by +','за каждый удар заражением (клики, тики, DoT).':'per infection hit (clicks, ticks, DoT).','Твои Чёрные Души:':'Your Black Souls:','1346 ГОД':'YEAR 1346','🧪 Очки Эпидемии':'🧪 Epidemic Points','🦴 Очки Гниения':'🦴 Rot Points','+0.2 к базовой цифре заражения (разово)':'+0.2 to base infection (once)','в пандемии 10% на крыс: +100%/сек к урону по врагу на 5с':'in a pandemic 10% for rats: +100%/sec to enemy for 5s','разово, ×10 к дропу':'once, ×10 to drop','🧪 2 Очка Эпидемии':'🧪 2 Epidemic Points','🧪 1 Очко Эпидемии':'🧪 1 Epidemic Point','🧪 5 Очков Эпидемии':'🧪 5 Epidemic Points','🧪 10 Очков Эпидемии':'🧪 10 Epidemic Points','🦴 2 Очка Гниения':'🦴 2 Rot Points','🦴 1 Очко Гниения':'🦴 1 Rot Point','❤️ 100M сердец':'❤️ 100M hearts','👁 500k глаз':'👁 500k eyes','множится поверх остальных усилений':'stacks on top of other boosts','меньше урона от лечения':'less damage from healing','быстрее перезарядка деления · макс 3':'faster division cooldown · max 3','куплено':'bought','сейчас':'now','умножает весь падающий дроп на ×2 (многоразово) · сейчас':'multiplies all loot ×2 (repeatable) · now','+30% сопротивления лечению':'+30% heal resistance','вместо 1 бактерии':'instead of 1 bacterium','×10 к падающим сердцам (разово)':'×10 to dropping hearts (once)','с 6-2 Деление → Мор: урон растёт каждую секунду (до +1000% за 10с; кулдаун-таланты делают короче). Разово.':'from 6-2 Division → Plague: damage grows each second (up to +1000% over 10s; cooldown talents shorten it). Once.','после исцеления колония делится ×2/сек в течение 5 секунд':'after cleansing the colony splits ×2/sec for 5 seconds','Мор съедает на 70% меньше матёрости. Разово.':'Plague eats 70% less potency. Once.','множит весь прирост матёрости +10% за уровень · сейчас':'boosts all potency gain +10% per level · now','заражение +10% за уровень · сейчас ×':'infection +10% per level · now ×','весь дроп +10% за уровень · сейчас ×':'all drops +10% per level · now ×','+10% к росту матёрости в секунду (7 ур.) · сейчас':'+10% potency/sec growth (7 lv.) · now','При Исцелении матёрость падает до':'On Cleansing potency drops to','Рост в сек при заражении:':'Growth/sec while infecting:','ВСЯ ЗЕМЛЯ':'THE EARTH','ЗАРАЖЕНА!':'INFECTED!','ПРОДОЛЖИТЬ':'CONTINUE','Все права защищены':'All rights reserved','КЛАДБИЩЕ: 30 мин':'GRAVEYARD: 30 min','ДУШИ':'SOULS','Получение Душ':'Getting Souls','играет':'now playing','Соберите души!':'Collect your souls!','Космическое заражение: заразить':'Space infection: infect','и получить':'to earn','Тотальный Напор: 1 чёрная душа за':'Total Surge: 1 black soul per','ударов':'hits','Забрать':'Claim','душ':'souls','Чем умнее тем взрослее':'The smarter, the older','Чумная лаборатория':'Plague Laboratory','ОТКРОЕТСЯ НА УРАНЕ':'UNLOCKS AT URANUS','Скормить Чуме':'Feed the Plague','Мастерство':'Mastery','таланты эпидемии обновились':'epidemic talents updated','МАСТЕРСТВО ЧУМЫ':'PLAGUE MASTERY','+10% к общей цифре мастерства за уровень · сейчас ×':'+10% to total mastery per level · now ×','Вспышка Мора':'Plague Flash','Мор больше не требует матёрости':'Plague no longer requires potency','Талант Чёрная Смерть':'Black Death Talent','Звезда':'Star','Опасность для звёзд':'Danger to stars','Колония:':'Colony:','Мультивселенная':'Multiverse','Грани Гравитации':'Edge of Gravity','Грани Времени':'Edge of Time','Грани Бесконечности':'Edge of Infinity','Абсолют':'Absolute','Чума получила Божественную Частицу. Ничего больше нет, жизнь теперь это ЯЧУМА!':'The Plague obtained the Divine Particle. Nothing else remains, life is now I, PLAGUE!','То ли жизнь, то ли смерть, то ли СОН...':'Maybe life, maybe death, maybe a DREAM...','КОНЕЦ':'THE END','ВСЕЛЕННАЯ':'UNIVERSE','Дальше':'Next','ПОЗДРАВЛЯЕМ!':'CONGRATULATIONS!','ЯЧУМА пройдена!':'I, PLAGUE completed!','Ура!':'Hooray!','ВСЯ':'THE WHOLE','должна быть заражена...':'must be infected...','ВСЕ ЗВЁЗДЫ':'ALL STARS','ЗАРАЖЕНЫ!':'INFECTED!','Чума расползается по всей галактике!':'The Plague spreads across the whole galaxy!','схемы':'recipes','Схемы':'Recipes','нет схем':'no recipes','Максимум:':'Maximum:','Молодая Чума и матёрая':'Young and Seasoned Plague','Матёрость растёт в 2 раза быстрее. Каждый миллиард матёрости — заражение +10%':'Potency grows 2x faster. Each billion of potency — infection +10%','Млечный Путь':'Milky Way','Вселенная':'Universe','Андромеда':'Andromeda','Водоворот M51':'Whirlpool M51','Галактика':'Galaxy','Сириус':'Sirius','Альдебаран':'Aldebaran','Антарес':'Antares','Арктур':'Arcturus','Спика':'Spica','Проксима Центавра':'Proxima Centauri','Полярная':'Polaris','Ригель':'Rigel','Бетельгейзе':'Betelgeuse','Вега':'Vega','Охота на звёзды!':'Hunt for the Stars!','Солнечная система заражена. Впереди — звёзды.':'The Solar System is infected. The stars lie ahead.','⭐ Баннер11':'⭐ Banner11','нужен 11-1 уровень':'need tier 11-1','нужен 8-1 уровень':'need tier 8-1','🔒 нужен 7-1 уровень':'🔒 need tier 7-1','Очаг болезни работает фоном':'Disease Outbreak runs in the background','Поверни телефон':'Rotate your phone','вертикально':'vertically','Покоритель звёзд':'Conqueror of Stars','После МОРА может выпасть ещё одна искра звёзд':'After the Plague, another star spark may drop','достигнут лимит':'limit reached','к возрасту чумы за клик':'to plague age per click','сила искр':'spark power','Шанс при клике':'Click chance','Сила заражения':'Infection power','к мастерству':'to mastery','к уменьшению таймера тотального деления':'to total division timer reduction','к дропу органов':'to organ drop','к лимиту Ног':'to legs limit','к лимиту Глаз':'to eyes limit','к лимиту Мозгов':'to brains limit','к максимуму матёрости':'to potency maximum','дальше матёрость не растёт, текущий максимум':'potency no longer grows, current max','Улучшайте в чумной лаборатории':'Upgrade it in the Plague Laboratory','Злая Бактерия':'Evil Bacteria','Злая бактерия':'Evil Bacteria','Каждое действие может нанести дополнительное заражение. Усиливайте злых бактерий в чумной лаборатории':'Every action can deal additional infection. Strengthen evil bacteria in the Plague Laboratory','шанс 1% на срабатывание · +10% к заражению':'1% proc chance · +10% to infection','Фатальность':'Fatality','Фатальность Вселенной':'Universe Fatality','Точка заражения, во Вселенной идут отзвуки Чумного воздействия, но Звезды уже почувствовали заразу':'Point of infection — echoes of the Plague ripple through the Universe, and the Stars have already sensed the contagion','Гниль звезд разрастается':'The rot of stars spreads','Гниль звёзд разрастается. Заражение +1% за каждую 1000 лет возраста чумы, пока чума грызёт космический объект':'The rot of stars spreads. Infection +1% per 1000 years of plague age while the plague gnaws a cosmic object','Звезды не держат заразу ЧУМА РАСТЕТ уже и ГАЛАКТИКИ бьют тревогу!':'The stars cannot hold the contagion — the PLAGUE is spreading and even the GALAXIES sound the alarm!','Стражи Вселенной, галактики, возможно они Чуму и остановят. Заражение всех галактик откроет путь к заражению всей ВСЕЛЕННОЙ!':'Guardians of the Universe — the galaxies. Perhaps they will stop the Plague. Infecting every galaxy will open the path to infecting the entire UNIVERSE!','Чума опасна для звёзд, они следят за ней. Заражение +10% за каждую звезду':'Plague is dangerous to stars, they watch it. Infection +10% per star','+1 к эффекту каждые 1000 лет возраста':'+1 to effect every 1000 years of age','ЧЁРНАЯ СМЕРТЬ':'BLACK DEATH','к базовой цифре заражения (разово)':'to base infection figure (once)','взрывное деление бактерий!':'explosive bacteria division!','ЭХО':'ECHO','уже получено':'already obtained','Улучшить %':'Upgrade %','Закрыть':'Close','Усиления:':'Buffs:','Уникальные способности:':'Unique abilities:','Дроп органов:':'Organ drop:','Умения:':'Skills:','к заражению':'to infection','Купить искру':'Buy spark','зелёный':'green','синий':'blue','фиолетовый':'purple','золотой':'gold','красный':'red','белый':'white','чёрный':'black','ГНИЕНИЕ МИРОВ':'WORLD ROT','ЧБ':'◆','Шанс от Мора':'Plague drop','Шанс':'Chance','к росту возраста за клик':'to age growth per click','к основе роста возраста за клик':'to base age growth per click','Чумная воля':'Plague Will','Сила Мора':'Power of Plague','Если чума уже на Уране, то каждый удачный МОР даст возможность матёрым бактериям найти <span class="ab-g">Искру Звёзд</span>. Поспеши её собрать!':'If the plague is already on Uranus, every successful Plague lets seasoned bacteria find a <span class="ab-g">Star Spark</span>. Hurry to collect it!','Мор наносит заражение в 2 раза быстрее':'Plague deals infection twice as fast','Клик ускоряет откат тотального деления':'Click speeds up total division cooldown','Пригласить друга':'Invite a friend','за каждого':'each','Забрать 5 чёрных душ':'Claim 5 Black Souls','Забрано. Следующая через':'Claimed. Next in','ЯЧУМА':'I, PLAGUE','Чингисхан':'Genghis Khan','ИГРАТЬ':'PLAY','Если бы вы не совершали великих грехов, Бог не послал бы на вас такого наказания, как я!':'If you had not committed great sins, God would not have sent a punishment like me upon you!','Чума покорила планету. Впереди — космос.':'The plague conquered the planet. Space awaits.','За каждый заражённый объект в космосе получаете чёрные души!':'Every space object you infect earns you black souls!','НАЧАТЬ':'START','чума пробуждается…':'the plague awakens…','Бонус':'Bonus','СМЕРТНОСТЬ':'MORTALITY','🔒 нужна матёрость 50000':'🔒 need potency 50000','макс. тик:':'max tick:','раз в час':'once an hour','МОР':'PLAGUE','РОСТ':'GROW','МАКС':'MAX','готово':'ready','за время':'by time','ДРОП СЕРДЕЦ +10%':'HEART DROP +10%','УЗЕЛ 50K +10%':'NODE 50K +10%','ЗАРАЖЕНИЕ':'INFECTION','ШАНС СМЕРТНОСТИ +1%':'MORTALITY CHANCE +1%','СИЛА СМЕРТНОСТИ +1':'MORTALITY POWER +1','ОТКРЫТЬ ОЧАГ БОЛЕЗНИ':'UNLOCK OUTBREAK','ВРЕМЯ ОЧАГА +0.2с':'OUTBREAK TIME +0.2s','ШАНС ОЧАГА +2%':'OUTBREAK CHANCE +2%','ОТКРЫТЬ ПАНДЕМИЮ':'UNLOCK PANDEMIC','УРОН ПАНДЕМИИ +':'PANDEMIC DAMAGE +','ВРЕМЯ ПАНДЕМИИ +0.25с':'PANDEMIC TIME +0.25s','ТОТАЛЬНОЕ ДЕЛЕНИЕ':'TOTAL DIVISION','Матёрые бактерии:':'Seasoned bacteria:','Деление в Море:':'Division in Plague:','След:':'Next:','бактерий → деление':'bacteria → division','Поднять уровень':'Level up','/тик':'/tick','Возраст Чумы':'Plague Age','Пора взрослеть!':'Time to grow up!','Каждый клик увеличивает возраст чумы на':'Each click increases plague age by','6 дней':'6 days','дней':'days','усиление взросления +10% за уровень · сейчас ×':'aging boost +10% per level · now ×','Гниение миров':'Rot of Worlds','Усиление взросления при действии на 10%.':'Aging boost per action +10%.','Сейчас':'Now','к взрослению':'to aging','нужен 8-1':'need 8-1','МАКС':'MAX','✓ макс':'✓ max','✓ доступно':'✓ available','и уменьшает таймер Тотального деления на':'and reduces Total Division timer by','1 минуту':'1 minute','минуту':'minute','минут':'minutes','Космический Очаг болезни':'Cosmic Disease Outbreak','Время действия очага':'Outbreak duration','6 секунд':'6 seconds','Больше действий':'More actions','Сжирать и расти':'Devour and grow','Потрошитель космоса':'Space Ripper','Больше бактерий':'More bacteria','к размножению матёрых бактерий Мором':'to Plague reproduction of seasoned bacteria','Максимум глаз 👁, мозгов 🧠 повышен до':'Max 👁 eyes, 🧠 brains raised to','Космические способности':'Cosmic abilities','рост (за клик) +2% за 1Т накопленных ног · сейчас':'growth (per click) +2% per 1T accumulated legs · now','+1 очко гниения за каждые +5 лет чумы (до 305)':'+1 rot point per +5 plague years (up to 305)','+10% взросления (дней за клик) за каждый эклик заражения объектов космоса · сейчас':'+10% aging (days per click) per infection stage of space objects · now','Максимум ног повышен до':'Leg cap raised to','Стоимость повышения заражения':'Infection upgrade cost','шанс появления':'appear chance','очаг стакается до':'outbreak stacks up to','25 стаков':'25 stacks','Возраст чумы:':'Plague Age:','матёрых бактерий':'seasoned bacteria','матёрых':'seasoned','рост':'growth','с':'s','матёрые бактерии':'seasoned bacteria','☠ ЧЁРНАЯ СМЕРТЬ +0.2':'☠ BLACK DEATH +0.2','☣ УСИЛИТЬ ЗАРАЖЕНИЕ +10%':'☣ BOOST INFECTION +10%','🩹 СОПРОТ. ЛЕЧЕНИЮ +10%':'🩹 HEAL RESIST +10%','⏱ ВОССТАНОВЛЕНИЕ ДЕЛЕНИЯ −1с':'⏱ DIVISION COOLDOWN −1s','📦 ВЕСЬ ДРОП ×2':'📦 ALL DROP ×2','👁 ДРОП ГЛАЗ ×10':'👁 EYE DROP ×10','🧠 ДРОП МОЗГОВ ×10':'🧠 BRAIN DROP ×10','🦵 ДРОП НОГ ×10':'🦵 LEG DROP ×10','🫀 ДРОП ПЕЧЕНИ ×10':'🫀 LIVER DROP ×10','🐀 РАЗБЛОКИРОВАТЬ КРЫС':'🐀 UNLOCK RATS','🐀 БЕШЕНЫЕ КРЫСЫ':'🐀 RABID RATS','🧬 ЖИВУЧИЕ ОСОБИ':'🧬 HARDY STRAIN','☠ ЧЁРНАЯ СМЕРТЬ (КАРА)':'☠ BLACK DEATH (WRATH)','💀 АКТИВИРОВАТЬ МОР':'💀 ACTIVATE PLAGUE','❓ обучение':'❓ tutorial','Как играть':'How to play','Подробнее':'More','ОК':'OK','Активируйте Мор в Эпидемии':'Activate the Plague in Epidemic','🧬 СТАРЫЕ ОСОБИ':'🧬 OLD STRAINS','🦠 БУБОННАЯ ЧУМА':'🦠 BUBONIC PLAGUE','🧟 ГНИЛОЙ МОР':'🧟 ROTTEN PLAGUE','◆ РОСТ МАТЁРОСТИ +10%':'◆ POTENCY GROWTH +10%','◆ ЗАРАЗНАЯ ЧУМА +10%':'◆ CONTAGIOUS PLAGUE +10%','◆ ЧУМНАЯ ЖАТВА +10%':'◆ PLAGUE HARVEST +10%','◆ РОСТ/СЕК +10%':'◆ GROWTH/SEC +10%','скрыться':'hide','бактерий':'bacteria','Музыка':'Music','Звуки':'Sounds','ВКЛ':'ON','ВЫКЛ':'OFF','Заражение в сек:':'Infection/sec:','МАГАЗИН':'SHOP','ур.':'lv.','дроп ×5':'drop ×5','ДЕЛЕНИЕ':'DIVIDE'
   }};
   const GUIDE_EN=`<b class="guide-title">I, PLAGUE — how to infect the universe!?</b><div class="guide-parts"><button id="guidePartBtn1" class="gpart">part one</button><button id="guidePartBtn2" class="gpart">part two</button></div><div id="guidePart1" style="display:none">
     <div class="gh">Part 1 · Getting started</div>
@@ -3804,6 +3820,69 @@ body.hd #diamondModal .daily-wait + .shop-sec{
   function updateDailyCountdown(){var cd=$('dailyCountdown');if(!cd)return;if(dailyAvailable()){renderDaily();return;}var ms=nextResetUTC()-Date.now();if(ms<=0){if(hasBackend()){S._dailyAvail=true;serverSync();}renderDaily();return;}var h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),sc=Math.floor(ms%60000/1000);cd.textContent=('0'+h).slice(-2)+':'+('0'+m).slice(-2)+':'+('0'+sc).slice(-2);}
   async function claimDaily(){var btn=$('dailyBtn');if(!btn||btn.disabled||!dailyAvailable())return;btn.disabled=true;if(false){try{var res=await api('daily-claim',{});if(res&&res.ok){S.diamonds=res.diamonds;S._dailyAvail=false;}else{btn.disabled=false;return;}}catch(e){btn.disabled=false;return;}}else{S.diamonds=(S.diamonds||0)+5;S.dailyLastClaim=String(Date.now());}saveGame();var db=$('diamondBal');if(db)db.textContent=fmtChb(S.diamonds||0);renderDaily();updateDailyCountdown();render();}
   setInterval(updateDailyCountdown,1000);
+  // ---- зелёная искра, пролетающая через экран ----
+  var SPARK_SPEED=30;                 // пикселей в секунду
+  var SPARK_MIN=60000, SPARK_MAX=300000;   // пауза между вылетами, мс
+  var SPARK_QTY_MIN=2, SPARK_QTY_MAX=5;
+  var _sparkEl=null,_sparkRAF=null;
+  function sparkRing(){
+    var w=innerWidth,h=innerHeight;
+    return {cx:w/2, cy:h/2, r:Math.sqrt(w*w+h*h)/2+50};
+  }
+  function spawnSpark(){
+    if(_sparkEl)return;                       // одна за раз
+    var R=sparkRing();
+    var a0=Math.random()*Math.PI*2;
+    // уходит примерно в противоположную сторону, но не строго через центр
+    var a1=a0+Math.PI+(Math.random()-0.5)*1.2;
+    var x0=R.cx+Math.cos(a0)*R.r, y0=R.cy+Math.sin(a0)*R.r;
+    var x1=R.cx+Math.cos(a1)*R.r, y1=R.cy+Math.sin(a1)*R.r;
+    var dx=x1-x0, dy=y1-y0, dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<10)return;
+    var dur=dist/SPARK_SPEED*1000;
+    var qty=SPARK_QTY_MIN+Math.floor(Math.random()*(SPARK_QTY_MAX-SPARK_QTY_MIN+1));
+    var el=document.createElement('button');
+    el.className='sky-spark';
+    el.setAttribute('aria-label','Искра звезды');
+    el.dataset.qty=qty;
+    el.innerHTML=shardSVG()+'<span class="gd-count">'+qty+'</span>';
+    el.style.transform='translate('+x0+'px,'+y0+'px)';
+    el.addEventListener('click',catchSpark);
+    document.body.appendChild(el);
+    _sparkEl=el;
+    var t0=performance.now();
+    var step=function(now){
+      if(_sparkEl!==el){return;}
+      var k=(now-t0)/dur;
+      if(k>=1){killSpark();return;}
+      el.style.transform='translate('+(x0+dx*k-17)+'px,'+(y0+dy*k-17)+'px)';
+      _sparkRAF=requestAnimationFrame(step);
+    };
+    _sparkRAF=requestAnimationFrame(step);
+  }
+  function killSpark(){
+    if(_sparkRAF){cancelAnimationFrame(_sparkRAF);_sparkRAF=null;}
+    if(_sparkEl){try{_sparkEl.remove();}catch(e){}_sparkEl=null;}
+  }
+  function catchSpark(e){
+    if(e)e.stopPropagation();
+    if(!_sparkEl)return;
+    var n=parseInt(_sparkEl.dataset.qty)||1;
+    if(!S.shards)S.shards={};
+    S.shards.green=(S.shards.green||0)+n;
+    try{playShardPickup();}catch(_){}
+    killSpark();
+    saveGame();
+    if(typeof renderLab==='function')try{renderLab();}catch(_){}
+  }
+  function sparkLoop(){
+    setTimeout(function(){
+      try{spawnSpark();}catch(e){}
+      sparkLoop();
+    },SPARK_MIN+Math.random()*(SPARK_MAX-SPARK_MIN));
+  }
+  sparkLoop();
+  try{window.__spawnSpark=spawnSpark;}catch(e){}
   // космос начинается с Марс 8-1 — это enemyLevel 43
   var SPACE_LVL0=43, SPACE_PAY=5, _spaceBound=false;
   function spaceInfoAt(lvl){
@@ -3840,7 +3919,7 @@ body.hd #diamondModal .daily-wait + .shop-sec{
     btn.disabled=(n<=0);btn.classList.toggle('poor',n<=0);
   }
   function spaceCheck(){renderSpace();}
-  var NAP_STEP=10000, NAP_MAX=10, _napBound=false;
+  var NAP_STEP=1000, NAP_MAX=10, _napBound=false;
   var _nel=function(id){return document.getElementById(id);};
   function napReady(){return Math.min(NAP_MAX,Math.floor((S.napProg||0)/NAP_STEP));}
   function napLeft(){return NAP_STEP-((S.napProg||0)%NAP_STEP);}
@@ -3850,7 +3929,7 @@ body.hd #diamondModal .daily-wait + .shop-sec{
     if(!sec||!btn||!txt)return;
     if(!_napBound){_napBound=true;btn.addEventListener('click',claimNap);}
     var n=napReady();
-    sec.textContent=(n>=NAP_MAX)?L('Соберите души!'):(L('Тотальный Напор: 1 чёрных душ за')+' '+napFmt(napLeft())+' '+L('ударов'));
+    sec.textContent=(n>=NAP_MAX)?L('Соберите души!'):(L('Тотальный Напор: 1 чёрная душа за')+' '+napFmt(napLeft())+' '+L('ударов'));
     txt.textContent=L('Забрать')+' '+n+' '+L('душ');
     btn.disabled=(n<=0);btn.classList.toggle('poor',n<=0);
   }
@@ -4491,7 +4570,7 @@ body.hd #diamondModal .daily-wait + .shop-sec{
   function showStarSplash(){const el=$('splashStar');if(!el)return;el.classList.add('show');}
   function showGalaxySplash(){const el=$('splashGalaxy');if(!el)return;el.classList.add('show');}
   function showUniverseSplash(){const el=$('splashUniverse');if(!el)return;el.classList.add('show');}function showAbsTierSplash(){var el=$('splashAbsTier');if(!el)return;var b=$('absTierBac');if(b)b.innerHTML=bacteriaBlackSVG();el.classList.add('show');}
-  function playHeal(){var a=AC();if(!a)return;if(a.state==='suspended')a.resume();var t=a.currentTime;var notes=[523.25,659.25,783.99,1046.5];for(var i=0;i<notes.length;i++){(function(fq,st){var o=a.createOscillator();o.type='sine';o.frequency.value=fq;var g=a.createGain();g.gain.setValueAtTime(0,t+st);g.gain.linearRampToValueAtTime(0.13,t+st+0.04);g.gain.exponentialRampToValueAtTime(0.001,t+st+0.9);o.connect(g);g.connect(a.destination);o.start(t+st);o.stop(t+st+0.95);})(notes[i],i*0.12);}}function showAbsoluteSplash(){var el=$('splashAbsolute');if(!el)return;var h=$('absHeir');if(h)h.innerHTML=heirGreenSVG();var sub=$('absSub');if(sub)sub.innerHTML=L('Мне мало Вселенной. Заражение пойдёт дальше сквозь')+' <b>'+L('Грани Гравитации')+'</b>, <b>'+L('Грани Времени')+'</b>, <b>'+L('Грани Бесконечности')+'</b>. '+L('Наша цель — заразить весь')+' <b>'+L('АБСОЛЮТ')+'</b>!';el.classList.add('show');try{playHeal();}catch(e){}}
+  function playHeal(){var a=AC();if(!a)return;if(a.state==='suspended')a.resume();var t=a.currentTime;var notes=[523.25,659.25,783.99,1046.5];for(var i=0;i<notes.length;i++){(function(fq,st){var o=a.createOscillator();o.type='sine';o.frequency.value=fq;var g=a.createGain();g.gain.setValueAtTime(0,t+st);g.gain.linearRampToValueAtTime(0.13,t+st+0.04);g.gain.exponentialRampToValueAtTime(0.001,t+st+0.9);o.connect(g);g.connect(_bus(a));o.start(t+st);o.stop(t+st+0.95);})(notes[i],i*0.12);}}function showAbsoluteSplash(){var el=$('splashAbsolute');if(!el)return;var h=$('absHeir');if(h)h.innerHTML=heirGreenSVG();var sub=$('absSub');if(sub)sub.innerHTML=L('Мне мало Вселенной. Заражение пойдёт дальше сквозь')+' <b>'+L('Грани Гравитации')+'</b>, <b>'+L('Грани Времени')+'</b>, <b>'+L('Грани Бесконечности')+'</b>. '+L('Наша цель — заразить весь')+' <b>'+L('АБСОЛЮТ')+'</b>!';el.classList.add('show');try{playHeal();}catch(e){}}
   function showFinalSplash(){const el=$('splashFinal');if(!el)return;el.classList.add('show');clearTimeout(window._absTimer);window._absTimer=setTimeout(function(){if($('splashFinal')&&$('splashFinal').classList.contains('show')){$('splashFinal').classList.remove('show');showAbsoluteSplash();}},6000);}
   function victory(){if(window._absMode){triggerAbsShatter();return;}over=true;subT=0;secE=0;secP=0;if(false){try{stopInfection();}catch(e){}banner('КОНЕЦ','','win',3200);setTimeout(function(){try{localStorage.removeItem('yachuma_save');}catch(e){}location.reload();},3400);return;}try{playVictory();}catch(e){}try{if(enemyInfo().cat>=10)dropGreenBatch(2+Math.floor(Math.random()*7));}catch(e){}if(S.enemyLevel===231&&!S.gameWon){S.gameWon=true;setTimeout(function(){try{showFinalSplash();}catch(e){}},2200);}endBonfire();stopBlackDeath();stopInfection();banner('ЗАРАЖЕНЫ','','win',2000);render();
     setTimeout(()=>{S.enemyLevel++;const info=enemyInfo();S.oe++;if(info.sub===1&&S.enemyLevel>1)S.og++;S.enemyHp=enemyMaxHp();S.playerHp=Math.min(S.playerHp,maxHp());if(S.enemyLevel===2&&!S.colonyBannerShown){S.colonyBannerShown=true;showColonyBanner();}if(S.enemyLevel===4&&!S.potencyBannerShown){S.potencyBannerShown=true;showPotencyBanner();}if(S.enemyLevel===9&&!S.epidemicBannerShown){S.epidemicBannerShown=true;showEpidemicBanner();}if(S.enemyLevel===19&&!S.heartsBannerShown){S.heartsBannerShown=true;showHeartsBanner();}if(S.enemyLevel===29&&!S.morBannerShown){S.morBannerShown=true;showMorBanner();}if(S.enemyLevel===43)showEarthSplash();if(S.enemyLevel===83)showStarSplash();if(S.enemyLevel===133)showGalaxySplash();if(S.enemyLevel===228)showUniverseSplash();if(S.enemyLevel===356)showAbsTierSplash();render();over=false;},2000);}
@@ -4677,38 +4756,61 @@ body.hd #diamondModal .daily-wait + .shop-sec{
   $('playerAvatar').innerHTML=virusSVG();document.querySelectorAll('.bicon').forEach(function(e){e.innerHTML=bacteriaSVG();});{const ti=$('tdIcon');if(ti)ti.innerHTML=bacteriaBlackSVG();}
   {var _ib0=$('introBug');if(_ib0)_ib0.innerHTML=bacteriaSVG();}
   let _ac;
-  function AC(){if(S.soundOn===false)return null;if(!_ac){try{_ac=new (window.AudioContext||window.webkitAudioContext)();}catch(e){_ac=null;}}return _ac;}
+  // контекст нужен и при выключенных эффектах — его же будит первый жест
+  function ACany(){if(!_ac){try{_ac=new (window.AudioContext||window.webkitAudioContext)();}catch(e){_ac=null;}}return _ac;}
+  function AC(){if(S.soundOn===false)return null;return ACany();}
+  function audioResume(){var a=ACany();if(a&&a.state==='suspended'){try{a.resume();}catch(e){}}}
+
+  var _sfxIn=null,_sfxLim=null;
+  function _bus(a){
+    if(!a)return null;
+    if(!_sfxIn||_sfxIn.context!==a){
+      try{
+        _sfxIn=a.createGain();_sfxIn.gain.value=1;
+        // лимитер: когда эффектов много, они не складываются в перегруз.
+        // Ссылку держим в переменной: без неё Chrome собирает промежуточный
+        // узел сборщиком мусора и цепочка обрывается — звук пропадает.
+        _sfxLim=a.createDynamicsCompressor();
+        _sfxLim.threshold.value=-6;_sfxLim.knee.value=6;_sfxLim.ratio.value=8;
+        _sfxLim.attack.value=0.003;_sfxLim.release.value=0.18;
+        _sfxIn.connect(_sfxLim);_sfxLim.connect(a.destination);
+      }catch(e){_sfxIn=null;_sfxLim=null;return a.destination;}
+    }
+    try{duckMusic();}catch(e){}   // запуск любого эффекта = триггер дакинга
+    return _sfxIn;
+  }
+  try{window.__yaAudio={ctx:ACany,bus:function(){return _bus(ACany());},duck:function(){try{duckMusic();}catch(e){}}};}catch(e){}
   function playClick(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;
     const o=a.createOscillator();o.type='triangle';
     o.frequency.setValueAtTime(200,t);o.frequency.exponentialRampToValueAtTime(120,t+0.03);
     const lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=900;
     const g=a.createGain();g.gain.setValueAtTime(0.26,t);g.gain.exponentialRampToValueAtTime(0.0001,t+0.035);
-    o.connect(lp);lp.connect(g);g.connect(a.destination);o.start(t);o.stop(t+0.04);
+    o.connect(lp);lp.connect(g);g.connect(_bus(a));o.start(t);o.stop(t+0.04);
     const dur=0.006,buf=a.createBuffer(1,Math.max(1,Math.floor(a.sampleRate*dur)),a.sampleRate),d=buf.getChannelData(0);
     for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);
     const src=a.createBufferSource();src.buffer=buf;
     const hp=a.createBiquadFilter();hp.type='highpass';hp.frequency.value=1600;
     const g2=a.createGain();g2.gain.value=0.05;
-    src.connect(hp);hp.connect(g2);g2.connect(a.destination);src.start(t);}
+    src.connect(hp);hp.connect(g2);g2.connect(_bus(a));src.start(t);}
   function playInfect(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;
     const o1=a.createOscillator();o1.type='sine';o1.frequency.setValueAtTime(140,t);o1.frequency.exponentialRampToValueAtTime(90,t+0.3);
     const o2=a.createOscillator();o2.type='sine';o2.frequency.setValueAtTime(142,t);o2.frequency.exponentialRampToValueAtTime(91,t+0.3);
     const lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(380,t);lp.frequency.exponentialRampToValueAtTime(950,t+0.08);lp.frequency.exponentialRampToValueAtTime(280,t+0.32);
     const g=a.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.16,t+0.06);g.gain.exponentialRampToValueAtTime(0.0001,t+0.34);
-    o1.connect(lp);o2.connect(lp);lp.connect(g);g.connect(a.destination);o1.start(t);o2.start(t);o1.stop(t+0.36);o2.stop(t+0.36);
+    o1.connect(lp);o2.connect(lp);lp.connect(g);g.connect(_bus(a));o1.start(t);o2.start(t);o1.stop(t+0.36);o2.stop(t+0.36);
     const dur=0.3,buf=a.createBuffer(1,Math.floor(a.sampleRate*dur),a.sampleRate),d=buf.getChannelData(0);
     for(let i=0;i<d.length;i++){const e=Math.sin(Math.PI*i/d.length);d[i]=(Math.random()*2-1)*e*0.5;}
     const src=a.createBufferSource();src.buffer=buf;
     const bp=a.createBiquadFilter();bp.type='bandpass';bp.frequency.value=520;bp.Q.value=0.8;
     const g2=a.createGain();g2.gain.value=0.05;
-    src.connect(bp);bp.connect(g2);g2.connect(a.destination);src.start(t);}
+    src.connect(bp);bp.connect(g2);g2.connect(_bus(a));src.start(t);}
   document.addEventListener('pointerdown',function(e){const a=AC();if(a&&a.state==='suspended')a.resume();const t=e.target;if(t&&t.closest){if(t.closest('#battleCircle'))return;if(t.closest('button')||t.closest('.logo.emperor')||t.closest('.emp-heir')||t.closest('.emp-heir-ic')||t.closest('.chb-pill'))playClick();}},{passive:true});
   function playDrone(){const a=AC();if(!a)return;const t=a.currentTime;
     const o1=a.createOscillator();o1.type='sawtooth';o1.frequency.value=46;
     const o2=a.createOscillator();o2.type='sine';o2.frequency.value=69;
     const lfo=a.createOscillator();lfo.type='sine';lfo.frequency.value=0.22;const lg=a.createGain();lg.gain.value=7;lfo.connect(lg);lg.connect(o1.frequency);
     const f=a.createBiquadFilter();f.type='lowpass';f.frequency.value=480;
-    const g=a.createGain();g.gain.value=0;o1.connect(f);o2.connect(f);f.connect(g);g.connect(a.destination);
+    const g=a.createGain();g.gain.value=0;o1.connect(f);o2.connect(f);f.connect(g);g.connect(_bus(a));
     o1.start();o2.start();lfo.start();
     g.gain.linearRampToValueAtTime(0.15,t+1.4);g.gain.setValueAtTime(0.15,t+3.8);g.gain.linearRampToValueAtTime(0.0001,t+5.0);
     o1.stop(t+5.1);o2.stop(t+5.1);lfo.stop(t+5.1);}
@@ -4716,33 +4818,33 @@ body.hd #diamondModal .daily-wait + .shop-sec{
     const buf=a.createBuffer(1,Math.floor(a.sampleRate*dur),a.sampleRate),d=buf.getChannelData(0);
     for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2.4);
     const src=a.createBufferSource();src.buffer=buf;const f=a.createBiquadFilter();f.type='lowpass';f.frequency.value=900;const g=a.createGain();g.gain.value=0.55;
-    src.connect(f);f.connect(g);g.connect(a.destination);src.start(t);
-    for(let k=0;k<2;k++){const o=a.createOscillator();o.type='square';o.frequency.value=95-k*24;const gg=a.createGain();gg.gain.value=0;o.connect(gg);gg.connect(a.destination);const tt=t+k*0.07;gg.gain.setValueAtTime(0.28,tt);gg.gain.exponentialRampToValueAtTime(0.001,tt+0.09);o.start(tt);o.stop(tt+0.1);}}
+    src.connect(f);f.connect(g);g.connect(_bus(a));src.start(t);
+    for(let k=0;k<2;k++){const o=a.createOscillator();o.type='square';o.frequency.value=95-k*24;const gg=a.createGain();gg.gain.value=0;o.connect(gg);gg.connect(_bus(a));const tt=t+k*0.07;gg.gain.setValueAtTime(0.28,tt);gg.gain.exponentialRampToValueAtTime(0.001,tt+0.09);o.start(tt);o.stop(tt+0.1);}}
   function whoosh(){const a=AC();if(!a)return;const t=a.currentTime,dur=0.6;
     const buf=a.createBuffer(1,Math.floor(a.sampleRate*dur),a.sampleRate),d=buf.getChannelData(0);
     for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
     const src=a.createBufferSource();src.buffer=buf;const f=a.createBiquadFilter();f.type='bandpass';f.Q.value=0.7;f.frequency.setValueAtTime(300,t);f.frequency.linearRampToValueAtTime(1600,t+dur);
-    const g=a.createGain();g.gain.value=0;src.connect(f);f.connect(g);g.connect(a.destination);
+    const g=a.createGain();g.gain.value=0;src.connect(f);f.connect(g);g.connect(_bus(a));
     g.gain.linearRampToValueAtTime(0.26,t+0.15);g.gain.linearRampToValueAtTime(0.0001,t+dur);src.start(t);}
-  function playVictory(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;var notes=[523.25,659.25,783.99];for(var i=0;i<notes.length;i++){(function(f,st){var o=a.createOscillator();o.type='triangle';o.frequency.value=f;var o2=a.createOscillator();o2.type='sine';o2.frequency.value=f*2;var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;var g=a.createGain();g.gain.setValueAtTime(0.0001,st);g.gain.exponentialRampToValueAtTime(0.098,st+0.03);g.gain.exponentialRampToValueAtTime(0.0001,st+0.5);var g2=a.createGain();g2.gain.value=0.0245;o.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(g);g.connect(a.destination);o.start(st);o2.start(st);o.stop(st+0.55);o2.stop(st+0.55);})(notes[i],t+i*0.09);}}
-  function playCraft(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;var notes=[880,1174.66];for(var i=0;i<notes.length;i++){(function(f,st){var o=a.createOscillator();o.type='sine';o.frequency.value=f;var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=3200;var g=a.createGain();g.gain.setValueAtTime(0.0001,st);g.gain.exponentialRampToValueAtTime(0.12,st+0.01);g.gain.exponentialRampToValueAtTime(0.0001,st+0.4);o.connect(lp);lp.connect(g);g.connect(a.destination);o.start(st);o.stop(st+0.42);})(notes[i],t+i*0.05);}}
-  function playShardPickup(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;var o=a.createOscillator();o.type='sine';o.frequency.setValueAtTime(660,t);o.frequency.exponentialRampToValueAtTime(990,t+0.12);var o2=a.createOscillator();o2.type='triangle';o2.frequency.setValueAtTime(1320,t);o2.frequency.exponentialRampToValueAtTime(1980,t+0.12);var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2800;var g=a.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.12,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.3);var g2=a.createGain();g2.gain.value=0.03;o.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(g);g.connect(a.destination);o.start(t);o2.start(t);o.stop(t+0.32);o2.stop(t+0.32);}
-  function playMor(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;var o=a.createOscillator();o.type='sine';o.frequency.setValueAtTime(98,t);o.frequency.exponentialRampToValueAtTime(147,t+0.5);var o2=a.createOscillator();o2.type='triangle';o2.frequency.setValueAtTime(196,t);o2.frequency.exponentialRampToValueAtTime(294,t+0.5);var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(300,t);lp.frequency.exponentialRampToValueAtTime(700,t+0.4);var g=a.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.15,t+0.12);g.gain.exponentialRampToValueAtTime(0.0001,t+0.65);var g2=a.createGain();g2.gain.value=0.05;o.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(g);g.connect(a.destination);o.start(t);o2.start(t);o.stop(t+0.7);o2.stop(t+0.7);}
-  function playWave(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;var dur=1.3;var buf=a.createBuffer(1,Math.floor(a.sampleRate*dur),a.sampleRate),d=buf.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1;var src=a.createBufferSource();src.buffer=buf;var bp=a.createBiquadFilter();bp.type='bandpass';bp.Q.value=0.5;bp.frequency.setValueAtTime(380,t);bp.frequency.linearRampToValueAtTime(920,t+0.55);bp.frequency.linearRampToValueAtTime(280,t+dur);var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1300;var g=a.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(0.098,t+0.45);g.gain.linearRampToValueAtTime(0.063,t+0.75);g.gain.linearRampToValueAtTime(0.0001,t+dur);src.connect(bp);bp.connect(lp);lp.connect(g);g.connect(a.destination);src.start(t);}
-  function playDefeat(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;var notes=[440,349.23];for(var i=0;i<notes.length;i++){(function(f,st){var o=a.createOscillator();o.type='sine';o.frequency.value=f;var o2=a.createOscillator();o2.type='triangle';o2.frequency.value=f/2;var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1400;var g=a.createGain();g.gain.setValueAtTime(0.0001,st);g.gain.exponentialRampToValueAtTime(0.1,st+0.03);g.gain.exponentialRampToValueAtTime(0.0001,st+0.42);var g2=a.createGain();g2.gain.value=0.028;o.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(g);g.connect(a.destination);o.start(st);o2.start(st);o.stop(st+0.44);o2.stop(st+0.44);})(notes[i],t+i*0.13);}}
+  function playVictory(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;var notes=[523.25,659.25,783.99];for(var i=0;i<notes.length;i++){(function(f,st){var o=a.createOscillator();o.type='triangle';o.frequency.value=f;var o2=a.createOscillator();o2.type='sine';o2.frequency.value=f*2;var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;var g=a.createGain();g.gain.setValueAtTime(0.0001,st);g.gain.exponentialRampToValueAtTime(0.098,st+0.03);g.gain.exponentialRampToValueAtTime(0.0001,st+0.5);var g2=a.createGain();g2.gain.value=0.0245;o.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(g);g.connect(_bus(a));o.start(st);o2.start(st);o.stop(st+0.55);o2.stop(st+0.55);})(notes[i],t+i*0.09);}}
+  function playCraft(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;var notes=[880,1174.66];for(var i=0;i<notes.length;i++){(function(f,st){var o=a.createOscillator();o.type='sine';o.frequency.value=f;var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=3200;var g=a.createGain();g.gain.setValueAtTime(0.0001,st);g.gain.exponentialRampToValueAtTime(0.12,st+0.01);g.gain.exponentialRampToValueAtTime(0.0001,st+0.4);o.connect(lp);lp.connect(g);g.connect(_bus(a));o.start(st);o.stop(st+0.42);})(notes[i],t+i*0.05);}}
+  function playShardPickup(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;var o=a.createOscillator();o.type='sine';o.frequency.setValueAtTime(660,t);o.frequency.exponentialRampToValueAtTime(990,t+0.12);var o2=a.createOscillator();o2.type='triangle';o2.frequency.setValueAtTime(1320,t);o2.frequency.exponentialRampToValueAtTime(1980,t+0.12);var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2800;var g=a.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.12,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.3);var g2=a.createGain();g2.gain.value=0.03;o.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(g);g.connect(_bus(a));o.start(t);o2.start(t);o.stop(t+0.32);o2.stop(t+0.32);}
+  function playMor(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;var o=a.createOscillator();o.type='sine';o.frequency.setValueAtTime(98,t);o.frequency.exponentialRampToValueAtTime(147,t+0.5);var o2=a.createOscillator();o2.type='triangle';o2.frequency.setValueAtTime(196,t);o2.frequency.exponentialRampToValueAtTime(294,t+0.5);var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(300,t);lp.frequency.exponentialRampToValueAtTime(700,t+0.4);var g=a.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.15,t+0.12);g.gain.exponentialRampToValueAtTime(0.0001,t+0.65);var g2=a.createGain();g2.gain.value=0.05;o.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(g);g.connect(_bus(a));o.start(t);o2.start(t);o.stop(t+0.7);o2.stop(t+0.7);}
+  function playWave(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;var dur=1.3;var buf=a.createBuffer(1,Math.floor(a.sampleRate*dur),a.sampleRate),d=buf.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1;var src=a.createBufferSource();src.buffer=buf;var bp=a.createBiquadFilter();bp.type='bandpass';bp.Q.value=0.5;bp.frequency.setValueAtTime(380,t);bp.frequency.linearRampToValueAtTime(920,t+0.55);bp.frequency.linearRampToValueAtTime(280,t+dur);var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1300;var g=a.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(0.098,t+0.45);g.gain.linearRampToValueAtTime(0.063,t+0.75);g.gain.linearRampToValueAtTime(0.0001,t+dur);src.connect(bp);bp.connect(lp);lp.connect(g);g.connect(_bus(a));src.start(t);}
+  function playDefeat(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;var notes=[440,349.23];for(var i=0;i<notes.length;i++){(function(f,st){var o=a.createOscillator();o.type='sine';o.frequency.value=f;var o2=a.createOscillator();o2.type='triangle';o2.frequency.value=f/2;var lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1400;var g=a.createGain();g.gain.setValueAtTime(0.0001,st);g.gain.exponentialRampToValueAtTime(0.1,st+0.03);g.gain.exponentialRampToValueAtTime(0.0001,st+0.42);var g2=a.createGain();g2.gain.value=0.028;o.connect(lp);o2.connect(g2);g2.connect(lp);lp.connect(g);g.connect(_bus(a));o.start(st);o2.start(st);o.stop(st+0.44);o2.stop(st+0.44);})(notes[i],t+i*0.13);}}
   let introDone=false;
   function playSpray(){const a=AC();if(!a)return;if(a.state==='suspended')a.resume();const t=a.currentTime;
     const o=a.createOscillator();o.type='sine';o.frequency.setValueAtTime(180,t);o.frequency.exponentialRampToValueAtTime(110,t+0.35);
     const o2=a.createOscillator();o2.type='sine';o2.frequency.setValueAtTime(270,t);o2.frequency.exponentialRampToValueAtTime(165,t+0.35);
     const lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(500,t);lp.frequency.exponentialRampToValueAtTime(1100,t+0.1);lp.frequency.exponentialRampToValueAtTime(400,t+0.4);
     const g=a.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.14,t+0.07);g.gain.exponentialRampToValueAtTime(0.0001,t+0.42);
-    o.connect(lp);o2.connect(lp);lp.connect(g);g.connect(a.destination);o.start(t);o2.start(t);o.stop(t+0.44);o2.stop(t+0.44);
+    o.connect(lp);o2.connect(lp);lp.connect(g);g.connect(_bus(a));o.start(t);o2.start(t);o.stop(t+0.44);o2.stop(t+0.44);
     const dur=0.4,buf=a.createBuffer(1,Math.floor(a.sampleRate*dur),a.sampleRate),d=buf.getChannelData(0);
     for(let i=0;i<d.length;i++){const e=Math.sin(Math.PI*i/d.length);d[i]=(Math.random()*2-1)*e*0.4;}
     const src=a.createBufferSource();src.buffer=buf;
     const lp2=a.createBiquadFilter();lp2.type='lowpass';lp2.frequency.value=700;
     const g2=a.createGain();g2.gain.value=0.04;
-    src.connect(lp2);lp2.connect(g2);g2.connect(a.destination);src.start(t);}
+    src.connect(lp2);lp2.connect(g2);g2.connect(_bus(a));src.start(t);}
   function startIntro(){if(introDone)return;const i=$('intro');if(!i)return;introDone=true;playDrone();i.classList.add('started');
     setTimeout(()=>{playCrack();i.classList.add('crack');},1300);
     setTimeout(()=>{i.classList.add('emerge');},1900);
@@ -4754,7 +4856,7 @@ body.hd #diamondModal .daily-wait + .shop-sec{
   function replayIntro(){try{closePops();}catch(e){}var old=$('intro');if(old&&old.parentNode)old.remove();if(!_introHTML)return;var tmp=document.createElement('div');tmp.innerHTML=_introHTML;var el=tmp.firstElementChild;if(!el)return;el.style.display='flex';el.classList.remove('started','crack','emerge','fly','hide');document.body.appendChild(el);introDone=false;startIntro();}
   document.querySelectorAll('.livericon').forEach(function(e){e.innerHTML=LIVER_SVG;});
   $('attackBtn').addEventListener('click',onInfectButton);
-  {const _bc=$('battleCircle');if(_bc){_bc.addEventListener('click',function(){if(!clickGuardOk())return;if(Math.floor((S.napProg||0)/10000)<10)S.napProg=(S.napProg||0)+1;try{meteorRoll();}catch(e){}onInfectButton();if((S.plagueAge||1)>=50&&viralActive)refreshViralTimer();if(S.lastFreeDivTime&&(Date.now()-S.lastFreeDivTime)<divTimerMs()){S.lastFreeDivTime=Math.max(S.lastFreeDivTime-divTapCutMs(),Date.now()-divTimerMs());updateTotalDiv();}if(S.mat>=200000000){S.ageClicks=(S.ageClicks||0)+agingMult()*((S.plagueAge||1)>=30?1.5:1);if(S.ageClicks>=60){const _y=Math.floor(S.ageClicks/60);S.plagueAge=(S.plagueAge||1)+_y;if((S.plagueAge||1)>=200000000000&&!S.starSpark200){S.starSpark200=true;try{banner('Зелёные и Синие искры!',L('Теперь ◆ даёт только зелёные и синие искры звёзд, 50/50'),'win',4200);}catch(e){}}{var _rt=(S.plagueAge>=200)?Math.floor((Math.min(305,S.plagueAge)-200)/5)+1:0;if(_rt>(S.rotGranted||0)){S.og=(S.og||0)+(_rt-(S.rotGranted||0));S.rotGranted=_rt;}}S.ageClicks-=_y*60;render();}}});_bc.addEventListener('pointerdown',(e)=>{try{emitSpores(10,e.clientX,e.clientY);}catch(_){}S.circleTaps=(S.circleTaps||0)+1;if(morActive&&heirFatTapCap()>0&&heirFatBuff<=heirFatTapCap())heirFatBuff++;if(heirSatietyActive())S.heirTapMult=(S.heirTapMult||1)*1.01;if(!infectRunning||viralActive){_bc.classList.add('tap');if(viralActive&&e.isTrusted)playClick();}});const _rm=()=>_bc.classList.remove('tap');_bc.addEventListener('pointerup',_rm);_bc.addEventListener('pointerleave',_rm);_bc.addEventListener('pointercancel',_rm);}}
+  {const _bc=$('battleCircle');if(_bc){_bc.addEventListener('click',function(){if(!clickGuardOk())return;if(Math.floor((S.napProg||0)/1000)<10)S.napProg=(S.napProg||0)+1;try{meteorRoll();}catch(e){}onInfectButton();if((S.plagueAge||1)>=50&&viralActive)refreshViralTimer();if(S.lastFreeDivTime&&(Date.now()-S.lastFreeDivTime)<divTimerMs()){S.lastFreeDivTime=Math.max(S.lastFreeDivTime-divTapCutMs(),Date.now()-divTimerMs());updateTotalDiv();}if(S.mat>=200000000){S.ageClicks=(S.ageClicks||0)+agingMult()*((S.plagueAge||1)>=30?1.5:1);if(S.ageClicks>=60){const _y=Math.floor(S.ageClicks/60);S.plagueAge=(S.plagueAge||1)+_y;if((S.plagueAge||1)>=200000000000&&!S.starSpark200){S.starSpark200=true;try{banner('Зелёные и Синие искры!',L('Теперь ◆ даёт только зелёные и синие искры звёзд, 50/50'),'win',4200);}catch(e){}}{var _rt=(S.plagueAge>=200)?Math.floor((Math.min(305,S.plagueAge)-200)/5)+1:0;if(_rt>(S.rotGranted||0)){S.og=(S.og||0)+(_rt-(S.rotGranted||0));S.rotGranted=_rt;}}S.ageClicks-=_y*60;render();}}});_bc.addEventListener('pointerdown',(e)=>{try{emitSpores(10,e.clientX,e.clientY);}catch(_){}S.circleTaps=(S.circleTaps||0)+1;if(morActive&&heirFatTapCap()>0&&heirFatBuff<=heirFatTapCap())heirFatBuff++;if(heirSatietyActive())S.heirTapMult=(S.heirTapMult||1)*1.01;if(!infectRunning||viralActive){_bc.classList.add('tap');if(viralActive&&e.isTrusted)playClick();}});const _rm=()=>_bc.classList.remove('tap');_bc.addEventListener('pointerup',_rm);_bc.addEventListener('pointerleave',_rm);_bc.addEventListener('pointercancel',_rm);}}
   $('stopBtn').addEventListener('click',()=>{stopInfection();S.recovering=true;startRecover();saveGame();});
   $('divBtn').addEventListener('click',divBtnClick);
   $('buyDmg').addEventListener('click',buyDamage);
@@ -5013,24 +5115,58 @@ body.hd #diamondModal .daily-wait + .shop-sec{
   ];
   var _musIdx=-1, _musBound=false;
   function trackName(t){return (lang==='en')?t.en:t.ru;}
+  // ---- огибающая громкости музыки ----
+  var DUCK_TO=0.45;             // до какой доли пригибаем музыку под эффект
+  var DUCK_HOLD=140;            // держим внизу после последнего эффекта, мс
+  var K_DOWN=0.34, K_UP=0.055;  // вниз резко, вверх мягко (шаг 33 мс)
+  var MUS_OUT=350;              // фейд при стопе и смене трека, мс
+  var _musCur=0,_musTgt=0,_duckUntil=0,_musEnv=null,_musStop=false;
+  function musEnvStart(){
+    if(_musEnv)return;
+    _musEnv=setInterval(function(){
+      var a=$('bgMusic');if(!a)return;
+      var tgt=_musTgt;
+      if(performance.now()<_duckUntil)tgt=Math.min(tgt,MUSIC_VOL*DUCK_TO);
+      var k=(tgt<_musCur)?K_DOWN:K_UP;
+      _musCur+=(tgt-_musCur)*k;
+      if(Math.abs(tgt-_musCur)<0.002)_musCur=tgt;
+      try{a.volume=Math.max(0,Math.min(1,_musCur));}catch(e){}
+      if(_musStop&&_musCur<=0.004){_musStop=false;try{a.pause();}catch(e){}renderMusic();}
+    },33);
+  }
+  function duckMusic(){
+    if(_musTgt<=0)return;
+    _duckUntil=performance.now()+DUCK_HOLD;
+  }
   function playIdx(i){
     var a=$('bgMusic');if(!a||i<0||i>=TRACKS.length)return;
-    _musIdx=i;
+    audioResume();musEnvStart();
     var src=encodeURI(TRACKS[i].file);
-    if(a.getAttribute('src')!==src){a.setAttribute('src',src);try{a.load();}catch(e){}}
-    a.volume=MUSIC_VOL;
-    a.play().catch(function(){});
-    renderMusic();
+    var swap=(a.getAttribute('src')!==src);
+    var go=function(){
+      _musIdx=i;_musStop=false;
+      if(swap){a.setAttribute('src',src);try{a.load();}catch(e){}}
+      _musCur=0;try{a.volume=0;}catch(e){}
+      _musTgt=MUSIC_VOL;
+      a.play().catch(function(){});
+      renderMusic();
+    };
+    // что-то уже играет — сначала уводим в тишину, потом подменяем
+    if(swap&&!a.paused&&_musCur>0.01){_musTgt=0;setTimeout(go,MUS_OUT);}
+    else go();
   }
   function stopMusic(){
-    var a=$('bgMusic');if(a){try{a.pause();}catch(e){}}
-    _musIdx=-1;renderMusic();
+    var a=$('bgMusic');
+    _musIdx=-1;_musTgt=0;
+    if(a){if(_musCur>0.01){_musStop=true;musEnvStart();}else{try{a.pause();}catch(e){}}}
+    renderMusic();
   }
   function applyMusic(){
     var a=$('bgMusic');if(!a)return;
     if(S.musicOn===false){stopMusic();return;}
     if(_musIdx<0){playIdx(0);return;}
-    a.volume=MUSIC_VOL;
+    audioResume();musEnvStart();
+    _musStop=false;_musTgt=MUSIC_VOL;
     if(a.paused)a.play().catch(function(){});
     renderMusic();
   }
@@ -5071,7 +5207,7 @@ body.hd #diamondModal .daily-wait + .shop-sec{
   musicBind();
   {const _sd=$('soundSw');if(_sd)_sd.addEventListener('click',()=>{S.soundOn=(S.soundOn===false);saveGame();updateAvToggles();});}
   updateAvToggles();
-  window.addEventListener('pointerdown',function _sm(){try{musicBind();applyMusic();}catch(e){}window.removeEventListener('pointerdown',_sm);},{once:true});
+  window.addEventListener('pointerdown',function _sm(){try{audioResume();musicBind();applyMusic();}catch(e){}window.removeEventListener('pointerdown',_sm);},{once:true});
   serverSync();
   setInterval(function(){if(document.visibilityState==='visible'){try{serverSync();}catch(e){}}},60000);
   {var _i0=$('intro');_introHTML=_i0?_i0.outerHTML:'';}
