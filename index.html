@@ -1240,7 +1240,7 @@ body.hd #app{
   overflow:hidden !important;
   display:block !important;
 }
-body.hd .vertag,body.hd #banner,body.hd .devbar,body.hd #mobileBtn{display:none !important}
+body.hd .vertag,body.hd .devbar,body.hd #mobileBtn{display:none !important}
 
 /* ================= ШАПКА ================= */
 body.hd #app > header{
@@ -2189,6 +2189,29 @@ body.hd #diamondModal .daily-wait + .shop-sec{
   margin-top:calc(12px + 20px) !important;
 }
 
+
+/* ===== баннеры победы и поражения ===== */
+/* раньше #banner был спрятан вместе со служебными метками — из-за этого
+   «ЗАРАЖЕНЫ» и «ИСЦЕЛЕНИЕ» не появлялись вовсе */
+body.hd #banner{
+  display:flex !important;
+  top:calc(14.5 * var(--apph)) !important;   /* под шапкой, над строкой матёрости */
+  padding:calc(1.1 * var(--apph)) calc(1.8 * var(--appvw)) !important;
+  border-radius:calc(1.3 * var(--apph)) !important;
+  border:2px solid rgba(0,0,0,.65) !important;
+  box-shadow:0 .5vh calc(1.6 * var(--apph)) rgba(0,0,0,.45) !important;
+  z-index:99999 !important;
+}
+body.hd #banner .big{font-size:calc(2.2 * var(--apph)) !important;letter-spacing:.06em !important}
+body.hd #banner .sm{font-size:calc(1.6 * var(--apph)) !important}
+
+/* ===== уровни Земли с 7-5 по 7-9 — красные ===== */
+body.hd #bcLvl.hd-lvl-red{
+  color:#ff5a4a !important;
+  text-shadow:0 0 calc(.6 * var(--apph)) rgba(255,60,40,.55),0 .2vh .6vh rgba(0,0,0,.75) !important;
+  opacity:1 !important;
+}
+
 </style>
 <script id="hdLayer">
 /* ЯЧУМА — HD-слой для браузера и десктопа.
@@ -2879,6 +2902,16 @@ body.hd #diamondModal .daily-wait + .shop-sec{
     });
     layoutDrops();
 
+    // ---- уровни Земли с 7-5 по 7-9 — красные ----
+    function syncRedLvl() {
+      var el = document.getElementById('bcLvl');
+      if (!el) return;
+      var m = /^\s*7-(\d+)\s*$/.exec(el.textContent || '');
+      var red = !!(m && +m[1] >= 5 && +m[1] <= 9);
+      if (el.classList.contains('hd-lvl-red') !== red) el.classList.toggle('hd-lvl-red', red);
+    }
+    syncRedLvl();
+
     var frameN = 1;
     try { var sv = localStorage.getItem('hdFrame'); if (sv !== null) frameN = +sv || 0; } catch (e) {}
     function applyFrame() {
@@ -2904,7 +2937,7 @@ body.hd #diamondModal .daily-wait + .shop-sec{
       }
       if (hdSurgeDraw) hdSurgeDraw();
       if (hdScrollHint) hdScrollHint();
-      if (now - epidTimer > 500) { epidTimer = now; syncEpid(); syncMat(); syncFlea(); layoutDrops(); }
+      if (now - epidTimer > 500) { epidTimer = now; syncEpid(); syncMat(); syncFlea(); layoutDrops(); syncRedLvl(); }
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
@@ -5107,7 +5140,7 @@ body.hd #diamondModal .daily-wait + .shop-sec{
   try{var _sib=document.getElementById('splashIntro');if(_sib)_sib.classList.add('show');}catch(e){}
   setTimeout(function(){try{render();}catch(e){}},250);
   applyLang();document.querySelectorAll('#langToggle .lopt').forEach(function(o){if(o.getAttribute('data-lang')===lang)o.classList.add('active');o.addEventListener('click',function(){if(o.getAttribute('data-lang')===lang)return;try{playClick();}catch(e){}document.querySelectorAll('#langToggle .lopt').forEach(function(x){x.classList.toggle('active',x===o);});setTimeout(function(){setLang(o.getAttribute('data-lang'));},130);});});
-  var MUSIC_VOL=0.3;
+  var MUSIC_VOL=0.27;
   var TRACKS=[
     {id:'souls',file:'IPLAGUE - Black Souls.mp3',ru:'ЯЧУМА — Чёрные Души',en:'IPLAGUE — Black Souls'},
     {id:'doors',file:'IPLAGUE - Pandemic doors.mp3',ru:'ЯЧУМА — Двери Пандемии',en:'IPLAGUE — Pandemic doors'},
@@ -5115,10 +5148,10 @@ body.hd #diamondModal .daily-wait + .shop-sec{
   ];
   var _musIdx=-1, _musBound=false;
   function trackName(t){return (lang==='en')?t.en:t.ru;}
-  // ---- огибающая громкости музыки ----
-  var DUCK_TO=0.45;             // до какой доли пригибаем музыку под эффект
+  // ---- огибающая громкости музыки: дакинг и фейды ----
+  var MUSIC_DUCK=0.18;          // до какой громкости музыка приседает под эффект
   var DUCK_HOLD=140;            // держим внизу после последнего эффекта, мс
-  var K_DOWN=0.34, K_UP=0.055;  // вниз резко, вверх мягко (шаг 33 мс)
+  var K_DOWN=0.34, K_UP=0.055;  // шаг 33 мс
   var MUS_OUT=350;              // фейд при стопе и смене трека, мс
   var _musCur=0,_musTgt=0,_duckUntil=0,_musEnv=null,_musStop=false;
   function musEnvStart(){
@@ -5126,7 +5159,7 @@ body.hd #diamondModal .daily-wait + .shop-sec{
     _musEnv=setInterval(function(){
       var a=$('bgMusic');if(!a)return;
       var tgt=_musTgt;
-      if(performance.now()<_duckUntil)tgt=Math.min(tgt,MUSIC_VOL*DUCK_TO);
+      if(performance.now()<_duckUntil)tgt=Math.min(tgt,MUSIC_DUCK);
       var k=(tgt<_musCur)?K_DOWN:K_UP;
       _musCur+=(tgt-_musCur)*k;
       if(Math.abs(tgt-_musCur)<0.002)_musCur=tgt;
