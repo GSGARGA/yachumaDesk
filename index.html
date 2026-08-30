@@ -5005,7 +5005,7 @@ body.hd #diamondModal .daily-wait + .shop-sec{
   try{var _sib=document.getElementById('splashIntro');if(_sib)_sib.classList.add('show');}catch(e){}
   setTimeout(function(){try{render();}catch(e){}},250);
   applyLang();document.querySelectorAll('#langToggle .lopt').forEach(function(o){if(o.getAttribute('data-lang')===lang)o.classList.add('active');o.addEventListener('click',function(){if(o.getAttribute('data-lang')===lang)return;try{playClick();}catch(e){}document.querySelectorAll('#langToggle .lopt').forEach(function(x){x.classList.toggle('active',x===o);});setTimeout(function(){setLang(o.getAttribute('data-lang'));},130);});});
-  var MUSIC_VOL=0.5;
+  var MUSIC_VOL=0.3;
   var TRACKS=[
     {id:'souls',file:'IPLAGUE - Black Souls.mp3',ru:'ЯЧУМА — Чёрные Души',en:'IPLAGUE — Black Souls'},
     {id:'doors',file:'IPLAGUE - Pandemic doors.mp3',ru:'ЯЧУМА — Двери Пандемии',en:'IPLAGUE — Pandemic doors'},
