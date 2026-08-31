@@ -2748,9 +2748,13 @@ body.hd #bcLvl.hd-lvl-red{
       function holdHit() {
         if (!holdOn) return;
         if (!spreadNow()) { holdStop(); return; }
-        // споры сыплются только первую секунду удержания: дальше идут
-        // одни удары, иначе экран забит спорами всё время нажатия
-        if (performance.now() - holdFrom < SPORE_MS) {
+        // брызги идут по правилу SPORE_MODE, удары — всегда
+        var _now = performance.now();
+        var _spore = (SPORE_MODE === 'first')
+          ? (_now - holdFrom < SPORE_MS)
+          : (_now - lastSpore >= SPORE_EVERY);
+        if (_spore) {
+          lastSpore = _now;
           try {
             // координаты обязательны: без них clientX/clientY = 0 и споры
             // вылетают в угол экрана, мимо холста. Берём точку, где палец.
@@ -2774,7 +2778,13 @@ body.hd #bcLvl.hd-lvl-red{
       }
 
       // где игрок держит палец — оттуда и летят споры у автоударов
-      var SPORE_MS = 1000;          // сколько споры сыплются от начала удержания
+      // SPORE_MODE:
+      //   'every' — брызги раз в секунду всё удержание (сейчас включено)
+      //   'first' — старое правило: только первую секунду от начала удержания
+      var SPORE_MODE = 'every';
+      var SPORE_EVERY = 1000;       // период брызг в режиме 'every', мс
+      var SPORE_MS = 1000;          // окно брызг в режиме 'first', мс
+      var lastSpore = 0;
       var holdX = null, holdY = null;
       function holdPoint() {
         if (holdX != null && holdY != null) return { x: holdX, y: holdY };
@@ -2787,6 +2797,7 @@ body.hd #bcLvl.hd-lvl-red{
         if (!spreadNow()) return;
         holdX = e.clientX; holdY = e.clientY;
         holdOn = true; holdFrom = performance.now();   // разгон всегда с нуля
+        lastSpore = holdFrom;   // само нажатие уже брызнуло, следующий — через секунду
         spreadSndStart(); spreadSndLevel(0, 0);
         holdTimer = setTimeout(holdHit, Math.round(1000 / RATE_MIN));
       });
