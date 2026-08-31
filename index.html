@@ -1070,15 +1070,16 @@
     border-radius:50%/45%;transition:background .1s ease-out}
   /* сам рисунок полупрозрачный, яркостью его сильно не поднять —
      поэтому нажатие подсвечиваем ещё и мягким пятном под пальцем */
-  /* пятна под пальцем нет: реагирует сам объект */
+  #mastHit:active{background:radial-gradient(circle at 50% 50%,
+    rgba(205,255,175,.20),rgba(140,230,110,.09) 45%,transparent 72%)}
   body.hd .hd-orn.r.mast-glow{animation:mastPulse 2s ease-in-out infinite}
   @keyframes mastPulse{
-    0%,100%{filter:brightness(1.08) saturate(2.2) drop-shadow(0 0 12px rgba(150,255,90,.35))}
-    50%    {filter:brightness(1.2)  saturate(4.6) drop-shadow(0 0 26px rgba(150,255,90,.7))}
+    0%,100%{filter:brightness(1.5) drop-shadow(0 0 16px rgba(166,239,122,.5))}
+    50%    {filter:brightness(2.6) drop-shadow(0 0 34px rgba(166,239,122,.9))}
   }
-  body.hd .hd-orn.r.mast-press{transform:translateY(3px);animation:none;
-    filter:brightness(1.15) saturate(4)
-           drop-shadow(0 0 14px rgba(150,255,90,.5))}
+  body.hd .hd-orn.r.mast-press{transform:translateY(2px);animation:none;
+    filter:brightness(3.2) hue-rotate(-18deg) saturate(1.5)
+           drop-shadow(0 0 30px rgba(205,255,175,.8))}
   /* окно: чёрное, как Фатальность */
   #mastModal{z-index:400}
   .mast-modal .shop-sec{color:#cfcfe0}
@@ -5488,7 +5489,7 @@ body.hd .lab-mastery{font-size:13px !important}
   
   
   $('epidClose').addEventListener('click',closeEpid);
-  $('epidModal').addEventListener('click',e=>{if(e.target===$('epidModal'))closeEpid();});$('labMastery').addEventListener('click',function(){try{var _mi=$('masteryInfoMult');if(_mi)_mi.textContent=(Math.round(masteryMult()*10)/10);var _mp=$('masteryInfoPct');if(_mp)_mp.textContent=Math.round(masteryPct());var _M=masteryPct();var _rows=$('masteryInfoModal').querySelectorAll('div[style*="max-width:210px"],div[style*="max-width:230px"]');for(var _ri=0;_ri<_rows.length;_ri++){var _sp=_rows[_ri].querySelector('span');if(_sp){var _thr=parseInt(_sp.textContent);if(!isNaN(_thr))_sp.style.color=(_M>=_thr)?'var(--gold)':'';}}}catch(e){}$('masteryInfoModal').style.display='flex';});$('labMastery').addEventListener('pointerdown',function(){try{playClick();}catch(e){}});$('masteryInfoModal').addEventListener('click',function(){$('masteryInfoModal').style.display='none';});
+  $('epidModal').addEventListener('click',e=>{if(e.target===$('epidModal'))closeEpid();});$('labMastery').addEventListener('click',function(){try{var _mi=$('masteryInfoMult');if(_mi)_mi.textContent=(Math.round(masteryMult()*10)/10);var _mp=$('masteryInfoPct');if(_mp)_mp.textContent=Math.round(masteryPct());var _M=masteryPct();var _rows=$('masteryInfoModal').querySelectorAll('div[style*="max-width:210px"],div[style*="max-width:230px"]');for(var _ri=0;_ri<_rows.length;_ri++){var _sp=_rows[_ri].querySelector('span');if(_sp){var _thr=parseInt(String(_sp.textContent).replace(/[^0-9]/g,''),10);if(!isNaN(_thr))_sp.style.color=(_M>=_thr)?'var(--gold)':'';}}}catch(e){}$('masteryInfoModal').style.display='flex';});$('labMastery').addEventListener('pointerdown',function(){try{playClick();}catch(e){}});$('masteryInfoModal').addEventListener('click',function(){$('masteryInfoModal').style.display='none';});
   $('diamondModal').addEventListener('click',e=>{if(e.target===$('diamondModal'))closeDiamond();});
   $('talDmg').addEventListener('click',buyTalDmg);
   $('talBlack').addEventListener('click',buyBlackDeath);
