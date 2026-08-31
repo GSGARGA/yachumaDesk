@@ -1025,6 +1025,45 @@
   /* ==== НАЧАТЬ ЗАНОВО ==== */
   #restartModal{z-index:500}
   .stats-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  /* новая веха: строка светится и пульсирует, пока по ней не нажмут */
+  @keyframes hdMileGlow{
+    0%,100%{filter:drop-shadow(0 0 2px rgba(255,228,140,.5))
+                   drop-shadow(0 0 7px rgba(255,190,60,.3))}
+    50%    {filter:drop-shadow(0 0 8px rgba(255,244,180,1))
+                   drop-shadow(0 0 22px rgba(255,200,70,.9)) brightness(1.35)}
+  }
+  body.hd #matBtn.mile-new,body.hd #ageBtn.mile-new,body.hd #fatality.mile-new{
+    animation:hdMileGlow 1.05s ease-in-out infinite}
+  body.hd #matBtn.mile-new .mlabel,body.hd #ageBtn.mile-new .mlabel{color:#ffeab0 !important}
+  body.hd #fatality.mile-new{color:#ffeab0 !important}
+  /* Мастер Чёрных Душ: рисунок бактерий справа — кнопка */
+  #mastHit{position:absolute;left:1330px;top:600px;width:360px;height:400px;
+    margin:0;padding:0;border:0;background:transparent;cursor:pointer;pointer-events:auto;
+    border-radius:50%/45%;transition:background .1s ease-out}
+  /* сам рисунок полупрозрачный, яркостью его сильно не поднять —
+     поэтому нажатие подсвечиваем ещё и мягким пятном под пальцем */
+  #mastHit:active{background:radial-gradient(circle at 50% 50%,
+    rgba(205,255,175,.20),rgba(140,230,110,.09) 45%,transparent 72%)}
+  body.hd .hd-orn.r.mast-glow{animation:mastPulse 2s ease-in-out infinite}
+  @keyframes mastPulse{
+    0%,100%{filter:brightness(1.5) drop-shadow(0 0 16px rgba(166,239,122,.5))}
+    50%    {filter:brightness(2.6) drop-shadow(0 0 34px rgba(166,239,122,.9))}
+  }
+  body.hd .hd-orn.r.mast-press{transform:translateY(2px);animation:none;
+    filter:brightness(3.2) hue-rotate(-18deg) saturate(1.5)
+           drop-shadow(0 0 30px rgba(205,255,175,.8))}
+  /* окно: чёрное, как Фатальность */
+  #mastModal{z-index:400}
+  .mast-modal .shop-sec{color:#cfcfe0}
+  #mastModal .dexch.daily-btn{border-color:#3a3a4a !important;
+    background:linear-gradient(180deg,#1e1e2a,#0c0c12) !important;color:#e6e6f0 !important;
+    box-shadow:0 2px 0 #000}
+  #mastModal .dexch.daily-btn:not(:disabled):active{box-shadow:0 0 0 #000}
+  .mast-modal .dexch.poor{opacity:.5}
+  .mast-modal .dexch + .shop-sec{margin-top:calc(12px + 20px)}
+  .mast-price{display:inline-flex;align-items:center;gap:10px;margin-left:8px}
+  .mast-one{display:inline-flex;align-items:center;gap:3px}
+  .mast-price .lb-cur{width:22px;height:22px;vertical-align:-5px}
   /* Повелитель Чёрных Душ: нажатие по рисунку заражения.
      Прозрачная область в системе координат #hdOrnStage — 1920x1080 с тем же
      масштабом, поэтому она всегда лежит ровно на рисунке. */
@@ -3274,6 +3313,8 @@ body.hd .lab-mastery{font-size:13px !important}
     <span class="gsub">20.2 Повелитель Чёрных Душ (1e045).</span> На фоне слева загорается знак заражения — нажми на него. В окне три покупки, каждая один раз за игру: <b>Получение Чёрных Душ ×2</b> за 50 душ — удваивает выдачу КЛАДБИЩА, Напора и Космического заражения; <b>×5 к пролетающим Зелёным Искрам</b> за 50 зелёных искр; <b>100 чёрных душ</b> за 10 чёрных искр.<br>
     <span class="gsub">20.3 Тонкости.</span> ×2 работает только на то, что накопится ПОСЛЕ покупки: уже висящие души Напора и уже пройденные подуровни космоса заплатят по старой цене. Свечение знака гаснет после первого нажатия. Кнопка «начать сначала» сбрасывает все три покупки.<br>
 
+    <span class="gsub">20.4 Мастер Чёрных Душ (1e100).</span> Загорается рисунок бактерий справа — нажми на него. Окно чёрное, внутри три покупки: <b>Получение Чёрных Душ ×2</b> — три ступени за 500, 1 000 и 2 000 душ, множители перемножаются между собой и с Повелителем, вместе получается до ×16; <b>Рост матёрости за клик +50%</b> — пять ступеней за 1 000 золотых, 2 000 красных, 5 000 белых, 10 000 чёрных и 100 000 чёрных искр, прибавки складываются, в сумме ×3,5; <b>1 000 чёрных душ</b> — разово за 500 синих, 500 фиолетовых и 500 золотых искр. Правила те же: множитель работает только на то, что накопится после покупки, а «начать сначала» сбрасывает все покупки.<br>
+
     <div class="gh">Раздел 21 · Вселенная, Мультивселенная и КОНЕЦ</div>
     <span class="gsub">21.1 Вселенная.</span> После галактик — Вселенная из 3 уровней.<br>
     <span class="gsub">21.2 Мультивселенная.</span> Затем — бесконечная Мультивселенная.<br>
@@ -3446,6 +3487,7 @@ body.hd .lab-mastery{font-size:13px !important}
     </div>
   </div>
   <div class="modal-backdrop" id="musicModal" style="display:none"><div class="modal music-modal"><div class="modal-head"><span>♪ Music</span><button id="musicClose">✕</button></div><div class="mus-list" id="musList"></div></div></div>
+  <div class="modal-backdrop" id="mastModal" style="display:none"><div class="modal fatal-modal mast-modal"><div class="modal-head"><span data-k="Мастер Чёрных Душ">Мастер Чёрных Душ</span><button id="mastClose">✕</button></div><div class="shop-sec" id="mastSec1"></div><button class="dexch daily-btn mast-buy" id="mastBuy1"></button><div class="shop-sec" id="mastSec2"></div><button class="dexch daily-btn mast-buy" id="mastBuy2"></button><div class="shop-sec" id="mastSec3"></div><button class="dexch daily-btn mast-buy" id="mastBuy3"></button></div></div>
   <div class="modal-backdrop" id="lordModal" style="display:none"><div class="modal"><div class="modal-head"><span data-k="Повелитель Чёрных Душ">Повелитель Чёрных Душ</span><button id="lordClose">✕</button></div><div class="shop-sec" data-k="Получение Чёрных Душ ×2">Получение Чёрных Душ ×2</div><button class="dexch daily-btn lord-buy" id="lordBuy1"><span id="lordBuyTxt1"></span> <svg class="bdi" viewBox="0 0 24 24"><polygon points="12,2 20,8 12,22 4,8" fill="#2b2b38"/><polygon points="12,2 4,8 12,10" fill="#17171f"/><polygon points="12,2 20,8 12,10" fill="#3d3d4d"/><polygon points="4,8 12,10 12,22" fill="#20202a"/><polygon points="20,8 12,10 12,22" fill="#30303d"/><polygon points="8,5 11,3.5 10,7.5" fill="#7a7a95" opacity=".5"/></svg></button><div class="shop-sec" data-k="×5 к пролетающим Зелёным Искрам">×5 к пролетающим Зелёным Искрам</div><button class="dexch daily-btn lord-buy" id="lordBuy2"><span id="lordBuyTxt2"></span> <span class="lb-cur shard-green" data-shard="green"></span></button><div class="shop-sec" data-k="100 чёрных душ">100 чёрных душ</div><button class="dexch daily-btn lord-buy" id="lordBuy3"><span id="lordBuyTxt3"></span> <span class="lb-cur shard-black" data-shard="black"></span></button></div></div>
   <div class="modal-backdrop" id="diamondModal" style="display:none">
     <div class="modal">
@@ -3762,7 +3804,7 @@ body.hd .lab-mastery{font-size:13px !important}
     'Марс':'Mars','Юпитер':'Jupiter','Сатурн':'Saturn','Солнце':'Sun','Уран':'Uranus','Нептун':'Neptune','Венера':'Venus','Меркурий':'Mercury',
     'ЗАРАЖАТЬ':'INFECT','РАСПРОСТРАНЯТЬ':'SPREAD','Начать заражение':'Start infection','Заражать массово':'Mass infect',
     'идёт заражение':'infecting…','ИДЁТ ЗАРАЖЕНИЕ':'INFECTING','ИСЦЕЛЕНИЕ':'CLEANSED','ЗАРАЖЕНЫ':'INFECTED','КОЛОНИЯ':'COLONY',
-    'ДЕЛЕНИЕ':'DIVIDE','🔒 нужен талант «ДРОП СЕРДЕЦ»':'🔒 need "HEART DROP" talent','БАКТЕРИИ':'BACTERIA','Лечение:':'Healing:','вернуть':'undo','не активен':'inactive','макс':'max','/сек':'/sec','сек':'sec','шанс':'chance','к заражению':'to infection','раз в сутки':'once a day','×5 ВКЛ':'×5 ON','🖥 Десктоп':'🖥 Desktop','📱 Телефон':'📱 Phone','🖥 авто':'🖥 auto','🎬 Заставка':'🎬 Intro','🌍 Баннер10':'🌍 Banner10','×5 скорость':'×5 speed','🧫 ОЧАГ':'🧫 OUTBREAK','☣ ПАНДЕМИЯ':'☣ PANDEMIC','🐀 КРЫСЫ':'🐀 RATS','🦟 БЛОХИ':'🦟 FLEAS','☠ ЧЁРНАЯ СМЕРТЬ':'☠ BLACK DEATH','смертность':'mortality','очаг':'outbreak','лечение ×':'heal ×','заражения':'infection','на':'on','✓ куплено':'✓ owned','✓ доступно':'✓ available','✓ доступно (4-1)':'✓ available (4-1)','✓ доступно (2-1)':'✓ available (2-1)','✓ доступно (6-2)':'✓ available (6-2)','🔒 нужен 4-1 уровень':'🔒 need tier 4-1','🔒 нужен 2-1 уровень':'🔒 need tier 2-1','🔒 нужен 6-2 уровень':'🔒 need tier 6-2','🔒 нужен разблокированный Мор':'🔒 need Plague unlocked','🔒 нужна матёрость 1M':'🔒 need potency 1M','🔒 нужен 7-2 уровень':'🔒 need tier 7-2','🔒 нужно 500k глаз':'🔒 need 500k eyes','🔒 нужна матёрость 200k':'🔒 need potency 200k','🔒 нужен 6-3 уровень':'🔒 need tier 6-3','🔒 нужно 500k сердец':'🔒 need 500k hearts','🔒 нужно 100M сердец':'🔒 need 100M hearts','🔒 7-1 для след. ур.':'🔒 7-1 for next lv.','🔒 нужен 7-1':'🔒 need 7-1','СМЕРТНОСТЬ':'MORTALITY','🧪 ОЭ':'🧪 EP','🦴 ОГ':'🦴 RP','версия 2.5':'version 2.5','ДРОП ПЕЧЕНИ ×10':'LIVER DROP ×10','❤️ ДРОП СЕРДЕЦ':'❤️ HEART DROP','после исцеления остаётся':'after cleansing remains','10% колонии':'10% of colony','режим бешеного заражения — 15% шанс, +50% урона за тик':'rabid infection — 15% chance, +50% damage per tick','в очаге болезни 10% шанс: DoT ×100 урона/сек на 3с, стакается':'in an outbreak 10% chance: DoT ×100 damage/sec for 3s, stacks','при одновременных Очаге, Пандемии, Крысах, Блохах копит тики×макс.тик 5с (10с при 200k), затем удар':'with Outbreak, Pandemic, Rats, Fleas together stores ticks×maxTick 5s (10s at 200k), then strikes','включает «Рост в секунду»: +текущий приход матёрости каждую секунду. Разово.':'enables "Growth/sec": +current potency gain each second. Once.','в крысах ХП +5% каждые 0.1с (можно выше макс.), после −10%/с до макс.;':'in rats HP +5% every 0.1s (can exceed max), then −10%/s to max;','Растёт на +':'Grows by +','за каждый удар заражением (клики, тики, DoT).':'per infection hit (clicks, ticks, DoT).','Твои Чёрные Души:':'Your Black Souls:','1346 ГОД':'YEAR 1346','🧪 Очки Эпидемии':'🧪 Epidemic Points','🦴 Очки Гниения':'🦴 Rot Points','+0.2 к базовой цифре заражения (разово)':'+0.2 to base infection (once)','в пандемии 10% на крыс: +100%/сек к урону по врагу на 5с':'in a pandemic 10% for rats: +100%/sec to enemy for 5s','разово, ×10 к дропу':'once, ×10 to drop','🧪 2 Очка Эпидемии':'🧪 2 Epidemic Points','🧪 1 Очко Эпидемии':'🧪 1 Epidemic Point','🧪 5 Очков Эпидемии':'🧪 5 Epidemic Points','🧪 10 Очков Эпидемии':'🧪 10 Epidemic Points','🦴 2 Очка Гниения':'🦴 2 Rot Points','🦴 1 Очко Гниения':'🦴 1 Rot Point','❤️ 100M сердец':'❤️ 100M hearts','👁 500k глаз':'👁 500k eyes','множится поверх остальных усилений':'stacks on top of other boosts','меньше урона от лечения':'less damage from healing','быстрее перезарядка деления · макс 3':'faster division cooldown · max 3','куплено':'bought','сейчас':'now','умножает весь падающий дроп на ×2 (многоразово) · сейчас':'multiplies all loot ×2 (repeatable) · now','+30% сопротивления лечению':'+30% heal resistance','вместо 1 бактерии':'instead of 1 bacterium','×10 к падающим сердцам (разово)':'×10 to dropping hearts (once)','с 6-2 Деление → Мор: урон растёт каждую секунду (до +1000% за 10с; кулдаун-таланты делают короче). Разово.':'from 6-2 Division → Plague: damage grows each second (up to +1000% over 10s; cooldown talents shorten it). Once.','после исцеления колония делится ×2/сек в течение 5 секунд':'after cleansing the colony splits ×2/sec for 5 seconds','Мор съедает на 70% меньше матёрости. Разово.':'Plague eats 70% less potency. Once.','множит весь прирост матёрости +10% за уровень · сейчас':'boosts all potency gain +10% per level · now','заражение +10% за уровень · сейчас ×':'infection +10% per level · now ×','весь дроп +10% за уровень · сейчас ×':'all drops +10% per level · now ×','+10% к росту матёрости в секунду (7 ур.) · сейчас':'+10% potency/sec growth (7 lv.) · now','При Исцелении матёрость падает до':'On Cleansing potency drops to','Рост в сек при заражении:':'Growth/sec while infecting:','ВСЯ ЗЕМЛЯ':'THE EARTH','ЗАРАЖЕНА!':'INFECTED!','ПРОДОЛЖИТЬ':'CONTINUE','Все права защищены':'All rights reserved','КЛАДБИЩЕ: 30 мин':'GRAVEYARD: 30 min','ДУШИ':'SOULS','Получение Душ':'Getting Souls','Повелитель Чёрных Душ':'Lord of Black Souls','Получение Чёрных Душ ×2':'Black Souls gain ×2','×5 к пролетающим Зелёным Искрам':'×5 to flying Green Sparks','100 чёрных душ':'100 Black Souls','Купить за':'Buy for','Куплено':'Purchased','Забрать 10 чёрных душ':'Claim 10 Black Souls','Тотальный Напор: 2 чёрные души за':'Total Surge: 2 black souls per','играет':'now playing','Соберите души!':'Collect your souls!','Космическое заражение: заразить':'Space infection: infect','Тотальный Напор: 1 чёрная душа за':'Total Surge: 1 black soul per','ударов':'hits','Забрать':'Claim','душ':'souls','Чем умнее тем взрослее':'The smarter, the older','Чумная лаборатория':'Plague Laboratory','ОТКРОЕТСЯ НА УРАНЕ':'UNLOCKS AT URANUS','Скормить Чуме':'Feed the Plague','Мастерство':'Mastery','таланты эпидемии обновились':'epidemic talents updated','МАСТЕРСТВО ЧУМЫ':'PLAGUE MASTERY','+10% к общей цифре мастерства за уровень · сейчас ×':'+10% to total mastery per level · now ×','Вспышка Мора':'Plague Flash','Мор больше не требует матёрости':'Plague no longer requires potency','Талант Чёрная Смерть':'Black Death Talent','Звезда':'Star','Опасность для звёзд':'Danger to stars','Колония:':'Colony:','Мультивселенная':'Multiverse','Грани Гравитации':'Edge of Gravity','Грани Времени':'Edge of Time','Грани Бесконечности':'Edge of Infinity','Абсолют':'Absolute','Чума получила Божественную Частицу. Ничего больше нет, жизнь теперь это ЯЧУМА!':'The Plague obtained the Divine Particle. Nothing else remains, life is now I, PLAGUE!','То ли жизнь, то ли смерть, то ли СОН...':'Maybe life, maybe death, maybe a DREAM...','КОНЕЦ':'THE END','ВСЕЛЕННАЯ':'UNIVERSE','Дальше':'Next','ПОЗДРАВЛЯЕМ!':'CONGRATULATIONS!','ЯЧУМА пройдена!':'I, PLAGUE completed!','Ура!':'Hooray!','ВСЯ':'THE WHOLE','должна быть заражена...':'must be infected...','ВСЕ ЗВЁЗДЫ':'ALL STARS','ЗАРАЖЕНЫ!':'INFECTED!','Чума расползается по всей галактике!':'The Plague spreads across the whole galaxy!','схемы':'recipes','Схемы':'Recipes','нет схем':'no recipes','Максимум:':'Maximum:','Молодая Чума и матёрая':'Young and Seasoned Plague','Матёрость растёт в 2 раза быстрее. Каждый миллиард матёрости — заражение +10%':'Potency grows 2x faster. Each billion of potency — infection +10%','Млечный Путь':'Milky Way','Вселенная':'Universe','Андромеда':'Andromeda','Водоворот M51':'Whirlpool M51','Галактика':'Galaxy','Сириус':'Sirius','Альдебаран':'Aldebaran','Антарес':'Antares','Арктур':'Arcturus','Спика':'Spica','Проксима Центавра':'Proxima Centauri','Полярная':'Polaris','Ригель':'Rigel','Бетельгейзе':'Betelgeuse','Вега':'Vega','Охота на звёзды!':'Hunt for the Stars!','Солнечная система заражена. Впереди — звёзды.':'The Solar System is infected. The stars lie ahead.','⭐ Баннер11':'⭐ Banner11','нужен 11-1 уровень':'need tier 11-1','нужен 8-1 уровень':'need tier 8-1','🔒 нужен 7-1 уровень':'🔒 need tier 7-1','Очаг болезни работает фоном':'Disease Outbreak runs in the background','Поверни телефон':'Rotate your phone','вертикально':'vertically','Покоритель звёзд':'Conqueror of Stars','После МОРА может выпасть ещё одна искра звёзд':'After the Plague, another star spark may drop','достигнут лимит':'limit reached','к возрасту чумы за клик':'to plague age per click','сила искр':'spark power','Шанс при клике':'Click chance','Сила заражения':'Infection power','к мастерству':'to mastery','к уменьшению таймера тотального деления':'to total division timer reduction','к дропу органов':'to organ drop','к лимиту Ног':'to legs limit','к лимиту Глаз':'to eyes limit','к лимиту Мозгов':'to brains limit','к максимуму матёрости':'to potency maximum','дальше матёрость не растёт, текущий максимум':'potency no longer grows, current max','Улучшайте в чумной лаборатории':'Upgrade it in the Plague Laboratory','Злая Бактерия':'Evil Bacteria','Злая бактерия':'Evil Bacteria','Каждое действие может нанести дополнительное заражение. Усиливайте злых бактерий в чумной лаборатории':'Every action can deal additional infection. Strengthen evil bacteria in the Plague Laboratory','шанс 1% на срабатывание · +10% к заражению':'1% proc chance · +10% to infection','Фатальность':'Fatality','Фатальность Вселенной':'Universe Fatality','Точка заражения, во Вселенной идут отзвуки Чумного воздействия, но Звезды уже почувствовали заразу. Открывает Повелителя Чёрных Душ':'Point of infection — echoes of the Plague ripple through the Universe, and the Stars have already sensed the contagion. Opens the Lord of Black Souls','Гниль звезд разрастается':'The rot of stars spreads','Гниль звёзд разрастается. Заражение +1% за каждую 1000 лет возраста чумы, пока чума грызёт космический объект':'The rot of stars spreads. Infection +1% per 1000 years of plague age while the plague gnaws a cosmic object','Звезды не держат заразу ЧУМА РАСТЕТ уже и ГАЛАКТИКИ бьют тревогу!':'The stars cannot hold the contagion — the PLAGUE is spreading and even the GALAXIES sound the alarm!','Стражи Вселенной, галактики, возможно они Чуму и остановят. Заражение всех галактик откроет путь к заражению всей ВСЕЛЕННОЙ!':'Guardians of the Universe — the galaxies. Perhaps they will stop the Plague. Infecting every galaxy will open the path to infecting the entire UNIVERSE!','Чума опасна для звёзд, они следят за ней. Заражение +10% за каждую звезду':'Plague is dangerous to stars, they watch it. Infection +10% per star','+1 к эффекту каждые 1000 лет возраста':'+1 to effect every 1000 years of age','ЧЁРНАЯ СМЕРТЬ':'BLACK DEATH','к базовой цифре заражения (разово)':'to base infection figure (once)','взрывное деление бактерий!':'explosive bacteria division!','ЭХО':'ECHO','уже получено':'already obtained','Улучшить %':'Upgrade %','Закрыть':'Close','Усиления:':'Buffs:','Уникальные способности:':'Unique abilities:','Дроп органов:':'Organ drop:','Умения:':'Skills:','к заражению':'to infection','Купить искру':'Buy spark','зелёный':'green','синий':'blue','фиолетовый':'purple','золотой':'gold','красный':'red','белый':'white','чёрный':'black','ГНИЕНИЕ МИРОВ':'WORLD ROT','ЧБ':'◆','Шанс от Мора':'Plague drop','Шанс':'Chance','к росту возраста за клик':'to age growth per click','к основе роста возраста за клик':'to base age growth per click','Чумная воля':'Plague Will','Сила Мора':'Power of Plague','Если чума уже на Уране, то каждый удачный МОР даст возможность матёрым бактериям найти <span class="ab-g">Искру Звёзд</span>. Поспеши её собрать!':'If the plague is already on Uranus, every successful Plague lets seasoned bacteria find a <span class="ab-g">Star Spark</span>. Hurry to collect it!','Мор наносит заражение в 2 раза быстрее':'Plague deals infection twice as fast','Клик ускоряет откат тотального деления':'Click speeds up total division cooldown','Пригласить друга':'Invite a friend','за каждого':'each','Забрать 5 чёрных душ':'Claim 5 Black Souls','Забрано. Следующая через':'Claimed. Next in','ЯЧУМА':'I, PLAGUE','Чингисхан':'Genghis Khan','ИГРАТЬ':'PLAY','Если бы вы не совершали великих грехов, Бог не послал бы на вас такого наказания, как я!':'If you had not committed great sins, God would not have sent a punishment like me upon you!','Чума покорила планету. Впереди — космос.':'The plague conquered the planet. Space awaits.','За каждый заражённый объект в космосе получаете чёрные души!':'Every space object you infect earns you black souls!','НАЧАТЬ':'START','чума пробуждается…':'the plague awakens…','Бонус':'Bonus','СМЕРТНОСТЬ':'MORTALITY','🔒 нужна матёрость 50000':'🔒 need potency 50000','макс. тик:':'max tick:','раз в час':'once an hour','МОР':'PLAGUE','РОСТ':'GROW','МАКС':'MAX','готово':'ready','за время':'by time','ДРОП СЕРДЕЦ +10%':'HEART DROP +10%','УЗЕЛ 50K +10%':'NODE 50K +10%','ЗАРАЖЕНИЕ':'INFECTION','ШАНС СМЕРТНОСТИ +1%':'MORTALITY CHANCE +1%','СИЛА СМЕРТНОСТИ +1':'MORTALITY POWER +1','ОТКРЫТЬ ОЧАГ БОЛЕЗНИ':'UNLOCK OUTBREAK','ВРЕМЯ ОЧАГА +0.2с':'OUTBREAK TIME +0.2s','ШАНС ОЧАГА +2%':'OUTBREAK CHANCE +2%','ОТКРЫТЬ ПАНДЕМИЮ':'UNLOCK PANDEMIC','УРОН ПАНДЕМИИ +':'PANDEMIC DAMAGE +','ВРЕМЯ ПАНДЕМИИ +0.25с':'PANDEMIC TIME +0.25s','ТОТАЛЬНОЕ ДЕЛЕНИЕ':'TOTAL DIVISION','Матёрые бактерии:':'Seasoned bacteria:','Деление в Море:':'Division in Plague:','След:':'Next:','бактерий → деление':'bacteria → division','Поднять уровень':'Level up','/тик':'/tick','Возраст Чумы':'Plague Age','Пора взрослеть!':'Time to grow up!','Каждый клик увеличивает возраст чумы на':'Each click increases plague age by','6 дней':'6 days','дней':'days','усиление взросления +10% за уровень · сейчас ×':'aging boost +10% per level · now ×','Гниение миров':'Rot of Worlds','Усиление взросления при действии на 10%.':'Aging boost per action +10%.','Сейчас':'Now','к взрослению':'to aging','нужен 8-1':'need 8-1','МАКС':'MAX','✓ макс':'✓ max','✓ доступно':'✓ available','и уменьшает таймер Тотального деления на':'and reduces Total Division timer by','1 минуту':'1 minute','минуту':'minute','минут':'minutes','Космический Очаг болезни':'Cosmic Disease Outbreak','Время действия очага':'Outbreak duration','6 секунд':'6 seconds','Больше действий':'More actions','Сжирать и расти':'Devour and grow','Потрошитель космоса':'Space Ripper','Больше бактерий':'More bacteria','к размножению матёрых бактерий Мором':'to Plague reproduction of seasoned bacteria','Максимум глаз 👁, мозгов 🧠 повышен до':'Max 👁 eyes, 🧠 brains raised to','Космические способности':'Cosmic abilities','рост (за клик) +2% за 1Т накопленных ног · сейчас':'growth (per click) +2% per 1T accumulated legs · now','+1 очко гниения за каждые +5 лет чумы (до 305)':'+1 rot point per +5 plague years (up to 305)','+10% взросления (дней за клик) за каждый этап заражения объектов космоса · сейчас':'+10% aging (days per click) per infection stage of space objects · now','Максимум ног повышен до':'Leg cap raised to','Стоимость повышения заражения':'Infection upgrade cost','шанс появления':'appear chance','очаг стакается до':'outbreak stacks up to','25 стаков':'25 stacks','Возраст чумы:':'Plague Age:','матёрых бактерий':'seasoned bacteria','матёрых':'seasoned','рост':'growth','с':'s','матёрые бактерии':'seasoned bacteria','☠ ЧЁРНАЯ СМЕРТЬ +0.2':'☠ BLACK DEATH +0.2','☣ УСИЛИТЬ ЗАРАЖЕНИЕ +10%':'☣ BOOST INFECTION +10%','🩹 СОПРОТ. ЛЕЧЕНИЮ +10%':'🩹 HEAL RESIST +10%','⏱ ВОССТАНОВЛЕНИЕ ДЕЛЕНИЯ −1с':'⏱ DIVISION COOLDOWN −1s','📦 ВЕСЬ ДРОП ×2':'📦 ALL DROP ×2','👁 ДРОП ГЛАЗ ×10':'👁 EYE DROP ×10','🧠 ДРОП МОЗГОВ ×10':'🧠 BRAIN DROP ×10','🦵 ДРОП НОГ ×10':'🦵 LEG DROP ×10','🫀 ДРОП ПЕЧЕНИ ×10':'🫀 LIVER DROP ×10','🐀 РАЗБЛОКИРОВАТЬ КРЫС':'🐀 UNLOCK RATS','🐀 БЕШЕНЫЕ КРЫСЫ':'🐀 RABID RATS','🧬 ЖИВУЧИЕ ОСОБИ':'🧬 HARDY STRAIN','☠ ЧЁРНАЯ СМЕРТЬ (КАРА)':'☠ BLACK DEATH (WRATH)','💀 АКТИВИРОВАТЬ МОР':'💀 ACTIVATE PLAGUE','❓ обучение':'❓ tutorial','Как играть':'How to play','Подробнее':'More','ОК':'OK','Активируйте Мор в Эпидемии':'Activate the Plague in Epidemic','🧬 СТАРЫЕ ОСОБИ':'🧬 OLD STRAINS','🦠 БУБОННАЯ ЧУМА':'🦠 BUBONIC PLAGUE','🧟 ГНИЛОЙ МОР':'🧟 ROTTEN PLAGUE','◆ РОСТ МАТЁРОСТИ +10%':'◆ POTENCY GROWTH +10%','◆ ЗАРАЗНАЯ ЧУМА +10%':'◆ CONTAGIOUS PLAGUE +10%','◆ ЧУМНАЯ ЖАТВА +10%':'◆ PLAGUE HARVEST +10%','◆ РОСТ/СЕК +10%':'◆ GROWTH/SEC +10%','скрыться':'hide','бактерий':'bacteria','Музыка':'Music','Звуки':'Sounds','ВКЛ':'ON','ВЫКЛ':'OFF','Заражение в сек:':'Infection/sec:','МАГАЗИН':'SHOP','ур.':'lv.','дроп ×5':'drop ×5','ДЕЛЕНИЕ':'DIVIDE'
+    'ДЕЛЕНИЕ':'DIVIDE','🔒 нужен талант «ДРОП СЕРДЕЦ»':'🔒 need "HEART DROP" talent','БАКТЕРИИ':'BACTERIA','Лечение:':'Healing:','вернуть':'undo','не активен':'inactive','макс':'max','/сек':'/sec','сек':'sec','шанс':'chance','к заражению':'to infection','раз в сутки':'once a day','×5 ВКЛ':'×5 ON','🖥 Десктоп':'🖥 Desktop','📱 Телефон':'📱 Phone','🖥 авто':'🖥 auto','🎬 Заставка':'🎬 Intro','🌍 Баннер10':'🌍 Banner10','×5 скорость':'×5 speed','🧫 ОЧАГ':'🧫 OUTBREAK','☣ ПАНДЕМИЯ':'☣ PANDEMIC','🐀 КРЫСЫ':'🐀 RATS','🦟 БЛОХИ':'🦟 FLEAS','☠ ЧЁРНАЯ СМЕРТЬ':'☠ BLACK DEATH','смертность':'mortality','очаг':'outbreak','лечение ×':'heal ×','заражения':'infection','на':'on','✓ куплено':'✓ owned','✓ доступно':'✓ available','✓ доступно (4-1)':'✓ available (4-1)','✓ доступно (2-1)':'✓ available (2-1)','✓ доступно (6-2)':'✓ available (6-2)','🔒 нужен 4-1 уровень':'🔒 need tier 4-1','🔒 нужен 2-1 уровень':'🔒 need tier 2-1','🔒 нужен 6-2 уровень':'🔒 need tier 6-2','🔒 нужен разблокированный Мор':'🔒 need Plague unlocked','🔒 нужна матёрость 1M':'🔒 need potency 1M','🔒 нужен 7-2 уровень':'🔒 need tier 7-2','🔒 нужно 500k глаз':'🔒 need 500k eyes','🔒 нужна матёрость 200k':'🔒 need potency 200k','🔒 нужен 6-3 уровень':'🔒 need tier 6-3','🔒 нужно 500k сердец':'🔒 need 500k hearts','🔒 нужно 100M сердец':'🔒 need 100M hearts','🔒 7-1 для след. ур.':'🔒 7-1 for next lv.','🔒 нужен 7-1':'🔒 need 7-1','СМЕРТНОСТЬ':'MORTALITY','🧪 ОЭ':'🧪 EP','🦴 ОГ':'🦴 RP','версия 2.5':'version 2.5','ДРОП ПЕЧЕНИ ×10':'LIVER DROP ×10','❤️ ДРОП СЕРДЕЦ':'❤️ HEART DROP','после исцеления остаётся':'after cleansing remains','10% колонии':'10% of colony','режим бешеного заражения — 15% шанс, +50% урона за тик':'rabid infection — 15% chance, +50% damage per tick','в очаге болезни 10% шанс: DoT ×100 урона/сек на 3с, стакается':'in an outbreak 10% chance: DoT ×100 damage/sec for 3s, stacks','при одновременных Очаге, Пандемии, Крысах, Блохах копит тики×макс.тик 5с (10с при 200k), затем удар':'with Outbreak, Pandemic, Rats, Fleas together stores ticks×maxTick 5s (10s at 200k), then strikes','включает «Рост в секунду»: +текущий приход матёрости каждую секунду. Разово.':'enables "Growth/sec": +current potency gain each second. Once.','в крысах ХП +5% каждые 0.1с (можно выше макс.), после −10%/с до макс.;':'in rats HP +5% every 0.1s (can exceed max), then −10%/s to max;','Растёт на +':'Grows by +','за каждый удар заражением (клики, тики, DoT).':'per infection hit (clicks, ticks, DoT).','Твои Чёрные Души:':'Your Black Souls:','1346 ГОД':'YEAR 1346','🧪 Очки Эпидемии':'🧪 Epidemic Points','🦴 Очки Гниения':'🦴 Rot Points','+0.2 к базовой цифре заражения (разово)':'+0.2 to base infection (once)','в пандемии 10% на крыс: +100%/сек к урону по врагу на 5с':'in a pandemic 10% for rats: +100%/sec to enemy for 5s','разово, ×10 к дропу':'once, ×10 to drop','🧪 2 Очка Эпидемии':'🧪 2 Epidemic Points','🧪 1 Очко Эпидемии':'🧪 1 Epidemic Point','🧪 5 Очков Эпидемии':'🧪 5 Epidemic Points','🧪 10 Очков Эпидемии':'🧪 10 Epidemic Points','🦴 2 Очка Гниения':'🦴 2 Rot Points','🦴 1 Очко Гниения':'🦴 1 Rot Point','❤️ 100M сердец':'❤️ 100M hearts','👁 500k глаз':'👁 500k eyes','множится поверх остальных усилений':'stacks on top of other boosts','меньше урона от лечения':'less damage from healing','быстрее перезарядка деления · макс 3':'faster division cooldown · max 3','куплено':'bought','сейчас':'now','умножает весь падающий дроп на ×2 (многоразово) · сейчас':'multiplies all loot ×2 (repeatable) · now','+30% сопротивления лечению':'+30% heal resistance','вместо 1 бактерии':'instead of 1 bacterium','×10 к падающим сердцам (разово)':'×10 to dropping hearts (once)','с 6-2 Деление → Мор: урон растёт каждую секунду (до +1000% за 10с; кулдаун-таланты делают короче). Разово.':'from 6-2 Division → Plague: damage grows each second (up to +1000% over 10s; cooldown talents shorten it). Once.','после исцеления колония делится ×2/сек в течение 5 секунд':'after cleansing the colony splits ×2/sec for 5 seconds','Мор съедает на 70% меньше матёрости. Разово.':'Plague eats 70% less potency. Once.','множит весь прирост матёрости +10% за уровень · сейчас':'boosts all potency gain +10% per level · now','заражение +10% за уровень · сейчас ×':'infection +10% per level · now ×','весь дроп +10% за уровень · сейчас ×':'all drops +10% per level · now ×','+10% к росту матёрости в секунду (7 ур.) · сейчас':'+10% potency/sec growth (7 lv.) · now','При Исцелении матёрость падает до':'On Cleansing potency drops to','Рост в сек при заражении:':'Growth/sec while infecting:','ВСЯ ЗЕМЛЯ':'THE EARTH','ЗАРАЖЕНА!':'INFECTED!','ПРОДОЛЖИТЬ':'CONTINUE','Все права защищены':'All rights reserved','КЛАДБИЩЕ: 30 мин':'GRAVEYARD: 30 min','ДУШИ':'SOULS','Получение Душ':'Getting Souls','Бактерии несут смерть и разложение... Теперь она Мастер Чёрных Душ':'The Plague bacteria carry death and decay... Now it is the Master of Black Souls','Мастер Чёрных Душ':'Master of Black Souls','Рост матёрости за клик +50%':'Potency per click +50%','1000 чёрных душ':'1000 Black Souls','Тотальный Напор: 4 чёрные души за':'Total Surge: 4 black souls per','Тотальный Напор: 8 чёрных душ за':'Total Surge: 8 black souls per','Тотальный Напор: 16 чёрных душ за':'Total Surge: 16 black souls per','Забрать 20 чёрных душ':'Claim 20 Black Souls','Забрать 40 чёрных душ':'Claim 40 Black Souls','Забрать 80 чёрных душ':'Claim 80 Black Souls','Купить за':'Buy for','Повелитель Чёрных Душ':'Lord of Black Souls','Получение Чёрных Душ ×2':'Black Souls gain ×2','×5 к пролетающим Зелёным Искрам':'×5 to flying Green Sparks','100 чёрных душ':'100 Black Souls','Купить за':'Buy for','Куплено':'Purchased','Забрать 10 чёрных душ':'Claim 10 Black Souls','Тотальный Напор: 2 чёрные души за':'Total Surge: 2 black souls per','играет':'now playing','Соберите души!':'Collect your souls!','Космическое заражение: заразить':'Space infection: infect','Тотальный Напор: 1 чёрная душа за':'Total Surge: 1 black soul per','ударов':'hits','Забрать':'Claim','душ':'souls','Чем умнее тем взрослее':'The smarter, the older','Чумная лаборатория':'Plague Laboratory','ОТКРОЕТСЯ НА УРАНЕ':'UNLOCKS AT URANUS','Скормить Чуме':'Feed the Plague','Мастерство':'Mastery','таланты эпидемии обновились':'epidemic talents updated','МАСТЕРСТВО ЧУМЫ':'PLAGUE MASTERY','+10% к общей цифре мастерства за уровень · сейчас ×':'+10% to total mastery per level · now ×','Вспышка Мора':'Plague Flash','Мор больше не требует матёрости':'Plague no longer requires potency','Талант Чёрная Смерть':'Black Death Talent','Звезда':'Star','Опасность для звёзд':'Danger to stars','Колония:':'Colony:','Мультивселенная':'Multiverse','Грани Гравитации':'Edge of Gravity','Грани Времени':'Edge of Time','Грани Бесконечности':'Edge of Infinity','Абсолют':'Absolute','Чума получила Божественную Частицу. Ничего больше нет, жизнь теперь это ЯЧУМА!':'The Plague obtained the Divine Particle. Nothing else remains, life is now I, PLAGUE!','То ли жизнь, то ли смерть, то ли СОН...':'Maybe life, maybe death, maybe a DREAM...','КОНЕЦ':'THE END','ВСЕЛЕННАЯ':'UNIVERSE','Дальше':'Next','ПОЗДРАВЛЯЕМ!':'CONGRATULATIONS!','ЯЧУМА пройдена!':'I, PLAGUE completed!','Ура!':'Hooray!','ВСЯ':'THE WHOLE','должна быть заражена...':'must be infected...','ВСЕ ЗВЁЗДЫ':'ALL STARS','ЗАРАЖЕНЫ!':'INFECTED!','Чума расползается по всей галактике!':'The Plague spreads across the whole galaxy!','схемы':'recipes','Схемы':'Recipes','нет схем':'no recipes','Максимум:':'Maximum:','Молодая Чума и матёрая':'Young and Seasoned Plague','Матёрость растёт в 2 раза быстрее. Каждый миллиард матёрости — заражение +10%':'Potency grows 2x faster. Each billion of potency — infection +10%','Млечный Путь':'Milky Way','Вселенная':'Universe','Андромеда':'Andromeda','Водоворот M51':'Whirlpool M51','Галактика':'Galaxy','Сириус':'Sirius','Альдебаран':'Aldebaran','Антарес':'Antares','Арктур':'Arcturus','Спика':'Spica','Проксима Центавра':'Proxima Centauri','Полярная':'Polaris','Ригель':'Rigel','Бетельгейзе':'Betelgeuse','Вега':'Vega','Охота на звёзды!':'Hunt for the Stars!','Солнечная система заражена. Впереди — звёзды.':'The Solar System is infected. The stars lie ahead.','⭐ Баннер11':'⭐ Banner11','нужен 11-1 уровень':'need tier 11-1','нужен 8-1 уровень':'need tier 8-1','🔒 нужен 7-1 уровень':'🔒 need tier 7-1','Очаг болезни работает фоном':'Disease Outbreak runs in the background','Поверни телефон':'Rotate your phone','вертикально':'vertically','Покоритель звёзд':'Conqueror of Stars','После МОРА может выпасть ещё одна искра звёзд':'After the Plague, another star spark may drop','достигнут лимит':'limit reached','к возрасту чумы за клик':'to plague age per click','сила искр':'spark power','Шанс при клике':'Click chance','Сила заражения':'Infection power','к мастерству':'to mastery','к уменьшению таймера тотального деления':'to total division timer reduction','к дропу органов':'to organ drop','к лимиту Ног':'to legs limit','к лимиту Глаз':'to eyes limit','к лимиту Мозгов':'to brains limit','к максимуму матёрости':'to potency maximum','дальше матёрость не растёт, текущий максимум':'potency no longer grows, current max','Улучшайте в чумной лаборатории':'Upgrade it in the Plague Laboratory','Злая Бактерия':'Evil Bacteria','Злая бактерия':'Evil Bacteria','Каждое действие может нанести дополнительное заражение. Усиливайте злых бактерий в чумной лаборатории':'Every action can deal additional infection. Strengthen evil bacteria in the Plague Laboratory','шанс 1% на срабатывание · +10% к заражению':'1% proc chance · +10% to infection','Фатальность':'Fatality','Фатальность Вселенной':'Universe Fatality','Точка заражения, во Вселенной идут отзвуки Чумного воздействия, но Звезды уже почувствовали заразу. Открывает Повелителя Чёрных Душ':'Point of infection — echoes of the Plague ripple through the Universe, and the Stars have already sensed the contagion. Opens the Lord of Black Souls','Гниль звезд разрастается':'The rot of stars spreads','Гниль звёзд разрастается. Заражение +1% за каждую 1000 лет возраста чумы, пока чума грызёт космический объект':'The rot of stars spreads. Infection +1% per 1000 years of plague age while the plague gnaws a cosmic object','Звезды не держат заразу ЧУМА РАСТЕТ уже и ГАЛАКТИКИ бьют тревогу!':'The stars cannot hold the contagion — the PLAGUE is spreading and even the GALAXIES sound the alarm!','Стражи Вселенной, галактики, возможно они Чуму и остановят. Заражение всех галактик откроет путь к заражению всей ВСЕЛЕННОЙ!':'Guardians of the Universe — the galaxies. Perhaps they will stop the Plague. Infecting every galaxy will open the path to infecting the entire UNIVERSE!','Чума опасна для звёзд, они следят за ней. Заражение +10% за каждую звезду':'Plague is dangerous to stars, they watch it. Infection +10% per star','+1 к эффекту каждые 1000 лет возраста':'+1 to effect every 1000 years of age','ЧЁРНАЯ СМЕРТЬ':'BLACK DEATH','к базовой цифре заражения (разово)':'to base infection figure (once)','взрывное деление бактерий!':'explosive bacteria division!','ЭХО':'ECHO','уже получено':'already obtained','Улучшить %':'Upgrade %','Закрыть':'Close','Усиления:':'Buffs:','Уникальные способности:':'Unique abilities:','Дроп органов:':'Organ drop:','Умения:':'Skills:','к заражению':'to infection','Купить искру':'Buy spark','зелёный':'green','синий':'blue','фиолетовый':'purple','золотой':'gold','красный':'red','белый':'white','чёрный':'black','ГНИЕНИЕ МИРОВ':'WORLD ROT','ЧБ':'◆','Шанс от Мора':'Plague drop','Шанс':'Chance','к росту возраста за клик':'to age growth per click','к основе роста возраста за клик':'to base age growth per click','Чумная воля':'Plague Will','Сила Мора':'Power of Plague','Если чума уже на Уране, то каждый удачный МОР даст возможность матёрым бактериям найти <span class="ab-g">Искру Звёзд</span>. Поспеши её собрать!':'If the plague is already on Uranus, every successful Plague lets seasoned bacteria find a <span class="ab-g">Star Spark</span>. Hurry to collect it!','Мор наносит заражение в 2 раза быстрее':'Plague deals infection twice as fast','Клик ускоряет откат тотального деления':'Click speeds up total division cooldown','Пригласить друга':'Invite a friend','за каждого':'each','Забрать 5 чёрных душ':'Claim 5 Black Souls','Забрано. Следующая через':'Claimed. Next in','ЯЧУМА':'I, PLAGUE','Чингисхан':'Genghis Khan','ИГРАТЬ':'PLAY','Если бы вы не совершали великих грехов, Бог не послал бы на вас такого наказания, как я!':'If you had not committed great sins, God would not have sent a punishment like me upon you!','Чума покорила планету. Впереди — космос.':'The plague conquered the planet. Space awaits.','За каждый заражённый объект в космосе получаете чёрные души!':'Every space object you infect earns you black souls!','НАЧАТЬ':'START','чума пробуждается…':'the plague awakens…','Бонус':'Bonus','СМЕРТНОСТЬ':'MORTALITY','🔒 нужна матёрость 50000':'🔒 need potency 50000','макс. тик:':'max tick:','раз в час':'once an hour','МОР':'PLAGUE','РОСТ':'GROW','МАКС':'MAX','готово':'ready','за время':'by time','ДРОП СЕРДЕЦ +10%':'HEART DROP +10%','УЗЕЛ 50K +10%':'NODE 50K +10%','ЗАРАЖЕНИЕ':'INFECTION','ШАНС СМЕРТНОСТИ +1%':'MORTALITY CHANCE +1%','СИЛА СМЕРТНОСТИ +1':'MORTALITY POWER +1','ОТКРЫТЬ ОЧАГ БОЛЕЗНИ':'UNLOCK OUTBREAK','ВРЕМЯ ОЧАГА +0.2с':'OUTBREAK TIME +0.2s','ШАНС ОЧАГА +2%':'OUTBREAK CHANCE +2%','ОТКРЫТЬ ПАНДЕМИЮ':'UNLOCK PANDEMIC','УРОН ПАНДЕМИИ +':'PANDEMIC DAMAGE +','ВРЕМЯ ПАНДЕМИИ +0.25с':'PANDEMIC TIME +0.25s','ТОТАЛЬНОЕ ДЕЛЕНИЕ':'TOTAL DIVISION','Матёрые бактерии:':'Seasoned bacteria:','Деление в Море:':'Division in Plague:','След:':'Next:','бактерий → деление':'bacteria → division','Поднять уровень':'Level up','/тик':'/tick','Возраст Чумы':'Plague Age','Пора взрослеть!':'Time to grow up!','Каждый клик увеличивает возраст чумы на':'Each click increases plague age by','6 дней':'6 days','дней':'days','усиление взросления +10% за уровень · сейчас ×':'aging boost +10% per level · now ×','Гниение миров':'Rot of Worlds','Усиление взросления при действии на 10%.':'Aging boost per action +10%.','Сейчас':'Now','к взрослению':'to aging','нужен 8-1':'need 8-1','МАКС':'MAX','✓ макс':'✓ max','✓ доступно':'✓ available','и уменьшает таймер Тотального деления на':'and reduces Total Division timer by','1 минуту':'1 minute','минуту':'minute','минут':'minutes','Космический Очаг болезни':'Cosmic Disease Outbreak','Время действия очага':'Outbreak duration','6 секунд':'6 seconds','Больше действий':'More actions','Сжирать и расти':'Devour and grow','Потрошитель космоса':'Space Ripper','Больше бактерий':'More bacteria','к размножению матёрых бактерий Мором':'to Plague reproduction of seasoned bacteria','Максимум глаз 👁, мозгов 🧠 повышен до':'Max 👁 eyes, 🧠 brains raised to','Космические способности':'Cosmic abilities','рост (за клик) +2% за 1Т накопленных ног · сейчас':'growth (per click) +2% per 1T accumulated legs · now','+1 очко гниения за каждые +5 лет чумы (до 305)':'+1 rot point per +5 plague years (up to 305)','+10% взросления (дней за клик) за каждый этап заражения объектов космоса · сейчас':'+10% aging (days per click) per infection stage of space objects · now','Максимум ног повышен до':'Leg cap raised to','Стоимость повышения заражения':'Infection upgrade cost','шанс появления':'appear chance','очаг стакается до':'outbreak stacks up to','25 стаков':'25 stacks','Возраст чумы:':'Plague Age:','матёрых бактерий':'seasoned bacteria','матёрых':'seasoned','рост':'growth','с':'s','матёрые бактерии':'seasoned bacteria','☠ ЧЁРНАЯ СМЕРТЬ +0.2':'☠ BLACK DEATH +0.2','☣ УСИЛИТЬ ЗАРАЖЕНИЕ +10%':'☣ BOOST INFECTION +10%','🩹 СОПРОТ. ЛЕЧЕНИЮ +10%':'🩹 HEAL RESIST +10%','⏱ ВОССТАНОВЛЕНИЕ ДЕЛЕНИЯ −1с':'⏱ DIVISION COOLDOWN −1s','📦 ВЕСЬ ДРОП ×2':'📦 ALL DROP ×2','👁 ДРОП ГЛАЗ ×10':'👁 EYE DROP ×10','🧠 ДРОП МОЗГОВ ×10':'🧠 BRAIN DROP ×10','🦵 ДРОП НОГ ×10':'🦵 LEG DROP ×10','🫀 ДРОП ПЕЧЕНИ ×10':'🫀 LIVER DROP ×10','🐀 РАЗБЛОКИРОВАТЬ КРЫС':'🐀 UNLOCK RATS','🐀 БЕШЕНЫЕ КРЫСЫ':'🐀 RABID RATS','🧬 ЖИВУЧИЕ ОСОБИ':'🧬 HARDY STRAIN','☠ ЧЁРНАЯ СМЕРТЬ (КАРА)':'☠ BLACK DEATH (WRATH)','💀 АКТИВИРОВАТЬ МОР':'💀 ACTIVATE PLAGUE','❓ обучение':'❓ tutorial','Как играть':'How to play','Подробнее':'More','ОК':'OK','Активируйте Мор в Эпидемии':'Activate the Plague in Epidemic','🧬 СТАРЫЕ ОСОБИ':'🧬 OLD STRAINS','🦠 БУБОННАЯ ЧУМА':'🦠 BUBONIC PLAGUE','🧟 ГНИЛОЙ МОР':'🧟 ROTTEN PLAGUE','◆ РОСТ МАТЁРОСТИ +10%':'◆ POTENCY GROWTH +10%','◆ ЗАРАЗНАЯ ЧУМА +10%':'◆ CONTAGIOUS PLAGUE +10%','◆ ЧУМНАЯ ЖАТВА +10%':'◆ PLAGUE HARVEST +10%','◆ РОСТ/СЕК +10%':'◆ GROWTH/SEC +10%','скрыться':'hide','бактерий':'bacteria','Музыка':'Music','Звуки':'Sounds','ВКЛ':'ON','ВЫКЛ':'OFF','Заражение в сек:':'Infection/sec:','МАГАЗИН':'SHOP','ур.':'lv.','дроп ×5':'drop ×5','ДЕЛЕНИЕ':'DIVIDE'
   }};
   const GUIDE_EN=`<b class="guide-title">I, PLAGUE — how to infect the universe!?</b><div class="guide-parts"><button id="guidePartBtn1" class="gpart">part one</button><button id="guidePartBtn2" class="gpart">part two</button></div><div id="guidePart1" style="display:none">
     <div class="gh">Part 1 · Getting started</div>
@@ -3887,6 +3929,8 @@ body.hd .lab-mastery{font-size:13px !important}
     <span class="gsub">20.2 Lord of Black Souls (1e045).</span> The biohazard sign in the background on the left starts to glow — click it. The window holds three purchases, each once per run: <b>Black Souls gain ×2</b> for 50 souls — doubles the GRAVEYARD, the Surge and Space infection; <b>×5 to flying Green Sparks</b> for 50 green sparks; <b>100 Black Souls</b> for 10 black sparks.<br>
     <span class="gsub">20.3 Fine print.</span> The ×2 only applies to what you gather AFTER the purchase: souls already waiting in the Surge and space sublevels already cleared pay the old rate. The glow goes out after the first click. The "start over" button clears all three purchases.<br>
 
+    <span class="gsub">20.4 Master of Black Souls (1e100).</span> The bacteria artwork on the right starts to glow — click it. The window is black and holds three purchases: <b>Black Souls gain ×2</b> — three tiers for 500, 1 000 and 2 000 souls; the multipliers stack with each other and with the Lord, up to ×16 together; <b>Potency per click +50%</b> — five tiers for 1 000 gold, 2 000 red, 5 000 white, 10 000 black and 100 000 black sparks; the bonuses add up to ×3.5; <b>1 000 Black Souls</b> — once, for 500 blue, 500 purple and 500 gold sparks. Same rules: the multiplier only applies to what you gather after the purchase, and "start over" clears every purchase.<br>
+
     <div class="gh">Part 21 · Universe, Multiverse and THE END</div>
     <span class="gsub">21.1 Universe.</span> After the galaxies — the Universe, made of 3 levels.<br>
     <span class="gsub">21.2 Multiverse.</span> Then — the endless Multiverse.<br>
@@ -3913,13 +3957,14 @@ body.hd .lab-mastery{font-size:13px !important}
     fingers:0, eyes:0, brains:0, legs:0, liver:0, totalInfected:0, diamonds:0,
     oe:0, og:0, epiDmgLevel:0, gravediggers:0, dropX2Level:0, blackDeath:0, healResistLevel:0, divCdLevel:0, rabidRats:false, hardy:false, oldOnes:false,
     mat:10, mat500:false, mat5000:false, mat10000:false, mat80000:false, mat100000:false, mat200000:false, mat400000:false, hearts:0,
-    x10eye:false, x10brain:false, x10leg:false, x10liver:false, x10heart:false, heartDropLevel:0, heartMatLevel:0, ratsUnlocked:false, bdAbility:false, morUnlocked:false, tutorSeen:false, bubonic:false, rottenMor:false, matGrowthLevel:0, bubGrowthLevel:0, infectiousLevel:0, harvestLevel:0, mat10000000:false, mat100000000:false, mat200000000:false, mat500000000:false, plagueAge:1, ageClicks:0, startTime:0, playTime:0, shardsFed:0, circleTaps:0, napProg:0, spacePaid:0, lord1:false, lord2:false, lord3:false, lordSeen:false, lordNapOld:0, lordSpaceMark:0, recMark:{}, starSpark200:false, matBac:0, totalDivLevel:0, lastFreeDivTime:0, sharedReward:false,
+    x10eye:false, x10brain:false, x10leg:false, x10liver:false, x10heart:false, heartDropLevel:0, heartMatLevel:0, ratsUnlocked:false, bdAbility:false, morUnlocked:false, tutorSeen:false, bubonic:false, rottenMor:false, matGrowthLevel:0, bubGrowthLevel:0, infectiousLevel:0, harvestLevel:0, mat10000000:false, mat100000000:false, mat200000000:false, mat500000000:false, plagueAge:1, ageClicks:0, startTime:0, playTime:0, shardsFed:0, circleTaps:0, napProg:0, spacePaid:0, lord1:false, lord2:false, lord3:false, lordSeen:false, mast1:0, mast2:0, mast3:false, mastSeen:false, galMusic:false, soulBankNap:0, soulBankSpace:0, recMark:{}, starSpark200:false, matBac:0, totalDivLevel:0, lastFreeDivTime:0, sharedReward:false,
     dmgLevel:0, hpTier:0, eyeLevel:0, brainLevel:0,
     viralUnlocked:false, viralDurLevel:0, viralProbLevel:0,
     pandemicUnlocked:false, pandDmgLevel:0, pandDurLevel:0,
     playerMaxHp:1, playerHp:1, enemyLevel:1, enemyHp:1,
     matResistAck:null,
     age2Ack:false,
+    mileAgeAck:null, mileFatAck:null,
   };
   const INIT_STATE=JSON.parse(JSON.stringify(S));
 
@@ -4007,28 +4052,34 @@ body.hd .lab-mastery{font-size:13px !important}
   }
   sparkLoop();
   try{window.__spawnSpark=spawnSpark;}catch(e){}
+  // первая галактика: галактический трек встаёт первым и играет сразу
+  setInterval(function(){
+    try{
+      if(!galaxyNow()||S.galMusic)return;
+      S.galMusic=true;try{saveGame();}catch(e){}
+      var gi=-1;for(var i=0;i<TRACKS.length;i++)if(TRACKS[i].gal)gi=i;
+      if(gi<0)return;
+      try{renderMusic();}catch(e){}
+      if(S.musicOn!==false){try{musCancelNext();musicBind();playIdx(gi);}catch(e){}}
+    }catch(e){}
+  },1000);
   // ---- Повелитель Чёрных Душ ----
   var LORD_AT=1e45;
   var LORD_BUY=[{cost:50,cur:'soul'},{cost:50,cur:'green'},{cost:10,cur:'black'}];
-  function soulMult(){return S.lord1?2:1;}
-  // x2 действует только на то, что накопится ПОСЛЕ покупки.
-  // Напор: сколько душ уже лежало в момент покупки — столько уйдёт по старой цене.
-  function napPay(n){
-    if(!S.lord1)return n;
-    var o=Math.min(n,S.lordNapOld||0);
-    return o+(n-o)*2;
+  // ×2 Повелителя и ×2 за каждую ступень Мастера: 1, 2, 4, 8, 16
+  function soulMult(){return (S.lord1?2:1)*Math.pow(2,S.mast1||0);}
+  // Множитель действует только на то, что накопится ПОСЛЕ покупки.
+  // В момент роста множителя всё уже накопленное сразу считаем по старой
+  // цене и кладём в банк, а счётчики обнуляем — дальше копится по новой.
+  function soulMultBank(){
+    var m=soulMult();
+    var n=napReady();
+    if(n>0){S.soulBankNap=(S.soulBankNap||0)+n*m;S.napProg=(S.napProg||0)-n*NAP_STEP;}
+    var k=spacePending();
+    if(k>0){S.soulBankSpace=(S.soulBankSpace||0)+k*SPACE_PAY*m;S.spacePaid=(S.spacePaid||0)+k;}
   }
-  // Космос: подуровни, пройденные до покупки, тоже платятся по старой цене.
-  function spaceOldLeft(){
-    if(!S.lord1)return 0;
-    var from=SPACE_LVL0+(S.spacePaid||0);
-    return Math.max(0,Math.min((S.enemyLevel||0),(S.lordSpaceMark||0))-from);
-  }
-  function spacePay(n){
-    if(!S.lord1)return n*SPACE_PAY;
-    var o=Math.min(n,spaceOldLeft());
-    return SPACE_PAY*(o+(n-o)*2);
-  }
+  function napPay(n){return (S.soulBankNap||0)+n*soulMult();}
+  function spacePay(n){return (S.soulBankSpace||0)+n*SPACE_PAY*soulMult();}
   function lordOwned(i){return !!S['lord'+i];}
   var _lordStage=null;
   function lordBuild(){
@@ -4050,10 +4101,13 @@ body.hd .lab-mastery{font-size:13px !important}
   function lordOrn(){return document.querySelector('#hdOrnStage .hd-orn.l');}
   function lordSync(){
     var st=lordBuild();
+    st.style.display='block';
     var on=((S.totalInfected||0)>=LORD_AT);
-    st.style.display=on?'block':'none';
+    var h=document.getElementById('lordHit');
+    if(h)h.style.display=on?'block':'none';
     var o=lordOrn();
     if(o)o.classList.toggle('lord-glow',on&&!S.lordSeen);
+    try{mastSync();}catch(e){}
   }
   function lordHave(cur){
     if(cur==='soul')return (S.diamonds||0);
@@ -4095,11 +4149,7 @@ body.hd .lab-mastery{font-size:13px !important}
     var d=LORD_BUY[i-1];
     if(lordHave(d.cur)<d.cost)return;
     lordPay(d.cur,d.cost);
-    if(i===1){
-      // запоминаем, что уже накопилось: это уйдёт по старой цене
-      try{S.lordNapOld=napReady();}catch(e){S.lordNapOld=0;}
-      S.lordSpaceMark=(S.enemyLevel||0);
-    }
+    if(i===1){try{soulMultBank();}catch(e){}}
     S['lord'+i]=true;
     if(i===3)S.diamonds=(S.diamonds||0)+100;
     saveGame();
@@ -4125,6 +4175,177 @@ body.hd .lab-mastery{font-size:13px !important}
     var m=document.getElementById('lordModal');
     if(m&&m.style.display!=='none'){try{lordRender();}catch(e){}}
   },600);
+  // ---- Мастер Чёрных Душ ----
+  var MAST_AT=1e100;
+  var MAST_SOUL_COST=[500,1000,2000];
+  var MAST_MAT_COST=[{cur:'gold',n:1000},{cur:'red',n:2000},{cur:'white',n:5000},
+                     {cur:'black',n:10000},{cur:'black',n:100000}];
+  var MAST_SOULS_COST=[{cur:'blue',n:500},{cur:'purple',n:500},{cur:'gold',n:500}];
+  var MAST_DIA='<svg class="bdi" viewBox="0 0 24 24">'+
+    '<polygon points="12,2 20,8 12,22 4,8" fill="#2b2b38"/>'+
+    '<polygon points="12,2 4,8 12,10" fill="#17171f"/>'+
+    '<polygon points="12,2 20,8 12,10" fill="#3d3d4d"/>'+
+    '<polygon points="4,8 12,10 12,22" fill="#20202a"/>'+
+    '<polygon points="20,8 12,10 12,22" fill="#30303d"/>'+
+    '<polygon points="8,5 11,3.5 10,7.5" fill="#7a7a95" opacity=".5"/></svg>';
+  function mastMatMult(){return 1+0.5*(S.mast2||0);}
+  function mastIc(c){return '<span class="lb-cur shard-'+c+'">'+shardSVG()+'</span>';}
+  function mastOrn(){return document.querySelector('#hdOrnStage .hd-orn.r');}
+  function mastSync(){
+    var st=document.getElementById('lordStage');if(!st)return;
+    var b=document.getElementById('mastHit');
+    if(!b){
+      b=document.createElement('button');b.id='mastHit';
+      b.setAttribute('aria-label','Мастер Чёрных Душ');
+      b.addEventListener('pointerdown',function(){var o=mastOrn();if(o)o.classList.add('mast-press');});
+      ['pointerup','pointercancel','pointerleave'].forEach(function(ev){
+        b.addEventListener(ev,function(){var o=mastOrn();if(o)o.classList.remove('mast-press');});
+      });
+      b.addEventListener('click',mastOpen);
+      st.appendChild(b);
+    }
+    var on=((S.totalInfected||0)>=MAST_AT);
+    b.style.display=on?'block':'none';
+    var o=mastOrn();
+    if(o)o.classList.toggle('mast-glow',on&&!S.mastSeen);
+  }
+  function mastHave(c){if(!S.shards)S.shards={};return (S.shards[c]||0);}
+  function mastRender(){
+    var lv1=S.mast1||0, lv2=S.mast2||0;
+    // 1. Получение Чёрных Душ ×2
+    var s1=document.getElementById('mastSec1'), b1=document.getElementById('mastBuy1');
+    if(s1)s1.textContent=L('Получение Чёрных Душ ×2')+' · '+L('ур.')+' '+lv1+'/3';
+    if(b1){
+      if(lv1>=3){b1.innerHTML='<span>'+L('Куплено')+'</span>';b1.disabled=true;b1.classList.add('poor');}
+      else{
+        var c1=MAST_SOUL_COST[lv1];
+        b1.innerHTML='<span>'+L('Купить за')+' '+c1+'</span><span class="mast-price">'+MAST_DIA+'</span>';
+        var ok1=((S.diamonds||0)>=c1);
+        b1.disabled=!ok1;b1.classList.toggle('poor',!ok1);
+      }
+    }
+    // 2. Рост матёрости за клик +50%
+    var s2=document.getElementById('mastSec2'), b2=document.getElementById('mastBuy2');
+    if(s2)s2.textContent=L('Рост матёрости за клик +50%')+' · '+L('ур.')+' '+lv2+'/5';
+    if(b2){
+      if(lv2>=5){b2.innerHTML='<span>'+L('Куплено')+'</span>';b2.disabled=true;b2.classList.add('poor');}
+      else{
+        var c2=MAST_MAT_COST[lv2];
+        b2.innerHTML='<span>'+L('Купить за')+' '+c2.n+'</span><span class="mast-price">'+mastIc(c2.cur)+'</span>';
+        var ok2=(mastHave(c2.cur)>=c2.n);
+        b2.disabled=!ok2;b2.classList.toggle('poor',!ok2);
+      }
+    }
+    // 3. 1000 чёрных душ
+    var s3=document.getElementById('mastSec3'), b3=document.getElementById('mastBuy3');
+    if(s3)s3.textContent=L('1000 чёрных душ');
+    if(b3){
+      if(S.mast3){b3.innerHTML='<span>'+L('Куплено')+'</span>';b3.disabled=true;b3.classList.add('poor');}
+      else{
+        var h='<span>'+L('Купить за')+'</span><span class="mast-price">';
+        var ok3=true;
+        for(var i=0;i<MAST_SOULS_COST.length;i++){
+          var c=MAST_SOULS_COST[i];
+          h+='<span class="mast-one">'+c.n+mastIc(c.cur)+'</span>';
+          if(mastHave(c.cur)<c.n)ok3=false;
+        }
+        b3.innerHTML=h+'</span>';
+        b3.disabled=!ok3;b3.classList.toggle('poor',!ok3);
+      }
+    }
+  }
+  function mastOpen(){
+    var m=document.getElementById('mastModal');if(!m)return;
+    try{closePops();}catch(e){}
+    if(!S.mastSeen){S.mastSeen=true;try{saveGame();}catch(e){}try{mastSync();}catch(e){}}
+    mastRender();
+    m.style.display='flex';
+  }
+  function mastClose(){var m=document.getElementById('mastModal');if(m)m.style.display='none';}
+  function mastPurchase(i){
+    if(i===1){
+      var lv=S.mast1||0;if(lv>=3)return;
+      var c=MAST_SOUL_COST[lv];if((S.diamonds||0)<c)return;
+      S.diamonds=(S.diamonds||0)-c;
+      try{soulMultBank();}catch(e){}   // всё накопленное — по старой цене
+      S.mast1=lv+1;
+    }else if(i===2){
+      var lv2=S.mast2||0;if(lv2>=5)return;
+      var c2=MAST_MAT_COST[lv2];if(mastHave(c2.cur)<c2.n)return;
+      S.shards[c2.cur]=(S.shards[c2.cur]||0)-c2.n;
+      S.mast2=lv2+1;
+    }else{
+      if(S.mast3)return;
+      for(var k=0;k<MAST_SOULS_COST.length;k++){
+        if(mastHave(MAST_SOULS_COST[k].cur)<MAST_SOULS_COST[k].n)return;
+      }
+      for(var k2=0;k2<MAST_SOULS_COST.length;k2++){
+        var cc=MAST_SOULS_COST[k2];
+        S.shards[cc.cur]=(S.shards[cc.cur]||0)-cc.n;
+      }
+      S.mast3=true;
+      S.diamonds=(S.diamonds||0)+1000;
+    }
+    saveGame();
+    mastRender();
+    var db=document.getElementById('diamondBal');if(db)db.textContent=fmtChb(S.diamonds||0);
+    try{renderDaily();}catch(e){}
+    try{renderNap();}catch(e){}
+    try{renderSpace();}catch(e){}
+    try{renderLab();}catch(e){}
+    try{render();}catch(e){}
+  }
+  for(var _mi2=1;_mi2<=3;_mi2++){(function(i){
+    var b=document.getElementById('mastBuy'+i);
+    if(b)b.addEventListener('click',function(){mastPurchase(i);});
+  })(_mi2);}
+  {var _mastCls=document.getElementById('mastClose');
+   if(_mastCls)_mastCls.addEventListener('click',mastClose);}
+  {var _mastMdl=document.getElementById('mastModal');
+   if(_mastMdl)_mastMdl.addEventListener('click',function(e){if(e.target===_mastMdl)mastClose();});}
+  setInterval(function(){
+    var m=document.getElementById('mastModal');
+    if(m&&m.style.display!=='none'){try{mastRender();}catch(e){}}
+  },600);
+  // ---- подсветка новых вех ----
+  var _ageMiles=null;
+  function ageMiles(){
+    if(!_ageMiles){
+      _ageMiles=[];
+      try{
+        var els=document.querySelectorAll('.age-buff[data-year]');
+        for(var i=0;i<els.length;i++){var v=+els[i].getAttribute('data-year');if(v>0)_ageMiles.push(v);}
+      }catch(e){}
+      _ageMiles.sort(function(a,b){return a-b;});
+    }
+    return _ageMiles;
+  }
+  function ageMile(){var a=ageMiles(),p=(S.plagueAge||1),v=0;
+    for(var i=0;i<a.length;i++)if(p>=a[i])v=a[i];return v;}
+  function fatMile(){var t=(S.totalInfected||0),v=0;
+    try{for(var i=0;i<FATAL_MILESTONES.length;i++)if(t>=FATAL_MILESTONES[i].n)v=FATAL_MILESTONES[i].n;}catch(e){}
+    return v;}
+  function mileSync(){
+    if(S.mileAgeAck==null)S.mileAgeAck=ageMile();
+    if(S.mileFatAck==null)S.mileFatAck=fatMile();
+    var m=document.getElementById('matBtn');
+    if(m)m.classList.toggle('mile-new',matMilestone()>(S.matResistAck||0));
+    var a=document.getElementById('ageBtn');
+    if(a)a.classList.toggle('mile-new',ageMile()>(S.mileAgeAck||0));
+    var f=document.getElementById('fatality');
+    if(f)f.classList.toggle('mile-new',fatMile()>(S.mileFatAck||0));
+  }
+  {var _ageAck=document.getElementById('ageBtn');
+   if(_ageAck)_ageAck.addEventListener('click',function(){
+     S.mileAgeAck=ageMile();try{saveGame();}catch(e){}mileSync();});}
+  {var _fatAck=document.getElementById('fatality');
+   if(_fatAck)_fatAck.addEventListener('click',function(){
+     S.mileFatAck=fatMile();try{saveGame();}catch(e){}mileSync();});}
+  {var _matAck=document.getElementById('matBtn');
+   if(_matAck)_matAck.addEventListener('click',function(){setTimeout(mileSync,0);});}
+  setInterval(function(){try{mileSync();}catch(e){}},400);
+  try{mileSync();}catch(e){}
+  try{window.__mile=mileSync;}catch(e){}
   try{window.__lord=lordSync;}catch(e){}
   // космос начинается с Марс 8-1 — это enemyLevel 43
   var SPACE_LVL0=43, SPACE_PAY=5, _spaceBound=false;
@@ -4143,8 +4364,9 @@ body.hd .lab-mastery{font-size:13px !important}
     return L(i.name)+' '+i.catNum+'-'+i.sub;
   }
   function claimSpace(){
-    var n=spacePending();if(n<=0)return;
-    S.diamonds=(S.diamonds||0)+spacePay(n);
+    var n=spacePending();var _pay=spacePay(n);if(_pay<=0)return;
+    S.diamonds=(S.diamonds||0)+_pay;
+    S.soulBankSpace=0;
     S.spacePaid=(S.spacePaid||0)+n;
     saveGame();
     var db=document.getElementById('diamondBal');if(db)db.textContent=fmtChb(S.diamonds||0);
@@ -4158,11 +4380,15 @@ body.hd .lab-mastery{font-size:13px !important}
     if(!_spaceBound){_spaceBound=true;btn.addEventListener('click',claimSpace);}
     sec.textContent=L('Космическое заражение: заразить')+' '+spaceLabel();
     var n=spacePending();
-    txt.textContent=L('Забрать')+' '+spacePay(n)+' '+L('душ');
-    btn.disabled=(n<=0);btn.classList.toggle('poor',n<=0);
+    var _p=spacePay(n);
+    txt.textContent=L('Забрать')+' '+_p+' '+L('душ');
+    btn.disabled=(_p<=0);btn.classList.toggle('poor',_p<=0);
   }
   function spaceCheck(){renderSpace();}
   var NAP_STEP=1000, NAP_MAX=10, _napBound=false;
+  var NAP_LINE={1:'Тотальный Напор: 1 чёрная душа за',2:'Тотальный Напор: 2 чёрные души за',
+                4:'Тотальный Напор: 4 чёрные души за',8:'Тотальный Напор: 8 чёрных душ за',
+                16:'Тотальный Напор: 16 чёрных душ за'};
   var _nel=function(id){return document.getElementById(id);};
   function napReady(){return Math.min(NAP_MAX,Math.floor((S.napProg||0)/NAP_STEP));}
   function napLeft(){return NAP_STEP-((S.napProg||0)%NAP_STEP);}
@@ -4172,15 +4398,14 @@ body.hd .lab-mastery{font-size:13px !important}
     if(!sec||!btn||!txt)return;
     if(!_napBound){_napBound=true;btn.addEventListener('click',claimNap);}
     var n=napReady();
-    sec.textContent=(n>=NAP_MAX)?L('Соберите души!'):(L(soulMult()>1?'Тотальный Напор: 2 чёрные души за':'Тотальный Напор: 1 чёрная душа за')+' '+napFmt(napLeft())+' '+L('ударов'));
-    txt.textContent=L('Забрать')+' '+napPay(n)+' '+L('душ');
-    btn.disabled=(n<=0);btn.classList.toggle('poor',n<=0);
+    sec.textContent=(n>=NAP_MAX)?L('Соберите души!'):(L(NAP_LINE[soulMult()]||NAP_LINE[1])+' '+napFmt(napLeft())+' '+L('ударов'));
+    var _p=napPay(n);
+    txt.textContent=L('Забрать')+' '+_p+' '+L('душ');
+    btn.disabled=(_p<=0);btn.classList.toggle('poor',_p<=0);
   }
   function claimNap(){
-    var n=napReady();if(n<=0)return;
-    var _pay=napPay(n);
-    var _o=Math.min(n,(S.lord1?(S.lordNapOld||0):0));
-    S.lordNapOld=Math.max(0,(S.lordNapOld||0)-_o);
+    var n=napReady();var _pay=napPay(n);if(_pay<=0)return;
+    S.soulBankNap=0;
     S.napProg=(S.napProg||0)-n*NAP_STEP;
     S.diamonds=(S.diamonds||0)+_pay;
     saveGame();
@@ -4362,7 +4587,7 @@ body.hd .lab-mastery{font-size:13px !important}
   function _agesp(n){return(''+n).replace(/\B(?=(\d{3})+(?!\d))/g,'\u00a0');}function _agefmt(x){return x>10?_agesp(Math.round(x)):(x%1?x.toFixed(1):''+x);}function ageWord(n){if(lang==='en')return Math.floor(Math.abs(n))===1?'yr':'yrs';n=Math.floor(Math.abs(n))%100;const n1=n%10;if(n>10&&n<20)return "лет";if(n1>1&&n1<5)return "года";if(n1===1)return "год";return "лет";}
   function bumpMatFlags(){if(S.mat>=500)S.mat500=true;if(S.mat>=5000)S.mat5000=true;if(S.mat>=10000)S.mat10000=true;if(S.mat>=80000)S.mat80000=true;if(S.mat>=100000)S.mat100000=true;if(S.mat>=200000)S.mat200000=true;if(S.mat>=400000)S.mat400000=true;if(S.mat>=10000000)S.mat10000000=true;if(S.mat>=100000000)S.mat100000000=true;if(S.mat>=200000000)S.mat200000000=true;if(S.mat>=500000000)S.mat500000000=true;}
   function matCap(){return (1e9*(1+0.01*((S.labBuffs&&S.labBuffs.matcap)||0))+empEmpressBonus())*empGranddaughterMult();}
-  function gainMat(){S.mat+=matGainAmount();if(S.mat>matCap())S.mat=matCap();bumpMatFlags();}
+  function gainMat(){S.mat+=matGainAmount()*mastMatMult();if(S.mat>matCap())S.mat=matCap();bumpMatFlags();}
   const lvl63=()=>{const i=enemyInfo();return !i.intro&&(i.cat>5||(i.cat===5&&i.sub>=3));};
   function liverPctVal(){var lv=S.liver||0;if(lv<=40000000)return Math.floor(lv/100000);return 400+Math.floor(Math.log((lv-40000000)/1100000+1)/Math.log(1.1)+1e-9);}
   function liverNextCost(){var P=liverPctVal();return P<400?100000:Math.ceil(100000*Math.pow(1.1,P-400));}
@@ -4479,7 +4704,7 @@ body.hd .lab-mastery{font-size:13px !important}
   function closeMat(){$('matModal').style.display='none';}
   function openAge(){S.age2Ack=true;saveGame();$('ageModalTitle').textContent=L('Возраст Чумы')+' - '+_agesp(S.plagueAge||1)+' '+ageWord(S.plagueAge||1);{const _d=$('ageBuffDesc');if(_d)_d.innerHTML=L('Каждый клик увеличивает возраст чумы на')+' <b class="ab-g">'+_agefmt(6*agingMult()*((S.plagueAge||1)>=30?1.5:1))+' '+L('дней')+'</b> '+L('и уменьшает таймер Тотального деления на')+' <b class="ab-g">'+(Math.round(divTapCutMs()/60000*10)/10)+' '+L(divTapCutMs()===60000?'минуту':'минут')+'</b>';}{const _y=$('ageBuffYear');if(_y)_y.textContent='1 '+ageWord(1);}{const _d2=$('ageBuffDesc2');if(_d2)_d2.innerHTML=L('Время действия очага')+' <b class="ab-g">'+L('6 секунд')+'</b>, '+L('шанс появления')+' <b class="ab-g">'+L('30%')+'</b>, '+L('очаг стакается до')+' <b class="ab-g">'+L('25 стаков')+'</b>';}{const _y2=$('ageBuffYear2');if(_y2)_y2.textContent='50 '+ageWord(50);}{const _d3=$('ageBuffDesc3');if(_d3)_d3.innerHTML=L('Максимум ног повышен до')+' <b class="ab-g">100T</b> 🦵';}{const _y3=$('ageBuffYear3');if(_y3)_y3.textContent='150 '+ageWord(150);}{const _d4=$('ageBuffDesc4');if(_d4)_d4.innerHTML=L('+10% взросления (дней за клик) за каждый этап заражения объектов космоса · сейчас')+' <b class="ab-g">'+(10*Math.max(0,(S.enemyLevel||0)-43))+'%</b>';}{const _y4=$('ageBuffYear4');if(_y4)_y4.textContent='120 '+ageWord(120);}{const _d5=$('ageBuffDesc5');if(_d5)_d5.innerHTML=L('рост (за клик) +2% за 1Т накопленных ног · сейчас')+' <b class="ab-g">'+_agesp(2*Math.floor((S.legs||0)/1e12))+'%</b> · '+L('+1 очко гниения за каждые +5 лет чумы (до 305)');}{const _y5=$('ageBuffYear5');if(_y5)_y5.textContent='200 '+ageWord(200);}{const _d6=$('ageBuffDesc6');if(_d6)_d6.innerHTML=L('Максимум глаз 👁, мозгов 🧠 повышен до')+' <b class="ab-g">100T</b> · '+L('Космические способности');}{const _y6=$('ageBuffYear6');if(_y6)_y6.textContent='250 '+ageWord(250);}{const _d7=$('ageBuffDesc7');if(_d7)_d7.innerHTML=L('Клик ускоряет откат тотального деления')+' ×<b class="ab-g">6</b>';}{const _y7=$('ageBuffYear7');if(_y7)_y7.textContent='350 '+ageWord(350);}{const _d8=$('ageBuffDesc8');if(_d8)_d8.innerHTML=L('Мор наносит заражение в 2 раза быстрее');}{const _y8=$('ageBuffYear8');if(_y8)_y8.textContent='500 '+ageWord(500);}{const _d9=$('ageBuffDesc9');if(_d9)_d9.innerHTML=L('Если чума уже на Уране, то каждый удачный МОР даст возможность матёрым бактериям найти <span class="ab-g">Искру Звёзд</span>. Поспеши её собрать!');}{const _d11=$('ageBuffDesc11');if(_d11)_d11.innerHTML=L('Каждое действие может нанести дополнительное заражение. Усиливайте злых бактерий в чумной лаборатории');}{const _d12=$('ageBuffDesc12');if(_d12)_d12.innerHTML=L('После МОРА может выпасть ещё одна искра звёзд');}{const _d13=$('ageBuffDesc13');if(_d13)_d13.innerHTML=L('Матёрость растёт в 2 раза быстрее. Каждый миллиард матёрости — заражение +10%')+' '+L('до 2 Т')+' · <span style="color:var(--gold)">'+L('сейчас')+' +'+fmt(Math.round((matMult()-1)*100))+'%</span>';}{const _d14=$('ageBuffDesc14');if(_d14)_d14.textContent=L('Открывает доступ к улучшению Мастерства свыше');}{const _dge=$('ageBuffDescGalExp');if(_dge)_dge.innerHTML=L('Каждый заражённый уровень Галактик ускоряет рост матёрости на 5%')+' <b class="ab-g">'+L('Сейчас')+' '+_agesp(Math.round((galaxyMatMult()-1)*100))+'%</b>';}{const _d10=$('ageBuffDesc10');if(_d10)_d10.innerHTML=L('Чума опасна для звёзд, они следят за ней. Заражение +10% за каждую звезду')+' · <span style="color:var(--gold)">'+L('сейчас')+' +'+(10*starCount())+'%</span>'+' · '+L('Очаг болезни работает фоном');}{const _y9=$('ageBuffYear9');if(_y9)_y9.textContent='600 '+ageWord(600);}document.querySelectorAll('.age-buff').forEach(b=>{const y=+b.dataset.year||1;b.classList.toggle('locked',(S.plagueAge||1)<y);});var _d200=$('ageMile200Desc');if(_d200)_d200.innerHTML=L('За')+' '+HEIRDIA+' — '+L('только зелёные и синие искры звёзд, 50/50');$('ageModal').style.display='flex';}
   function closeAge(){$('ageModal').style.display='none';}
-  var FATAL_MILESTONES=[{n:1e45,text:'Точка заражения, во Вселенной идут отзвуки Чумного воздействия, но Звезды уже почувствовали заразу. Открывает Повелителя Чёрных Душ'},{n:1e50,text:'Каждая полностью зараженная звезда ускоряет рост матёрости на 10%'},{n:1e55,text:'Гниль звёзд разрастается. Заражение +1% за каждую 1000 лет возраста чумы, пока чума грызёт космический объект'},{n:1e60,text:'Звезды не держат заразу ЧУМА РАСТЕТ уже и ГАЛАКТИКИ бьют тревогу!'},{n:1e75,text:'Колония чумы все больше и голоднее, способна теперь пожирать осколки звезд массово. Открывает возможность массового кормления Чумы в лаборатории! Массовое усиление в лаборатории!'},{n:1e80,text:'Стражи Вселенной, галактики, возможно они Чуму и остановят. Заражение всех галактик откроет путь к заражению всей ВСЕЛЕННОЙ!'},{n:1e200,text:'Горизонт Чумных Событий...'}];
+  var FATAL_MILESTONES=[{n:1e45,text:'Точка заражения, во Вселенной идут отзвуки Чумного воздействия, но Звезды уже почувствовали заразу. Открывает Повелителя Чёрных Душ'},{n:1e50,text:'Каждая полностью зараженная звезда ускоряет рост матёрости на 10%'},{n:1e55,text:'Гниль звёзд разрастается. Заражение +1% за каждую 1000 лет возраста чумы, пока чума грызёт космический объект'},{n:1e60,text:'Звезды не держат заразу ЧУМА РАСТЕТ уже и ГАЛАКТИКИ бьют тревогу!'},{n:1e75,text:'Колония чумы все больше и голоднее, способна теперь пожирать осколки звезд массово. Открывает возможность массового кормления Чумы в лаборатории! Массовое усиление в лаборатории!'},{n:1e80,text:'Стражи Вселенной, галактики, возможно они Чуму и остановят. Заражение всех галактик откроет путь к заражению всей ВСЕЛЕННОЙ!'},{n:1e100,text:'Бактерии несут смерть и разложение... Теперь она Мастер Чёрных Душ'},{n:1e200,text:'Горизонт Чумных Событий...'}];
   function _fmtTime(sec){sec=Math.floor(sec||0);var d=Math.floor(sec/86400),h=Math.floor((sec%86400)/3600),m=Math.floor((sec%3600)/60);var u=(lang==='en')?['d','h','m']:['д','ч','м'];var p=[];if(d)p.push(d+u[0]);if(h||d)p.push(h+u[1]);p.push(m+u[2]);return p.join(' ');}function renderStats(){try{var _st=$('statStart');if(_st){var _dt=S.startTime?new Date(S.startTime):new Date();_st.textContent=_dt.toLocaleDateString((lang==='en')?'en-US':'ru-RU');}var _tt=$('statTime');if(_tt)_tt.textContent=_fmtTime(S.playTime||0);var _si=$('statInfected');if(_si)_si.textContent=fmtFatal(S.totalInfected||0);var _sf=$('statFed');if(_sf)_sf.textContent=fmt(S.shardsFed||0);var _tp=$('statTaps');if(_tp)_tp.textContent=fmt(S.circleTaps||0);var _sm=$('statMastery');if(_sm)_sm.textContent=fmt(Math.round(masteryPct()));var _rm=S.recMark||{};var _rv=function(sc,ec,el){var e=$(el);if(!e)return;var _rs=(sc===0)?0:_rm[sc];var _re=_rm[ec];e.textContent=(_rs!=null&&_re!=null&&_re>=_rs)?_fmtTime(_re-_rs):'—';};_rv(0,7,'recEarth');_rv(7,15,'recPlanets');_rv(15,25,'recStars');_rv(25,28,'recGalaxies');_rv(0,28,'recFull');}catch(e){}}function openStats(){closePops();renderStats();$('statsModal').style.display='flex';}function closeStats(){$('statsModal').style.display='none';}
   function renderFatalModal(){var _n=$('fatalNum');if(_n)_n.textContent=fmtFatal(S.totalInfected||0);var _b=$('fatalBody');if(!_b)return;var _h='';for(var i=0;i<FATAL_MILESTONES.length;i++){var m=FATAL_MILESTONES[i];var _u=(S.totalInfected||0)>=m.n;_h+='<div class="fatal-milestone'+(_u?'':' locked')+(m.n===1e75?' fm-gold':'')+'"><b class="fm-num">'+fmtFatal(m.n)+'</b><span class="fm-text">'+L(m.text)+(m.n===1e55?(' · '+L('сейчас')+' +'+fmt(Math.round((fatalMult()-1)*100))+'%'):m.n===1e50?(' · '+L('сейчас')+' +'+fmt(Math.round((starMatMult()-1)*100))+'%'):m.n===1e200?('<br><span class="fm-sub">'+L('Каждый 1Т возраста даёт 10 главных матёрых бактерий (стартовых). Сейчас: ')+fmt(1+horizonBac())+' <span class="fm-bac">'+bacteriaBlackSVG()+'</span></span><br><span class="fm-sub">'+L('Матёрость свыше 15Т даёт ×1,1 усиления заражения за каждый шаг роста. Сейчас: ')+'×'+(function(){var _m=horizonInfMult();return _m<100?(Math.round(_m*100)/100):fmt(Math.round(_m));})()+' · '+L('след. поднятие: ')+(function(){var _v=horizonNextAt();return _v<1e16?(parseFloat((_v/1e12).toFixed(2)))+'T':fmt(_v);})()+'</span>'):'')+'</span></div>';}_b.innerHTML=_h;}
   function openFatal(){renderFatalModal();$('fatalityModal').style.display='flex';}
@@ -4631,7 +4856,7 @@ body.hd .lab-mastery{font-size:13px !important}
     setSmooth('matVal',S.mat,true);setSmooth('matVal2',S.mat,true);
     document.querySelectorAll('.mat-row').forEach(r=>{const th=+r.dataset.th;r.classList.toggle('on',S.mat>=th);const big=S.mat>=200000000;r.style.display=((big&&th>=50&&th<50000)||(!big&&th>200000000))?'none':(r.classList.contains('base')?'grid':'');});
     $('matStepDmg').textContent='+'+fmtPct(matSteps())+'%';if(S.mat>=200000000){var _msl=$('matStepHpLbl');if(_msl)_msl.textContent=L('Максимум:');$('matStepHp').textContent=fmt(matCap());}else{var _msl2=$('matStepHpLbl');if(_msl2)_msl2.textContent=L('Колония:');$('matStepHp').textContent='+'+fmtPct(matSteps()*5)+'%';}
-    $('matGainVal').textContent=fmt(matGainAmount());if((S.mat||0)>matCap())S.mat=matCap();{var _mc=$('matCapMsg');if(_mc){if((S.mat||0)>=matCap()){_mc.style.display='block';_mc.innerHTML=L('дальше матёрость не растёт, текущий максимум')+' '+fmt(matCap())+'. '+L('Улучшайте в чумной лаборатории');}else _mc.style.display='none';}}$('matStartVal').textContent=fmt(matStart());
+    $('matGainVal').textContent=fmt(matGainAmount()*mastMatMult());if((S.mat||0)>matCap())S.mat=matCap();{var _mc=$('matCapMsg');if(_mc){if((S.mat||0)>=matCap()){_mc.style.display='block';_mc.innerHTML=L('дальше матёрость не растёт, текущий максимум')+' '+fmt(matCap())+'. '+L('Улучшайте в чумной лаборатории');}else _mc.style.display='none';}}$('matStartVal').textContent=fmt(matStart());
     setSmooth('totalInfected',S.totalInfected,true);{var _fat=$('fatality');if(_fat){var _vb=$('viralBadge');if((S.plagueAge||0)>=2000){_fat.classList.add('show');_fat.innerHTML=L('Фатальность')+':<span class="fat-num">'+fmtFatal(S.totalInfected||0)+'</span>';var _age=$('ageBtn');var _ref=(_age&&getComputedStyle(_age).display!=='none')?_age:$('matBtn');if(_ref){var _rr=_ref.getBoundingClientRect();_fat.style.top=Math.round(_rr.top-30-_fat.offsetHeight+30+(document.body.classList.contains('android')?14:0))+'px';}if(_vb)_vb.classList.add('age2000hide');}else{_fat.classList.remove('show');if(_vb)_vb.classList.remove('age2000hide');}}}
     $('dropBonus').textContent=fmtDrop(Math.round(dropTiers()*25))+'%';{const _lbi=$('labBtn');if(_lbi)_lbi.classList.add('on');var _lk=labLocked();document.body.classList.toggle('lab-locked',_lk);var _ldu2=$('labDropUp');if(_ldu2&&_lk)_ldu2.disabled=false;}
     $('dropNext').textContent=fmtDrop(Math.ceil(nextDropThreshold()-S.totalInfected));
@@ -5358,8 +5583,17 @@ body.hd .lab-mastery{font-size:13px !important}
   var TRACKS=[
     {file:'IPLAGUE - Black Souls.mp3',ru:'ЯЧУМА — Чёрные Души',en:'IPLAGUE — Black Souls'},
     {file:'IPLAGUE - Pandemic doors.mp3',ru:'ЯЧУМА — Двери Пандемии',en:'IPLAGUE — Pandemic doors'},
-    {file:'IPLAGUE - Infected Sun.mp3', ru:'ЯЧУМА — Заражённое Солнце',en:'IPLAGUE — Infected Sun'}
+    {file:'IPLAGUE - Infected Sun.mp3', ru:'ЯЧУМА — Заражённое Солнце',en:'IPLAGUE — Infected Sun'},
+    {file:'IPLAGUE - Galactic infection.mp3', ru:'ЯЧУМА — Галактическое заражение',en:'IPLAGUE — Galactic infection', gal:true}
   ];
+  // галактики начинаются с категории 25 (Млечный Путь)
+  function galaxyNow(){try{return enemyInfo().cat>=25;}catch(e){return false;}}
+  function trackOpen(i){var t=TRACKS[i];return !(t&&t.gal)||galaxyNow();}
+  function trackFirst(){for(var i=0;i<TRACKS.length;i++)if(trackOpen(i))return i;return 0;}
+  function trackNext(i){
+    for(var k=1;k<=TRACKS.length;k++){var j=(i+k)%TRACKS.length;if(trackOpen(j))return j;}
+    return i;
+  }
   var _musIdx=-1, _musBound=false;
   function trackName(t){return (lang==='en')?t.en:t.ru;}
   // ---- огибающая громкости музыки: дакинг и фейды ----
@@ -5423,7 +5657,7 @@ body.hd .lab-mastery{font-size:13px !important}
   function applyMusic(){
     var a=$('bgMusic');if(!a)return;
     if(S.musicOn===false){stopMusic();return;}
-    if(_musIdx<0){playIdx(0);return;}
+    if(_musIdx<0||!trackOpen(_musIdx)){playIdx(trackFirst());return;}
     audioResume();musEnvStart();
     _musStop=false;_musTgt=MUSIC_VOL;
     if(a.paused)a.play().catch(function(){});
@@ -5438,8 +5672,9 @@ body.hd .lab-mastery{font-size:13px !important}
   function musicBind(){
     if(_musBound)return;var a=$('bgMusic');if(!a)return;_musBound=true;
     a.addEventListener('ended',function(){
-      var nxt=(_musIdx+1)%TRACKS.length;
-      musQueueNext(nxt,(nxt===0)?TRACK_GAP_ALL:TRACK_GAP);
+      var nxt=trackNext(_musIdx);
+      // круг закончился — пауза длиннее
+      musQueueNext(nxt,(nxt===trackFirst())?TRACK_GAP_ALL:TRACK_GAP);
       renderMusic();
     });
     a.addEventListener('error',function(){try{a.pause();}catch(e){}});
@@ -5448,11 +5683,14 @@ body.hd .lab-mastery{font-size:13px !important}
     var box=$('musList');if(!box)return;
     var a=$('bgMusic'), html='';
     var now=(S.musicOn!==false&&a&&!a.paused)?_musIdx:-1;
+    var _n=0;
     for(var i=0;i<TRACKS.length;i++){
+      if(!trackOpen(i))continue;
+      _n++;
       var t=TRACKS[i],on=(i===now);
       html+='<div class="mus-row'+(on?' playing':'')+'" data-mus="'+i+'">'+
             '<span class="mus-ic"><svg viewBox="0 0 24 24"><path d="M9 17V5l9-2v9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><ellipse cx="6.2" cy="17" rx="3.4" ry="2.7" fill="currentColor"/><ellipse cx="15.2" cy="14.5" rx="3.4" ry="2.7" fill="currentColor"/></svg></span>'+
-            '<span class="mus-name"><span class="mus-num">'+(i+1)+'.</span> '+trackName(t)+
+            '<span class="mus-name"><span class="mus-num">'+_n+'.</span> '+trackName(t)+
             (on?'<span class="mus-now"><span class="mus-eq"><i></i><i></i><i></i></span>'+L('играет')+'</span>':'')+
             '</span></div>';
     }
@@ -5460,6 +5698,7 @@ body.hd .lab-mastery{font-size:13px !important}
   }
   function pickTrack(i){
     var a=$('bgMusic');
+    if(!trackOpen(i))return;
     musCancelNext();
     if(i===_musIdx&&a&&!a.paused){stopMusic();return;}
     if(S.musicOn===false){S.musicOn=true;saveGame();try{updateAvToggles();}catch(e){}}
