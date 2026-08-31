@@ -1032,6 +1032,8 @@
   #heirSat{position:absolute;left:960px;top:400px;transform:translate(-50%,-100%);
     pointer-events:none;opacity:1;transition:opacity 2s linear}
   #heirSat.hs-fade{opacity:0}
+  /* на гейтах времени Наследник молчит и ждёт клика */
+  #heirSat.hs-tap{pointer-events:auto;cursor:pointer}
   #heirSat .hs-body{position:relative;width:74px;height:74px;
     animation:hsFloat 2.4s ease-in-out infinite}
   @keyframes hsFloat{0%,100%{transform:translateY(-2.5px)}50%{transform:translateY(2.5px)}}
@@ -4493,13 +4495,23 @@ body.hd .lab-mastery{font-size:13px !important}
       var n=d.querySelector('.hs-num');
       var now=performance.now();
       if(act){
+        d.classList.remove('hs-tap');
         if(n){n.style.display='';
           var left=Math.max(0,Math.ceil(((S.heirSatietyUntil||0)-Date.now())/1000));
           if(n.textContent!==String(left))n.textContent=left;}
         if(now>=_hsNext){hsSay();_hsNext=now+1000+Math.random()*5000;}
       }else{
         if(n)n.style.display='none';
-        if(now>=_hsNext){hsSay(timeGateOn()?TIME_SAY:TIME2_SAY);_hsNext=now+5000;}
+        d.classList.add('hs-tap');
+        if(!d.dataset.tap){
+          d.dataset.tap='1';
+          d.addEventListener('click',function(e){
+            try{e.stopPropagation();}catch(_){}
+            if(!anyTimeGate())return;
+            var old=d.querySelector('.hs-say');if(old){try{old.remove();}catch(_){}}
+            hsSay(timeGateOn()?TIME_SAY:TIME2_SAY);
+          });
+        }
       }
     }else if(d.style.display!=='none'){
       if(!_hsFadeAt){_hsFadeAt=performance.now();d.classList.add('hs-fade');}
