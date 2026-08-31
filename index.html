@@ -3897,7 +3897,7 @@ body.hd #bcLvl.hd-lvl-red{
   /* ===== АЛМАЗЫ · МАГАЗИН · ПЛАТЕЖИ ===== */
   // >>> Впиши адрес своего платёжного сервера (создаёт Stripe Checkout Session).
   //     Пусто = ТЕСТ-режим: покупка начисляет алмазы без реальной оплаты. <<<
-    // серверного слоя в этой сборке нет: души живут только в сохраненииfunction spendDiamonds(amount,reason,refund){amount=Math.max(0,Math.round(amount||0));if(!refund&&(S.diamonds||0)<amount)return false;S.diamonds=(S.diamonds||0)+(refund?amount:-amount);saveGame();return true;}
+    /* серверного слоя в этой сборке нет: души живут только в сохранении */function spendDiamonds(amount,reason,refund){amount=Math.max(0,Math.round(amount||0));if(!refund&&(S.diamonds||0)<amount)return false;S.diamonds=(S.diamonds||0)+(refund?amount:-amount);saveGame();return true;}
   function saveGame(){try{localStorage.setItem('yachuma_save',JSON.stringify(S));}catch(e){}}
   function loadGame(){try{const d=localStorage.getItem('yachuma_save');if(d){const o=JSON.parse(d);for(const k in o)if(k in S)S[k]=o[k];}}catch(e){}if(!S.startTime)S.startTime=Date.now();}
   
