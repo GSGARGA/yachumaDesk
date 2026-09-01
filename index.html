@@ -2070,6 +2070,14 @@ body.hd #hdIconReveal{
   -webkit-mask-image:conic-gradient(#000 0 var(--lost,0deg),transparent var(--lost,0deg));
           mask-image:conic-gradient(#000 0 var(--lost,0deg),transparent var(--lost,0deg));
 }
+/* На Абсолюте сектор урона не растёт (--lost всегда 0deg), поэтому коническая
+   маска срезала копию иконки в ноль, а базовая иконка скрыта прозрачностью —
+   в итоге иконки Абсолюта, идущие в обратном порядке, не было видно вообще.
+   Здесь маску снимаем: копия показывается целиком. */
+body.hd #battleCircle.absolute #hdIconReveal{
+  -webkit-mask-image:none !important;
+          mask-image:none !important;
+}
 body.hd #hdIconReveal svg,body.hd #hdIconReveal img{
   width:100% !important;height:100% !important;max-width:none !important;max-height:none !important;
 }
